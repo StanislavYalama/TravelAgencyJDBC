@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotels catalog</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <th>id</th>
+        <th>Назва</th>
+        <th>Адреса</th>
+        <th>Країна</th>
+        <th>Місто</th>
+        <th>Приймання їжі</th>
+        <th>Якість</th>
+        <th>Кількість місць</th>
+        <th>Номер локації</th>
+    </tr>
+    <tr th:each = "el : ${hotels}">
+        <td th:text="${el.id}" id="id1"></td>
+        <td th:text="${el.name}"></td>
+        <td th:text="${el.address}"></td>
+        <td th:text="${el.country}"></td>
+        <td th:text="${el.city}"></td>
+        <td th:text="${el.typeFood}"></td>
+        <td th:text="${el.quality}"></td>
+        <td th:text="${el.placesCount}"></td>
+        <td th:text="${el.locationId}"></td>
+    </tr>
+</table>
+</body>
+</html>

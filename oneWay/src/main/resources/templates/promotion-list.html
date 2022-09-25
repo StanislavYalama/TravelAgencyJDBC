@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Promotions</title>
+</head>
+<body>
+    <div>
+        <form action="/promotions/create" th:if="${role}=='tour_manager'"
+              method="post">
+            Дата початку<input type="datetime-local" name="dateBeginning"><br><br>
+            Дата кінця<input type="datetime-local" name="dateEnd"><br><br>
+            Номер творця<input type="number" name="creatorId" value="3"><br><br>
+            Знижка<input type="number" name="discountPercentage" value="22"><br><br>
+            <input type="submit" value="Створити"><br><br>
+        </form>
+        <br><br>
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>date_begining</th>
+                <th>date_end</th>
+                <th>creator_id</th>
+                <th>discount_percentage</th>
+            </tr>
+            <tr th:each = "el : ${promotion}">
+                <td><a th:href="'/promotions/' + ${el.id}" th:text="${el.id}"></a></td>
+                <td th:text="${el.dateBeginning}"></td>
+                <td th:text="${el.dateEnd}"></td>
+                <td th:text="${el.creatorId}"></td>
+                <td th:text="${el.discountPercentage}"></td>
+                <td>
+                    <form th:action="'/promotions/delete/' + ${el.id}" method="post">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+<!--<div>-->
+<!--    <form th:action="'/promotions/linking/' + promotion" method="post">-->
+<!--        Номер акції<input type="number" name="promotionId"><br><br>-->
+<!--        Номер тура<input type="number" name="tourId"><br><br>-->
+<!--        <input type="submit" value="Створити"><br><br>-->
+<!--    </form>-->
+<!--</div>-->
+</body>
+</html>

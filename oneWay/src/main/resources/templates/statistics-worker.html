@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Worker Statistic</title>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script type="text/javascript"
+            src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+<div align="center" style="width: 1000px;">
+    <h2>Spring Boot Google Charts Example</h2>
+    <div id="chart_div_c1"></div>
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
+    <div id="chart_div_c2"></div>
+</div>
+</body>
+<script th:inline="javascript">
+        var managerRankRequests = /*[[${managerRankRequests}]]*/'noValue';
+        var managerRankProfit = /*[[${managerRankProfit}]]*/'noValue';
+        var tourManagerRank = /*[[${tourManagerRank}]]*/'noValue';
+        $(document).ready(function() {
+            google.charts.load('current', {
+                packages : [ 'corechart', 'bar' ]
+            });
+            google.charts.setOnLoadCallback(drawColumnChart);
+            google.charts.setOnLoadCallback(drawPieChart);
+            google.charts.setOnLoadCallback(drawColumnChart2);
+        });
+        function drawColumnChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Visits');
+            Object.keys(managerRankRequests).forEach(function(key) {
+                data.addRow([ key, managerRankRequests[key] ]);
+            });
+            var options = {
+                title : 'Manager Rank By Count Of Computed Requests',
+                hAxis : {
+                    title : 'Name',
+                },
+                vAxis : {
+                    title : 'Requests'
+                }
+            };
+            var chart = new google.visualization.ColumnChart(document
+                    .getElementById('chart_div_c1'));
+            chart.draw(data, options);
+        }
+        function drawPieChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Profit');
+            Object.keys(managerRankProfit).forEach(function(key) {
+                data.addRow([ key, managerRankProfit[key] ]);
+            });
+            var options = {
+                title : 'Manager Rank By Profit'
+            };
+            var chart = new google.visualization.PieChart(document
+                    .getElementById('piechart'));
+            chart.draw(data, options);
+        }
+        function drawColumnChart2() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('number', 'Count');
+        Object.keys(tourManagerRank).forEach(function(key) {
+            data.addRow([ key, tourManagerRank[key] ]);
+        });
+        var options = {
+            title : 'Tour Manager Rank By Count Of Created Tours',
+            hAxis : {
+                title : 'Name',
+            },
+            vAxis : {
+                title : 'Created Tours'
+            }
+        };
+        var chart = new google.visualization.ColumnChart(document
+                .getElementById('chart_div_c2'));
+        chart.draw(data, options);
+        }
+    </script>
+</html>

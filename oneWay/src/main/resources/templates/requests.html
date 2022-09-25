@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Заявки</title>
+</head>
+<body>
+<input type=radio id="toggle1" name="toggle" checked>Не переглянуті
+<input type=radio id="toggle2" name="toggle">Переглянуті
+
+<div id="content1">
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>Номер клієнта</th>
+            <th>Статус</th>
+            <th>Дата</th>
+            <th>Номер тура</th>
+            <th>Номер менеджера</th>
+            <th>Статус оплати</th>
+        </tr>
+        <tr th:each = "el : ${requestUnadmit}">
+            <td th:text="${el.id}" id="id1"></td>
+            <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
+            <td>
+                <select class="form-control" id="dropDownList" name="status">
+                    <option value="0">Не опрацьовано</option>
+                    <option th:each="el_status : ${status_values}" th:value="${el_status}" th:text="${el_status}"></option>
+                </select>
+            </td>
+            <td th:text="${el.date}"></td>
+            <td th:text="${el.tourId}"></td>
+            <td th:text="${el.managerId}"></td>
+            <td th:text="${el.paymentStatus}"></td>
+            <td>
+                <form th:action="'/requests/admit/' + ${el.id}" method="post">
+                    <input type="submit" value="Надіслати">
+                </form>
+            </td>
+
+        </tr>
+    </table>
+</div>
+<br><br>
+<div id="content2">
+    <table border="1" style="visible=true">
+        <tr>
+            <th>id</th>
+            <th>Номер клієнта</th>
+            <th>Статус</th>
+            <th>Дата</th>
+            <th>Номер тура</th>
+            <th>Номер менеджера</th>
+            <th>Статус оплати</th>
+        </tr>
+        <tr th:each = "el : ${requestAdmit}">
+            <td th:text="${el.id}" id="id"></td>
+            <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
+            <td th:text="${el.status}"></td>
+            <td th:text="${el.date}"></td>
+            <td th:text="${el.tourId}"></td>
+            <td th:text="${el.managerId}"></td>
+            <td th:text="${el.paymentStatus}"></td>
+        </tr>
+    </table>
+</div>
+<style>
+    #content1
+    {
+        display:none;
+    }
+
+    #content2
+    {
+        display:none;
+    }
+
+    #toggle1:checked ~ #content1
+    {
+      display: block;
+    }
+
+    #toggle2:checked ~ #content2
+    {
+      display: block;
+    }
+</style>
+
+</body>
+</html>

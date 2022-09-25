@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${client.name}"></title>
+</head>
+<body>
+    <div id="content1">
+        <p>Особисті дані</p>
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>ФІО</th>
+                <th>Телефон</th>
+                <th>Ел. скринька</th>
+                <th>Док місця проживання</th>
+                <th>Док ковід</th>
+                <th>Паспорт</th>
+            </tr>
+            <tr th:each = "el : ${client}">
+                <td th:text="${el.id}" id="id1"></td>
+                <td th:text="${el.name}"></td>
+                <td th:text="${el.phone}"></td>
+                <td th:text="${el.email}"></td>
+                <td>
+                    <img th:attr="src=@{/image/{certificateResidence}(certificateResidence=${el.certificateResidence})}">
+                </td>
+                <td>
+                    <img th:attr="src=@{/image/{certificateCovid}(certificateCovid=${el.certificateCovid})}">
+                </td>
+                <td>
+                    <img th:attr="src=@{/image/{passport}(passport=${el.passport})}">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="request">
+        <p>Надіслані запити</p>
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>Номер клієнта</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Номер тура</th>
+                <th>Номер менеджера</th>
+                <th>Статус оплати</th>
+            </tr>
+            <tr th:each = "el : ${request}">
+                <td th:text="${el.id}" id="id2"></td>
+                <td th:text="${el.clientId}"></td>
+                <td th:if="${role}=='manager'">
+                    <select class="form-control" id="dropDownList" name="status">
+                        <option th:each="el_status : ${status_values}" th:value="${el_status}"
+                                th:text="${el_status}" th:if="${el_status}!='відпралено'"></option>
+                    </select>
+                </td>
+                <td th:text="${el.status}" th:unless="${role}=='manager'"></td>
+                <td th:text="${el.date}"></td>
+                <td th:text="${el.tourId}"></td>
+                <td th:text="${el.managerId}"></td>
+                <td th:text="${el.paymentStatus}"></td>
+                <td th:if="${role}=='manager'">
+                    <form th:action="'/requests/admit/' + ${el.id}" method="post">
+                        <input type="submit" value="Надіслати">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="voucher" th:if="${voucher}">
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>tourOperatorId</th>
+                <th>date</th>
+                <th>country</th>
+                <th>photo</th>
+            </tr>
+            <tr th:each = "el : ${voucher}">
+                <td th:text="${el.id}" id="id3"></td>
+                <td th:text="${el.tourOperatorId}"></td>
+                <td th:text="${el.date}"></td>
+                <td th:text="${el.country}"></td>
+                <td>
+                    <img th:src="'/image/' + ${el.photo}">
+                </td>
+                <td th:text="${el.requestId}"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

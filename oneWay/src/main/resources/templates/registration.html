@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/authorization.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jaldi&family=Mina&display=swap" rel="stylesheet">    <title>One way</title>
+    <title>Registration</title>
+</head>
+<body>
+    <header>
+        <div class="header-navigate">
+            <div class="nav-image">
+                <a href="home.html">
+                    <img src="image/home/logo.png" alt="" width="100px" height="60px">
+                </a>
+            </div>
+            <nav class="navigate">
+                <ul>
+                    <li>
+                        <a href="catalog.html">Каталог турів</a>
+                    </li>
+                    <li>
+                        <a href="promotions.html">Акції</a>
+                    </li>
+                    <li>
+                        <a href="login.html">Вхід</a>
+                    </li>
+                </ul>        
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="reg-form-conteiner">
+            <form action="" method="post">
+                <p>Зареєструватись</p>
+
+                <p>ФІО</p>
+                <input type="text" name="name">
+                <p>Номер телефону</p>
+                <input type="text" name="phone">
+
+                <p>Електронна пошта</p>
+                <input type="email" name="email">
+                <p>Логін</p>
+                <input type="text" name="login">
+                <p>Пароль</p>
+                <input type="password" name="password"><br>
+                <p>Пароль повторно</p>
+                <input type="password" name="repassword"><br>
+                
+                <div class="account">
+                    <a href="/login">Я вже маю обліковий запис</a>
+                </div>
+                
+                <button type="submit" class="reg-button">Зареєструватись</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

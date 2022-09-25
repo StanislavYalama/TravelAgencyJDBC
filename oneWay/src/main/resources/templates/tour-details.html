@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Catalog</title>
+</head>
+<body>
+<h1>Tour Catalog</h1>
+<br/><br/>
+<table border="1">
+  <tr>
+    <th>Id</th>
+    <th>DateStart</th>
+    <th>DateEnd</th>
+    <th>price</th>
+    <th>pricePromotion</th>
+    <th>description</th>
+    <th>tourManagerId</th>
+    <th>tourOperatorId</th>
+  </tr>
+    <td th:text="${tour.id}"></td>
+    <td th:text="${tour.dateStart}"></td>
+    <td th:text="${tour.dateEnd}"></td>
+    <td th:text="${tour.price}"></td>
+    <td th:text="${tour.priceWithPromotion}"></td>
+    <td th:text="${tour.description}"></td>
+    <td th:text="${tour.creatorId}"></td>
+    <td th:text="${tour.tourOperatorId}"></td>
+</table>
+<form th:action="'/catalog/' + ${tour.id} + '/send-request/' + ${clientId}" th:if="${role}=='client'" method="post">
+  <input type="submit" value="Замовити">
+</form>
+<form th:action="'/catalog/delete/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
+  <input type="submit" value="Delete">
+</form>
+<br>
+<br>
+<p>Locations</p>
+<table border="1">
+  <tr>
+    <th>Id</th>
+    <th>country</th>
+    <th>description</th>
+    <th>city</th>
+    <th>creatorId</th>
+    <th>price</th>
+  </tr>
+  <tr th:each = "el : ${locations}">
+    <td th:text="${el.id}"></td>
+    <td th:text="${el.country}"></td>
+    <td th:text="${el.city}"></td>
+    <td th:text="${el.description}"></td>
+    <td th:text="${el.price}"></td>
+    <td th:text="${el.creatorId}"></td>
+  </tr>
+</table>
+<tr>
+  Знижки до цього туру<br>
+  <table border="1" th:if="${promotions}">
+    <tr>
+      <th>Id</th>
+      <th>Дата початку</th>
+      <th>Дата кінця</th>
+      <th>Номер номер творця</th>
+      <th>Відсоток знижки</th>
+    </tr>
+    <tr th:each = "el : ${promotions}">
+      <td th:text="${el.id}"></td>
+      <td th:text="${el.dateBeginning}"></td>
+      <td th:text="${el.dateEnd}"></td>
+      <td th:text="${el.creatorId}"></td>
+      <td th:text="${el.discountPercentage}"></td>
+    </tr>
+  </table>
+  <br>
+  Form linking
+  <form th:action="'/catalog/linking/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
+    Номер знижки: <input type="number" name="promotionId"><br>
+    <input type="submit" value="Link">
+  </form>
+</tr>
+</body>
+</html>
