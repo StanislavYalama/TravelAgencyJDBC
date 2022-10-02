@@ -6,6 +6,7 @@ import com.coursework.oneWay.repositories.RequestRepositoryImpl;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,10 +16,10 @@ import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class RequestService {
 
-    private final RequestRepositoryImpl requestRepository;
+    @Autowired
+    private RequestRepositoryImpl requestRepository;
 
     public List<Request> findAll(Connection connection){
         return requestRepository.findAll(Request.class, connection);
@@ -51,6 +52,10 @@ public class RequestService {
     public void setStatus(int id, String value, Connection connection){
         requestRepository.update(Request.class, id, "status", value, connection);
         log.info("Request status with id {} was updated to {}", id, value);
+    }
+
+    public void pay(int requestId, int clientId, Connection connection) {
+        requestRepository.pay(requestId, clientId, connection);
     }
 
 //    public void saveNew(int clientId, int tourId){

@@ -1,18 +1,20 @@
 package com.coursework.oneWay.controllers;
 
 import com.coursework.oneWay.bean.HttpSessionBean;
+import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
 import com.coursework.oneWay.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 @Controller
 public class CatalogController {
@@ -50,20 +52,14 @@ public class CatalogController {
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("promotions",
                 promotionService.findByTourId(tourId, httpSessionBean.getConnection()));
-        model.addAttribute("documents",
-                documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection()));
+//        model.addAttribute("documents",
+//                documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection()));
+        model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
         return "tour-details";
     }
-    /*
-    * @RequestParam(name = "clientId") int clientId,
-                                  @RequestParam(name = "status") String status,
-                                  @RequestParam(name = "dateBeginning") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime dateBeggining,
-                                  @RequestParam(name = "dateEnd") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime dateEnd,
-                                  @RequestParam(name = "tourId") int tourId,
-                                  @RequestParam(name = "payment") boolean paymentStatus,
-                                  * */
     @PostMapping("/catalog/save")
     public String catalogSave(Tour tour){
+        tour.setCreatorId(httpSessionBean.getId());
         tourService.save(tour, httpSessionBean.getConnection());
         return "redirect:/catalog";
     }
@@ -78,9 +74,17 @@ public class CatalogController {
         requestService.save(clientId, tourId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
-    @PostMapping("catalog/linking/{tourId}")
-    public String catalogLink(@PathVariable int tourId, @RequestParam int promotionId){
+    @PostMapping("catalog/linkingPromotion/{tourId}")
+    public String catalogLinkPromotion(@PathVariable int tourId, @RequestParam int promotionId){
         promotionService.linkWithTour(promotionId, tourId, httpSessionBean.getConnection());
+        return "redirect:/catalog/{tourId}";
+    }
+    @PostMapping("catalog/linkingLocation/{tourId}")    //List<Location>
+    public String catalogLinkLocation(@PathVariable int tourId,
+                                      @RequestParam(name = "location") List<Integer> locationIdList){
+        List<Location> locationList = new ArrayList<>();
+        locationIdList.forEach(el -> locationList.add(locationService.findById(el, httpSessionBean.getConnection())));
+        tourService.saveLocations(locationList, tourId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
 }

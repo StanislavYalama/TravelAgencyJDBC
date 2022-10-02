@@ -8,7 +8,15 @@ import java.util.List;
 
 public interface ClientRepository {
 
+    List<Client> findAll(Connection connection);
+
+    Client findById(int id, Connection connection);
+
     int findIdByLogin(String login, Connection connection);
+
+    void save(Client client, Connection connection);
+
+    void deleteById(int id, Connection connection);
 
 //    @Query(nativeQuery = true, value = "select * from client_rank()")
 //    List<Map<String, List>> showRank();

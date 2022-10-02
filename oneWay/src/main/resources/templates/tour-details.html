@@ -15,8 +15,9 @@
     <th>price</th>
     <th>pricePromotion</th>
     <th>description</th>
-    <th>tourManagerId</th>
+    <th>creatorId</th>
     <th>tourOperatorId</th>
+    <th>locationCount</th>
   </tr>
     <td th:text="${tour.id}"></td>
     <td th:text="${tour.dateStart}"></td>
@@ -26,6 +27,7 @@
     <td th:text="${tour.description}"></td>
     <td th:text="${tour.creatorId}"></td>
     <td th:text="${tour.tourOperatorId}"></td>
+    <td th:text="${tour.locationCount}"></td>
 </table>
 <form th:action="'/catalog/' + ${tour.id} + '/send-request/' + ${clientId}" th:if="${role}=='client'" method="post">
   <input type="submit" value="Замовити">
@@ -42,8 +44,8 @@
     <th>country</th>
     <th>description</th>
     <th>city</th>
-    <th>creatorId</th>
     <th>price</th>
+    <th>creatorId</th>
   </tr>
   <tr th:each = "el : ${locations}">
     <td th:text="${el.id}"></td>
@@ -73,10 +75,20 @@
     </tr>
   </table>
   <br>
-  Form linking
-  <form th:action="'/catalog/linking/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
+  Form linking promotion
+  <form th:action="'/catalog/linkingPromotion/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
     Номер знижки: <input type="number" name="promotionId"><br>
     <input type="submit" value="Link">
+  </form>
+  Form linking locations
+  <form th:action="'/catalog/linkingLocation/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
+    <div th:each="i, itemStat : ${#numbers.sequence(1, tour.locationCount, 1)}">
+      <select name="location">
+        <option th:value="${loc.id}" th:each="loc : ${allLocations}" th:text="${loc.country} + ' - ' + ${loc.city}"></option>
+      </select>
+      <br>
+    </div>
+    <input type="submit" value="Підтвердити">
   </form>
 </tr>
 </body>

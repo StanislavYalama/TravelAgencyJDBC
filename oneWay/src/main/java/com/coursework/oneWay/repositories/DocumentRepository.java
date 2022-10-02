@@ -1,4 +1,4 @@
-package com.coursework.oneWay.repositories;
-
-public interface DocumentRepository {
-}
+//package com.coursework.oneWay.repositories;
+//
+//public interface DocumentRepository {
+//}

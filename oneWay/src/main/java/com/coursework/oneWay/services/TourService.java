@@ -1,5 +1,6 @@
 package com.coursework.oneWay.services;
 
+import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
 import com.coursework.oneWay.repositories.TourRepository;
 import com.coursework.oneWay.repositories.TourRepositoryImpl;
@@ -31,5 +32,8 @@ public class TourService {
     }
     public void deleteById(int tourId, Connection connection){
         tourRepository.deleteById(Tour.class, tourId, connection);
+    }
+    public void saveLocations(List<Location> locationList, int tourId, Connection connection){
+        tourRepository.saveLocations(locationList, tourId, connection);
     }
 }

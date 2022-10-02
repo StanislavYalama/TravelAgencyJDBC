@@ -23,11 +23,11 @@ public class ClientService {
     }
 
     public List<Client> findAll(Connection connection) throws SQLException {
-        return clientRepository.findAll(Client.class, connection);
+        return clientRepository.findAll(connection);
     }
 
     public Client findById(Integer id, Connection connection){
-        return clientRepository.findById(Client.class, id, connection);
+        return clientRepository.findById(id, connection);
     }
 //    public Client findByEmail(String email) throws SQLException {
 //        return clientRepository.findByEmail(email);
@@ -37,7 +37,7 @@ public class ClientService {
         clientRepository.save(client, connection);
     }
     public void delete(Integer id, Connection connection){
-        clientRepository.deleteById(Client.class, id, connection);
+        clientRepository.deleteById(id, connection);
     }
 
 //    public Collection<FClientRank> showRank() {

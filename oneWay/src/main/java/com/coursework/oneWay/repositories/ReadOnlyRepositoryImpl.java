@@ -31,7 +31,7 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
             }
 
             rs.close();
-            // sort this shit
+            // sort
             columnList.sort(Comparator.naturalOrder());
 
             // get result data from required entity
@@ -48,18 +48,18 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
                     Class<?> aClass = paramTypes.get(i)[0];
                     if(rs2.getObject(columnList.get(i)) instanceof java.sql.Date){
                         LocalDate localDate = ((java.sql.Date) rs2.getObject(columnList.get(i))).toLocalDate();
-
-//                        java.sql.Date sqlDate = rs2.getObject(columnList.get(i), java.sql.Date.class);
                         methodList.get(i).invoke(t, localDate);
                     } else if(rs2.getObject(columnList.get(i)) instanceof java.sql.Timestamp){
                         LocalDateTime localDateTime = ((Timestamp) rs2.getObject(columnList.get(i))).toLocalDateTime();
-
-//                        java.sql.Timestamp sqlTimeStamp = rs2.getObject(columnList.get(i), java.sql.Timestamp.class);
                         methodList.get(i).invoke(t, localDateTime);
-                    } else{
+                    } else if(rs2.getObject(columnList.get(i)) instanceof Integer){
+                        methodList.get(i).invoke(t, rs2.getInt(columnList.get(i)));
+                    } else if(rs2.getObject(columnList.get(i)) instanceof Double){
+                        methodList.get(i).invoke(t, rs2.getDouble(columnList.get(i)));
+                    }
+                    else{
                         methodList.get(i).invoke(t, (rs2.getObject(columnList.get(i))));  //, aClass
                     }
-//                    if(paramTypes.get(i)[0].getName().equals("java.util.Date")){
                 }
                 result.add(t);
             }
@@ -91,7 +91,6 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
                 columnList.add(rs.getString(1));
             }
 
-            // sort this shit
             columnList.sort(Comparator.naturalOrder());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,11 +110,7 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
 
                 Class<?> aClass = null;
                 for (int i = 0; i < methodList.size(); i++) {
-                    aClass = paramTypes.get(i)[0];
-//                    if (paramTypes.get(i)[0].getName().equals("java.time.LocalDateTime")) {
-//                        LocalDateTime tempDate = new LocalDateTime(rs2.getTimestamp(columnList.get(i)).getTime());
-//                        methodList.get(i).invoke(t, tempDate);
-//                    }
+//                    aClass = paramTypes.get(i)[0];
                     if(paramTypes.get(i)[0].getName().equals("java.lang.Integer")){
                         methodList.get(i).invoke(t, rs2.getInt(columnList.get(i)));
                     } if(paramTypes.get(i)[0].getName().equals("java.lang.Double")){
@@ -128,9 +123,7 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
                         methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), LocalDate.class));
                     }
                     else {
-//                        rs2.getOb
                         methodList.get(i).invoke(t, rs2.getObject(columnList.get(i)));
-//                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), aClass));
                     }
                 }
             }

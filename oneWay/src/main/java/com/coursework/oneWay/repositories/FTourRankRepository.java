@@ -1,6 +1,5 @@
 package com.coursework.oneWay.repositories;
 
-import com.coursework.oneWay.models.functions.TourProfit;
 import com.coursework.oneWay.models.functions.TourRank;
 import org.springframework.stereotype.Component;
 

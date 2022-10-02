@@ -3,6 +3,9 @@ package com.coursework.oneWay.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -12,6 +15,6 @@ public class Location {
     private String country;
     private String city;
     private String description;
-    private double price;
+    private BigDecimal price;
     private int creatorId;
 }

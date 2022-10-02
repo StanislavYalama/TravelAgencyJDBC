@@ -1,8 +1,6 @@
 package com.coursework.oneWay.repositories;
 
-import com.coursework.oneWay.models.Manager;
 import com.coursework.oneWay.models.functions.ManagerRank;
-import com.coursework.oneWay.models.functions.TourManagerRank;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;

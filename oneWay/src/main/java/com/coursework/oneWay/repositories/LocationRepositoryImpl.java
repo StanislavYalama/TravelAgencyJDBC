@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class LocationRepositoryImpl implements LocationRepository{
+public class LocationRepositoryImpl extends JDBCCustomRepositoryImpl<Location, Integer> implements LocationRepository{
     @Override
     public List<Location> findByTourId(int tourId, Connection connection) {
         String query = """
@@ -29,7 +29,7 @@ public class LocationRepositoryImpl implements LocationRepository{
                 location.setCountry(resultSet.getString("country"));
                 location.setCity(resultSet.getString("city"));
                 location.setDescription(resultSet.getString("description"));
-                location.setPrice(resultSet.getDouble("price"));
+                location.setPrice(resultSet.getBigDecimal("price"));
                 location.setCreatorId(resultSet.getInt("creator_id"));
                 locationList.add(location);
             }

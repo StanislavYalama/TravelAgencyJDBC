@@ -12,8 +12,6 @@ public interface RequestRepository extends JDBCCustomRepository<Request, Integer
     List<Request> findAdmitted(Connection connection);
 
     List<Request> findByClientId(int id, Connection connection);
-//    @Transactional
-//    @Modifying
-//    @Query("input into Request(client_id, date, tour_id) values(?1, NOW(), ?2)")
-//    void saveNew(int clientId, int tourId);
+
+    void pay(int requestId, int clientId, Connection connection);
 }

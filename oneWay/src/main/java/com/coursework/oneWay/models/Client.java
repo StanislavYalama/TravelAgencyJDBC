@@ -2,6 +2,8 @@ package com.coursework.oneWay.models;
 
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class Client {
@@ -11,8 +13,7 @@ public class Client {
     private String phone;
     private String email;
     private String password;
-    private String certificateResidence;
-    private String certificateCovid;
-    private String passport;
     private String login;
+    private PersonalWallet personalWallet;
+    private List<ClientDocument> clientDocument;
 }

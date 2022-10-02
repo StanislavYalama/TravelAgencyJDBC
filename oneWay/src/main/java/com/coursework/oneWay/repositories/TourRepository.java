@@ -1,5 +1,6 @@
 package com.coursework.oneWay.repositories;
 
+import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +10,13 @@ import java.util.List;
 
 public interface TourRepository {
 
-    List<Tour> findAll(Connection connection) throws SQLException;
+//    List<Tour> findAll(Connection connection) throws SQLException;
 
     void save(Tour tour, Connection connection);
+
+    void saveLocations(List<Location> locationList, int tourId, Connection connection);
+
+
 
 //    List<Tour> findByDateStart(Date dateStart);
 //

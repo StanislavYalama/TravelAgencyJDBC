@@ -16,4 +16,12 @@ public class LocationService {
     public List<Location> findByTourId(int tourId, Connection connection){
         return locationRepository.findByTourId(tourId, connection);
     }
+
+    public List<Location> finAll(Connection connection) {
+        return locationRepository.findAll(Location.class, connection);
+    }
+
+    public Location findById(int id, Connection connection) {
+        return locationRepository.findById(Location.class, id, connection);
+    }
 }

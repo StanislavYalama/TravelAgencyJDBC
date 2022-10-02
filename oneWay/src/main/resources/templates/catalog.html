@@ -19,6 +19,7 @@
             <th>description</th>
             <th>tourManagerId</th>
             <th>tourOperatorId</th>
+            <th>locationCount</th>
         </tr>
         <tr th:each = "el : ${tours}">
             <td th:text="${el.id}"></td>
@@ -29,19 +30,20 @@
             <td th:text="${el.description}"></td>
             <td th:text="${el.creatorId}"></td>
             <td th:text="${el.tourOperatorId}"></td>
+            <td th:text="${el.locationCount}"></td>
             <td><a th:href="'/catalog/' + ${el.id}">Details</a></td>
         </tr>
     </table>
-<!--    th:if="${role} == 'tour_manager'"-->
     <form action="/catalog/save" th:if="${role}=='tour_manager'" method="post">
-        Номер тура<input type="number" name="id" value="12"><br><br>
+<!--        Номер тура<input type="number" name="id" value="12"><br><br>-->
         Дата початку<input type="date" name="dateStart"><br><br>
         Дата кінця<input type="date" name="dateEnd"><br><br>
         Ціна<input type="number" name="price" value="4555"><br><br>
         Ціна за знижкою<input type="number" name="priceWithPromotion" value="4400"><br><br>
         Опис<input type="text" name="description" value="descr"><br><br>
-        Номер творця<input type="number" name="creatorId" value="1"><br><br>
+<!--        Номер творця<input type="number" name="creatorId" value="1"><br><br>-->
         Номер туроператора<input type="number" name="tourOperatorId" value="1"><br><br>
+        Кількість локацій<input type="number" name="locationCount" value="1"><br><br>
         <input type="submit" value="Створити"><br><br>
     </form>
 </body>

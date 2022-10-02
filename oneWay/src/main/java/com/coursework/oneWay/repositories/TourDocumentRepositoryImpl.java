@@ -12,14 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TourDocumentRepositoryImpl
-        extends JDBCCustomRepositoryImpl<TourDocument, Integer> implements TourDocumentRepository{
+public class TourDocumentRepositoryImpl implements TourDocumentRepository{
 
     @Override
     public List<TourDocumentView> findTourDocumentById(int tourId, Connection connection) {
         String query = """
-                SELECT t.tour_id, d.name FROM document d
-                LEFT JOIN tour_document td ON d.id=td.document_id
+                SELECT td.tour_id, d.name FROM document d
+                RIGHT JOIN tour_document td ON d.id=td.document_id
                 WHERE tour_id = ?
                 """;
         List<TourDocumentView> viewList = new ArrayList<>();

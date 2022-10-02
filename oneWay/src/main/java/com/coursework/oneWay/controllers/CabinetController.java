@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -40,9 +41,15 @@ public class CabinetController {
         model.addAttribute("voucher", voucherService.findByClientId(id,
                 httpSessionBean.getConnection()));
         model.addAttribute("role", httpSessionBean.getRole());
-        model.addAttribute("documents",
-                documentService.findClientDocumentByClientId(id, httpSessionBean.getConnection()));
+//        model.addAttribute("documents",
+//                documentService.findClientDocumentByClientId(id, httpSessionBean.getConnection()));
         return "clients-cabinet";
+    }
+
+    @PostMapping("/cabinet/{clientId}/payRequest/{requestId}")
+    public String requestPay(@PathVariable int clientId, @PathVariable int requestId){
+        requestService.pay(requestId, clientId, httpSessionBean.getConnection());
+        return "redirect:/cabinet/{clientId}";
     }
 
     @GetMapping("/personal/cabinet/{id}")
