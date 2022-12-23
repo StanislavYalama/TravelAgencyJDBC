@@ -12,9 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Promotion {
     private Integer id;
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime dateBeginning;
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime dateEnd;
     private Integer creatorId;
     private Integer discountPercentage;

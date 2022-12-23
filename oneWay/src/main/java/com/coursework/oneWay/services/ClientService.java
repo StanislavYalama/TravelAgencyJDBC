@@ -1,6 +1,8 @@
 package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Client;
+import com.coursework.oneWay.models.ClientDocumentView;
+import com.coursework.oneWay.models.Request;
 import com.coursework.oneWay.repositories.ClientRepository;
 import com.coursework.oneWay.repositories.ClientRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class ClientService {
     public void delete(Integer id, Connection connection){
         clientRepository.deleteById(id, connection);
     }
+
 
 //    public Collection<FClientRank> showRank() {
 //        return clientRepository.showRank();

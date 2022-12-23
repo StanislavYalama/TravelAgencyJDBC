@@ -1,42 +1,30 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Особистий кабінет</title>
 </head>
 <body>
-    <div id="content1">
-        <p>Особисті дані</p>
-        <table border="1">
-            <tr>
-                <th>id</th>
-                <th>ФІО</th>
-                <th>Телефон</th>
-                <th>Ел. скринька</th>
-<!--                <th>Док місця проживання</th>-->
-<!--                <th>Док ковід</th>-->
-<!--                <th>Паспорт</th>-->
-                <th>Баланс</th>
-            </tr>
-            <tr>
-                <td th:text="${client.id}" id="id1"></td>
-                <td th:text="${client.name}"></td>
-                <td th:text="${client.phone}"></td>
-                <td th:text="${client.email}"></td>
-<!--                <td th:text="${client.personalWallet.getBalance()}"></td>-->
-<!--                <td>-->
-<!--                    <img th:attr="src=@{/image/{certificateResidence}(certificateResidence=${client.certificateResidence})}">-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <img th:attr="src=@{/image/{certificateCovid}(certificateCovid=${client.certificateCovid})}">-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <img th:attr="src=@{/image/{passport}(passport=${client.passport})}">-->
-<!--                </td>-->
-            </tr>
-        </table>
-    </div>
-    <div id="request">
+<div id="content1">
+    <p>Особисті дані</p>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>ФІО</th>
+            <th>Телефон</th>
+            <th>Ел. скринька</th>
+            <th>Баланс</th>
+        </tr>
+        <tr>
+            <td th:text="${client.id}" id="id1"></td>
+            <td th:text="${client.name}"></td>
+            <td th:text="${client.phone}"></td>
+            <td th:text="${client.email}"></td>
+        </tr>
+    </table>
+</div>
+<div id="request">
+    <div class="requests-container" th:if="${request.size()} &gt; 0">
         <p>Надіслані запити</p>
         <table border="1">
             <tr>
@@ -48,7 +36,7 @@
                 <th>Номер менеджера</th>
                 <th>Статус оплати</th>
             </tr>
-            <tr th:each = "el : ${request}">
+            <tr th:each="el : ${request}">
                 <form th:action="'/cabinet/' + ${client.id} + '/payRequest/' + ${el.id}" method="post">
                     <td th:text="${el.id}" id="id2"></td>
                     <td th:text="${el.clientId}"></td>
@@ -63,16 +51,11 @@
                     <td th:text="${el.tourId}"></td>
                     <td th:text="${el.managerId}"></td>
                     <td th:text="${el.paymentStatus}"></td>
-<!--                    <td th:if="${role} ? 'client' : 'manager'">-->
-<!--                        <form th:action="'/requests/delete/' + ${el.id}" method="post">-->
-<!--                            <input type="submit" value="Скасувати заявку">-->
-<!--                        </form>-->
-<!--                    </td>-->
-<!--                    <td th:if="${role}=='manager'">-->
-<!--                        <form th:action="'/requests/admit/' + ${el.id}" method="post">-->
-<!--                            <input type="submit" value="Надіслати">-->
-<!--                        </form>-->
-<!--                    </td>-->
+                    <td th:if="${role} ? 'client' : 'manager'">
+                        <form th:action="'/requests/delete/' + ${el.id}" method="post">
+                            <input type="submit" value="Скасувати заявку">
+                        </form>
+                    </td>
                     <td th:if="${role}=='client'">
                         <input type="submit" value="Оплатити">
                     </td>
@@ -80,26 +63,71 @@
             </tr>
         </table>
     </div>
-    <div id="voucher" th:if="${voucher}">
+    <div th:unless="${request.size()} &gt; 0">
+        <p>Не подано жодної заявки</p>
+    </div>
+</div>
+<div id="voucher" th:if="${voucher.size()} &gt; 0">
+    <p>Ваучери</p>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>tourOperatorId</th>
+            <th>date</th>
+            <th>country</th>
+            <th>photo</th>
+        </tr>
+        <tr th:each="el : ${voucher}">
+            <td th:text="${el.id}" id="id3"></td>
+            <td th:text="${el.tourOperatorId}"></td>
+            <td th:text="${el.date}"></td>
+            <td th:text="${el.country}"></td>
+            <td>
+                <img th:src="'image/voucher' + ${el.photo}">
+            </td>
+            <td th:text="${el.requestId}"></td>
+        </tr>
+    </table>
+</div>
+<div id="documents">
+    <div class="downloaded-docs" th:if="${document.size()} &gt; 0">
+        <p>Завантажені документи</p>
         <table border="1">
             <tr>
-                <th>id</th>
-                <th>tourOperatorId</th>
-                <th>date</th>
-                <th>country</th>
-                <th>photo</th>
+                <th>Назва</th>
+                <th>Фото</th>
+                <th>Опції</th>
             </tr>
-            <tr th:each = "el : ${voucher}">
-                <td th:text="${el.id}" id="id3"></td>
-                <td th:text="${el.tourOperatorId}"></td>
-                <td th:text="${el.date}"></td>
-                <td th:text="${el.country}"></td>
-                <td>
-                    <img th:src="'/image/' + ${el.photo}">
-                </td>
-                <td th:text="${el.requestId}"></td>
+            <tr th:each="doc : ${document}">
+                <form th:action="'/cabinet/' + ${client.id} + '/changeDocument/' + ${doc.documentId} + '/' + ${doc.clientDocumentId}"
+                      method="post" enctype="multipart/form-data">
+                    <td th:text="${doc.name}"></td>
+                    <td>
+                        <img th:src="'/img/' + ${doc.photoPath}">
+
+                    </td>
+                    <td>
+                        <input type="file" accept="image/*" name="imageChange">
+                        <input type="submit" value="Змінити">
+                    </td>
+                </form>
             </tr>
         </table>
     </div>
+    <div class="download-docs">
+        <p>Потрібно завантажити наступні документи</p>
+        <ul>
+            <li th:each="reqDoc : ${requiredDocuments}">
+                <form th:action="'/cabinet/' + ${client.id} + '/uploadDocuments/' + ${reqDoc.id}"
+                      method="post" enctype="multipart/form-data">
+                <p th:text="${reqDoc.name}"></p>
+                    <input type="file" accept="image/*" name="imageUpload" value="Обрати файл">
+                    <input type="submit" value="Завантажити">
+                </form>
+            </li>
+        </ul>
+    </div>
+
+</div>
 </body>
 </html>

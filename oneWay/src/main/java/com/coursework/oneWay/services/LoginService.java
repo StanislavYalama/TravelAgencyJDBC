@@ -53,23 +53,22 @@ public class LoginService {
     }
 
     // TO DO (LoginController && registration.html)
-    public void createUser(Client client, Connection connection) {
-        String qCreateUser = "CREATE USER ? WITH PASSWORD '?'";
-        String qGrantRole = "GRANT client TO ?";
+    public void createUser(Client client, Connection connection) throws SQLException {
+        String queryCreateUser = "CREATE USER ".concat(client.getLogin()).concat(" WITH PASSWORD '")
+                .concat(client.getPassword()).concat("' IN GROUP client");
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(qCreateUser)){
-            preparedStatement.setString(1, client.getLogin());
-            preparedStatement.setString(2, client.getPassword());
-            preparedStatement.executeUpdate();
+        Connection connectionPostgres = DriverManager.getConnection(
+                    "jdbc:postgresql://localhost:5432/travel_agency?currentSchema=public",
+                    "postgres", "1201");
+
+        try (Statement statement = connectionPostgres.createStatement()){
+//            preparedStatement.setString(1, client.getLogin());
+//            preparedStatement.setString(1, client.getPassword());
+            statement.executeUpdate(queryCreateUser);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        try (PreparedStatement preparedStatement = connection.prepareStatement(qGrantRole)){
-            preparedStatement.setString(1, client.getLogin());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connectionPostgres.close();
 
         clientService.save(client, connection);
     }

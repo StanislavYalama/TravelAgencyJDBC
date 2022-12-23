@@ -25,6 +25,10 @@ public class RequestService {
         return requestRepository.findAll(Request.class, connection);
     }
 
+    public Request findById(int requestId, Connection connection){
+        return requestRepository.findById(Request.class, requestId, connection);
+    }
+
     public List<Request> findUnadmitted(Connection connection){
         return requestRepository.findUnadmitted(connection);
     }

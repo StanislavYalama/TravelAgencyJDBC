@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ua">
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,23 +14,26 @@
         <header>
             <div class="header-navigate">
                 <div class="nav-image">
-                    <a href="home.html">
+                    <a href="/">
                         <img src="image/home/logo.png" alt="" width="100px" height="60px">
                     </a>
                 </div>
                 <nav class="navigate">
                     <ul>
                         <li>
-                            <a href="/catalog/">Каталог турів</a>
+                            <a href="/catalog">Каталог турів</a>
                         </li>
                         <li>
-                            <a href="/promotions/">Акції</a>
+                            <a href="/promotions">Акції</a>
                         </li>
                         <li>
                             <a href="/login">Вхід</a>
                         </li>
-                        <li>
-                            <a href="/logout/">Вихід</a>
+                        <li th:if="${role}=='client'">
+                            <a th:href="/cabinet/${userId}">Особистий кабінет</a>
+                        </li>
+                        <li th:unless="${role}=='client'" th:if="${role}!='guest'">
+                            <a href="/logout">Вихід</a>
                         </li>
                     </ul>        
                 </nav>

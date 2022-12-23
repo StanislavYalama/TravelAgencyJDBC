@@ -2,17 +2,29 @@ package com.coursework.oneWay.controllers;
 
 import com.coursework.oneWay.STATUS;
 import com.coursework.oneWay.bean.HttpSessionBean;
+import com.coursework.oneWay.models.ClientDocument;
+import com.coursework.oneWay.models.ClientDocumentView;
 import com.coursework.oneWay.models.Request;
 import com.coursework.oneWay.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Comparator;
-import java.util.EnumSet;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,8 +40,6 @@ public class CabinetController {
     private TourService tourService;
     @Autowired
     private VoucherService voucherService;
-    @Autowired
-    private DocumentService documentService;
 
     @GetMapping("/cabinet/{id}")
     public String cabinet(Model model, @PathVariable int id){
@@ -41,8 +51,6 @@ public class CabinetController {
         model.addAttribute("voucher", voucherService.findByClientId(id,
                 httpSessionBean.getConnection()));
         model.addAttribute("role", httpSessionBean.getRole());
-//        model.addAttribute("documents",
-//                documentService.findClientDocumentByClientId(id, httpSessionBean.getConnection()));
         return "clients-cabinet";
     }
 
@@ -50,12 +58,5 @@ public class CabinetController {
     public String requestPay(@PathVariable int clientId, @PathVariable int requestId){
         requestService.pay(requestId, clientId, httpSessionBean.getConnection());
         return "redirect:/cabinet/{clientId}";
-    }
-
-    @GetMapping("/personal/cabinet/{id}")
-    public String personalCabinet(Model model, @PathVariable int id){
-        model.addAttribute("client", clientService.findById(id,
-                httpSessionBean.getConnection()));
-        return "personal-cabinet";
     }
 }

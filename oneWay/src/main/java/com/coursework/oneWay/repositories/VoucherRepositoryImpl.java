@@ -30,9 +30,7 @@ public class VoucherRepositoryImpl extends JDBCCustomRepositoryImpl<Voucher, Int
                 Voucher voucher = new Voucher();
                 voucher.setId(resultSet.getInt("id"));
                 voucher.setCountry(resultSet.getString("country"));
-                LocalDate localDate = resultSet.getDate("date").toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate();
+                LocalDate localDate = resultSet.getObject("date", LocalDate.class);
                 voucher.setDate(localDate);
                 voucher.setRequestId(resultSet.getInt("request_id"));
                 voucher.setTourOperatorId(resultSet.getInt("tour_operator_id"));

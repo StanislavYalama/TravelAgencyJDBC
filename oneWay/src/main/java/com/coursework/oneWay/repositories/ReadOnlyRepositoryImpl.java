@@ -110,21 +110,25 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
 
                 Class<?> aClass = null;
                 for (int i = 0; i < methodList.size(); i++) {
-//                    aClass = paramTypes.get(i)[0];
-                    if(paramTypes.get(i)[0].getName().equals("java.lang.Integer")){
-                        methodList.get(i).invoke(t, rs2.getInt(columnList.get(i)));
-                    } if(paramTypes.get(i)[0].getName().equals("java.lang.Double")){
-                        methodList.get(i).invoke(t, rs2.getDouble(columnList.get(i)));
-                    } if(paramTypes.get(i)[0].getName().equals("boolean")){
+                    aClass = paramTypes.get(i)[0];
+//                    if(paramTypes.get(i)[0].getName().equals("java.lang.Integer")){
+//                        methodList.get(i).invoke(t, rs2.getInt(columnList.get(i)));
+//                    } if(paramTypes.get(i)[0].getName().equals("java.lang.Double")){
+//                        methodList.get(i).invoke(t, rs2.getDouble(columnList.get(i)));
+//                    } if(paramTypes.get(i)[0].getName().equals("boolean")){
+//                        methodList.get(i).invoke(t, rs2.getBoolean(columnList.get(i)));
+//                    } if(paramTypes.get(i)[0].getName().equals("java.time.LocalDateTime")){
+//                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), LocalDateTime.class));
+//                    } if(paramTypes.get(i)[0].getName().equals("java.time.LocalDate")){
+//                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), LocalDate.class));
+//                    }
+//                    else {
+                    if(aClass.getSimpleName().equals("boolean")){
                         methodList.get(i).invoke(t, rs2.getBoolean(columnList.get(i)));
-                    } if(paramTypes.get(i)[0].getName().equals("java.time.LocalDateTime")){
-                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), LocalDateTime.class));
-                    } if(paramTypes.get(i)[0].getName().equals("java.time.LocalDate")){
-                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), LocalDate.class));
+                    } else{
+                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i), aClass));
                     }
-                    else {
-                        methodList.get(i).invoke(t, rs2.getObject(columnList.get(i)));
-                    }
+//                    }
                 }
             }
         } catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

@@ -36,4 +36,7 @@ public class TourService {
     public void saveLocations(List<Location> locationList, int tourId, Connection connection){
         tourRepository.saveLocations(locationList, tourId, connection);
     }
+    public void deleteLocation(int tourId, int locationId, Connection connection){
+        tourRepository.deleteLocation(tourId, locationId, connection);
+    }
 }

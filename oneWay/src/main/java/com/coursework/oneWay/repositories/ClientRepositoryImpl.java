@@ -19,7 +19,6 @@ public class ClientRepositoryImpl implements ClientRepository {
 
         String queryClientTable = "SELECT * FROM client";
         String queryPersonalWallet = "SELECT * FROM personal_wallet WHERE client_id = ?";
-        String queryClientDocuments = "SELECT * FROM client_document WHERE client_id = ?";
 
         try{
             Statement statement = connection.createStatement();
@@ -47,23 +46,6 @@ public class ClientRepositoryImpl implements ClientRepository {
                 }
 //                resultSet2.close();
 //                preparedStatement2.close();
-
-                PreparedStatement preparedStatement3 = connection.prepareStatement(queryClientDocuments);
-                preparedStatement3.setInt(1, client.getId());
-                ResultSet resultSet3 = preparedStatement3.executeQuery();
-                List<ClientDocument> clientDocumentList = new ArrayList<>();
-                while(resultSet3.next()){
-                    ClientDocument clientDocument = new ClientDocument();
-                    clientDocument.setId(resultSet3.getInt("id"));
-                    clientDocument.setClientId(resultSet3.getInt("client_id"));
-                    clientDocument.setDocumentId(resultSet3.getInt("document_id"));
-                    clientDocument.setPhotoPath(resultSet3.getString("photo_path"));
-                    clientDocumentList.add(clientDocument);
-                }
-//                resultSet3.close();
-//                preparedStatement3.close();
-
-                client.setClientDocument(clientDocumentList);
             }
 //            resultSet1.close();
 //            statement.close();
@@ -79,7 +61,6 @@ public class ClientRepositoryImpl implements ClientRepository {
         Client client = new Client();
         String queryClientTable = "SELECT * FROM client WHERE id = ?";
         String queryPersonalWallet = "SELECT * FROM personal_wallet WHERE client_id = ?";
-        String queryClientDocuments = "SELECT * FROM client_document WHERE client_id = ?";
 
         try{
             PreparedStatement preparedStatement1 = connection.prepareStatement(queryClientTable);
@@ -105,23 +86,6 @@ public class ClientRepositoryImpl implements ClientRepository {
                 }
                 resultSet2.close();
                 preparedStatement2.close();
-
-                PreparedStatement preparedStatement3 = connection.prepareStatement(queryClientDocuments);
-                preparedStatement3.setInt(1, id);
-                ResultSet resultSet3 = preparedStatement3.executeQuery();
-                List<ClientDocument> clientDocumentList = new ArrayList<>();
-                while(resultSet3.next()){
-                    ClientDocument clientDocument = new ClientDocument();
-                    clientDocument.setId(resultSet3.getInt("id"));
-                    clientDocument.setClientId(resultSet3.getInt("client_id"));
-                    clientDocument.setDocumentId(resultSet3.getInt("document_id"));
-                    clientDocument.setPhotoPath(resultSet3.getString("photo_path"));
-                    clientDocumentList.add(clientDocument);
-                }
-                resultSet3.close();
-                preparedStatement3.close();
-
-                client.setClientDocument(clientDocumentList);
             }
 //            resultSet1.close();
 //            preparedStatement1.close();
@@ -155,14 +119,13 @@ public class ClientRepositoryImpl implements ClientRepository {
     @Override
     public void save(Client client, Connection connection) {
         String query = """
-                INSERT INTO client(id, name, email, phone, login)
-                VALUES(?, ?, ?, ?, ?)""";
+                INSERT INTO client(name, email, phone, login)
+                VALUES(?, ?, ?, ?)""";
         try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, client.getId());
-            preparedStatement.setString(2, client.getName());
-            preparedStatement.setString(3, client.getEmail());
-            preparedStatement.setString(4, client.getPhone());
-            preparedStatement.setString(5, client.getLogin());
+            preparedStatement.setString(1, client.getName());
+            preparedStatement.setString(2, client.getEmail());
+            preparedStatement.setString(3, client.getPhone());
+            preparedStatement.setString(4, client.getLogin());
             preparedStatement.executeUpdate();
 
             log.info("Client {} was saved", client);

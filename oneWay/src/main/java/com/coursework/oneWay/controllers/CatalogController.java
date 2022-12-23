@@ -4,7 +4,6 @@ import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
 import com.coursework.oneWay.services.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -31,8 +28,6 @@ public class CatalogController {
     private LocationService locationService;
     @Autowired
     private PromotionService promotionService;
-    @Autowired
-    private DocumentService documentService;
 
     @GetMapping("/catalog")
     public String catalog(Model model) throws SQLException {
@@ -40,6 +35,8 @@ public class CatalogController {
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("tours",
                 tourService.findAll(httpSessionBean.getConnection()));
+
+        httpSessionBean.setLastUrl("redirect:/catalog");
         return "catalog";
     }
     @GetMapping("/catalog/{tourId}")
@@ -52,9 +49,9 @@ public class CatalogController {
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("promotions",
                 promotionService.findByTourId(tourId, httpSessionBean.getConnection()));
-//        model.addAttribute("documents",
-//                documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection()));
         model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+
+        httpSessionBean.setLastUrl("redirect:/catalog/".concat(Integer.toString(tourId)));
         return "tour-details";
     }
     @PostMapping("/catalog/save")
@@ -63,7 +60,7 @@ public class CatalogController {
         tourService.save(tour, httpSessionBean.getConnection());
         return "redirect:/catalog";
     }
-    @PostMapping("catalog/delete/{tourId}")
+    @PostMapping("/catalog/delete/{tourId}")
     public String catalogDelete(@PathVariable int tourId){
         tourService.deleteById(tourId, httpSessionBean.getConnection());
         return "redirect:/catalog";
@@ -74,17 +71,33 @@ public class CatalogController {
         requestService.save(clientId, tourId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
-    @PostMapping("catalog/linkingPromotion/{tourId}")
-    public String catalogLinkPromotion(@PathVariable int tourId, @RequestParam int promotionId){
+    @PostMapping("/catalog/addPromotion/{tourId}")
+    public String catalogAddPromotion(@PathVariable int tourId, @RequestParam int promotionId){
         promotionService.linkWithTour(promotionId, tourId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
-    @PostMapping("catalog/linkingLocation/{tourId}")    //List<Location>
-    public String catalogLinkLocation(@PathVariable int tourId,
+
+    @PostMapping("/catalog/addLocation/{tourId}")
+    public String catalogAddLocation(@PathVariable int tourId,
                                       @RequestParam(name = "location") List<Integer> locationIdList){
         List<Location> locationList = new ArrayList<>();
-        locationIdList.forEach(el -> locationList.add(locationService.findById(el, httpSessionBean.getConnection())));
-        tourService.saveLocations(locationList, tourId, httpSessionBean.getConnection());
+        locationIdList.forEach(el ->
+        {
+            if(el != 0){
+                locationList.add(locationService.findById(el, httpSessionBean.getConnection()));
+            }
+        });
+
+        if(!locationList.isEmpty()){
+            tourService.saveLocations(locationList, tourId, httpSessionBean.getConnection());
+        }
+
+        return "redirect:/catalog/{tourId}";
+    }
+
+    @PostMapping("/catalog/{tourId}/deleteLocation/{locationId}")
+    public String catalogDeleteLocation(@PathVariable int tourId, @PathVariable int locationId){
+        tourService.deleteLocation(tourId, locationId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Client {
 
@@ -15,5 +16,4 @@ public class Client {
     private String password;
     private String login;
     private PersonalWallet personalWallet;
-    private List<ClientDocument> clientDocument;
 }

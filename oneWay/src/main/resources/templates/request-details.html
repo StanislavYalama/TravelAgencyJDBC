@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Request ##</title>
+</head>
+<body>
+<div class="wrapper" th:if="${role} eq 'manager'">
+    <div class="request-container">
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>Номер клієнта</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Номер тура</th>
+<!--                <th>Номер менеджера</th>-->
+                <th>Статус оплати</th>
+            </tr>
+            <tr>
+                <form th:action="'/requests/admit/' + ${request.id}" method="post">
+                    <td th:text="${request.id}" id="id1"></td>
+                    <td><a th:text="${request.clientId}" th:href="'/cabinet/' + ${request.clientId}"></a></td>
+                    <td>
+                        <select class="form-control" id="dropDownList" name="status">
+                            <option value="0">Не опрацьовано</option>
+                            <option th:each="el_status : ${status_values}" th:value="${el_status}" th:text="${el_status}"></option>
+                        </select>
+                    </td>
+                    <td th:text="${request.date}"></td>
+                    <td th:text="${request.tourId}"></td>
+<!--                    <td th:text="${request.managerId}"></td>-->
+                    <td th:text="${request.paymentStatus}"></td>
+                    <td>
+                        <input type="submit" value="Надіслати">
+                    </td>
+                </form>
+            </tr>
+        </table>
+    </div>
+
+    <div class="client-data">
+        <p>Особисті дані клієнта</p>
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>ФІО</th>
+                <th>Телефон</th>
+                <th>Ел. скринька</th>
+                <th>Баланс</th>
+            </tr>
+            <tr>
+                <td th:text="${client.id}"></td>
+                <td th:text="${client.name}"></td>
+                <td th:text="${client.phone}"></td>
+                <td th:text="${client.email}"></td>
+                <td th:text="${balance}"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="uploadedDocuments">
+        <div th:if="${documentList}">
+            <table >
+                <tr>
+                    <th>Doc name</th>
+                    <th>Img</th>
+                </tr>
+                <tr th:each="document : ${documentList}">
+                    <td th:text="${document.name}"></td>
+                    <td>
+                        <img th:src="'/img/' + ${document.photoPath}" alt="">
+                    </td>
+                </tr>
+            </table>
+            <br>
+
+            <form th:action="'/requests/sendDocuments/' + ${request.id}" method="post">
+                <button type="submit">Надіслати документи туроператору</button>
+            </form>
+
+            <div>
+                <p>Надіслати клієнту документи для подорожі</p>
+                <form action="'/requests/sendTravelDocuments/' + ${client.id}" method="post" enctype="multipart/form-data">
+                    <input type="file" accept="application/pdf, image/jpeg, image/png" th:each="${travelDocuments}">
+                    <input type="submit" value="Надіслати">
+                </form>
+            </div>
+        </div>
+
+        <p th:unless="${documentList}">Клієнт не завантажив жодного документу</p>
+    </div>
+</div>
+
+</body>
+</html>

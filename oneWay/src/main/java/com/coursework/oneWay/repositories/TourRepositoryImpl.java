@@ -44,4 +44,19 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void deleteLocation(int tourId, int locationId, Connection connection) {
+        String query = "DELETE FROM tour_location WHERE tour_id = ? AND location_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tourId);
+            preparedStatement.setInt(2, locationId);
+            preparedStatement.executeUpdate();
+            log.info("Delete row from tour_location table with tourId = {} and locationId = {}",
+                    tourId, locationId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

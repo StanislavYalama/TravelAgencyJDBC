@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <title>Catalog</title>
 </head>
 <body>
-<h1>Tour Catalog</h1>
+<h1>Tour Details</h1>
 <br/><br/>
-<table border="1">
-  <tr>
-    <th>Id</th>
-    <th>DateStart</th>
-    <th>DateEnd</th>
-    <th>price</th>
-    <th>pricePromotion</th>
-    <th>description</th>
-    <th>creatorId</th>
-    <th>tourOperatorId</th>
-    <th>locationCount</th>
-  </tr>
+<div class="tour-info">
+  <table border="1">
+    <tr>
+      <th>Id</th>
+      <th>DateStart</th>
+      <th>DateEnd</th>
+      <th>price</th>
+      <th>pricePromotion</th>
+      <th>description</th>
+      <th>creatorId</th>
+      <th>tourOperatorId</th>
+      <th>locationCount</th>
+    </tr>
     <td th:text="${tour.id}"></td>
     <td th:text="${tour.dateStart}"></td>
     <td th:text="${tour.dateEnd}"></td>
@@ -28,37 +29,51 @@
     <td th:text="${tour.creatorId}"></td>
     <td th:text="${tour.tourOperatorId}"></td>
     <td th:text="${tour.locationCount}"></td>
-</table>
-<form th:action="'/catalog/' + ${tour.id} + '/send-request/' + ${clientId}" th:if="${role}=='client'" method="post">
-  <input type="submit" value="Замовити">
-</form>
-<form th:action="'/catalog/delete/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
-  <input type="submit" value="Delete">
-</form>
+  </table>
+</div>
 <br>
+<div class="catalog-forms">
+  <form th:action="'/catalog/' + ${tour.id} + '/send-request/' + ${clientId}" th:if="${role}=='client'" method="post">
+    <input type="submit" value="Замовити">
+  </form>
+  <form action="/login" th:if="${role}=='guest'">
+    <input type="submit" value="Замовити">
+  </form>
+  <form th:action="'/catalog/delete/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
+    <input type="submit" value="Delete">
+  </form>
+</div>
+<br><br>
+<div class="locations" th:if="${locations.size()} &gt; 0">
+  <p>Locations</p>
+  <table border="1">
+    <tr>
+      <th>Id</th>
+      <th>country</th>
+      <th>description</th>
+      <th>city</th>
+      <th>price</th>
+      <th>creatorId</th>
+    </tr>
+    <tr th:each = "el : ${locations}">
+      <td th:text="${el.id}"></td>
+      <td th:text="${el.country}"></td>
+      <td th:text="${el.city}"></td>
+      <td th:text="${el.description}"></td>
+      <td th:text="${el.price}"></td>
+      <td th:text="${el.creatorId}"></td>
+      <td>
+        <form th:action="'/catalog/' + ${tour.id} + '/deleteLocation/' + ${el.id}" method="post">
+          <input type="submit" value="Відкріпити">
+        </form>
+      </td>
+    </tr>
+  </table>
+</div>
 <br>
-<p>Locations</p>
-<table border="1">
-  <tr>
-    <th>Id</th>
-    <th>country</th>
-    <th>description</th>
-    <th>city</th>
-    <th>price</th>
-    <th>creatorId</th>
-  </tr>
-  <tr th:each = "el : ${locations}">
-    <td th:text="${el.id}"></td>
-    <td th:text="${el.country}"></td>
-    <td th:text="${el.city}"></td>
-    <td th:text="${el.description}"></td>
-    <td th:text="${el.price}"></td>
-    <td th:text="${el.creatorId}"></td>
-  </tr>
-</table>
-<tr>
-  Знижки до цього туру<br>
-  <table border="1" th:if="${promotions}">
+<div class="promotions" th:if="${promotions.size()} &gt; 0">
+  <p>Знижки</p><br>
+  <table border="1">
     <tr>
       <th>Id</th>
       <th>Дата початку</th>
@@ -74,22 +89,46 @@
       <td th:text="${el.discountPercentage}"></td>
     </tr>
   </table>
-  <br>
-  Form linking promotion
-  <form th:action="'/catalog/linkingPromotion/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
-    Номер знижки: <input type="number" name="promotionId"><br>
-    <input type="submit" value="Link">
+</div>
+<br>
+<div class="forms" th:if="${role}=='tour_manager'">
+  <div>
+    Form linking promotion
+    <form th:action="'/catalog/addPromotion/' + ${tour.id}" method="post">
+      Номер знижки: <input type="number" name="promotionId"><br>
+      <input type="submit" value="Link">
+    </form>
+  </div>
+  <div th:if="${locations.size()} &lt; ${tour.locationCount}">
+    Form linking locations
+    <form th:action="'/catalog/addLocation/' + ${tour.id}" method="post">
+      <div th:each="i, itemStat : ${#numbers.sequence(1, tour.locationCount - locations.size(), 1)}">
+        <select name="location">
+          <option value="0">--Обрати локацію--</option>
+          <option th:value="${loc.id}" th:each="loc : ${allLocations}" th:text="${loc.country} + ' - ' + ${loc.city}"></option>
+        </select>
+        <br>
+      </div>
+      <input type="submit" value="Підтвердити">
+    </form>
+  </div>
+</div>
+</br>
+<div th:if="${documentList.size()} &gt; 0">
+  <p>Необхідні документи</p>
+  <ul>
+    <li th:each="document : ${documentList}" th:text="${document.name}"></li>
+  </ul>
+</div>
+<div th:if="${freeDocumentList} and ${role}=='tour_manager'">
+  <form th:action="'/catalog/' + ${tour.id} + '/addDocument/'" method="post">
+    <select class="form-control" id="dropDownList" name="documentAdd">
+      <option value="0">--Оберіть документ--</option>
+      <option th:each="doc : ${freeDocumentList}" th:value="${doc.id}" th:text="${doc.name}"></option>
+    </select>
+    <input type="submit" value="Додати">
   </form>
-  Form linking locations
-  <form th:action="'/catalog/linkingLocation/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
-    <div th:each="i, itemStat : ${#numbers.sequence(1, tour.locationCount, 1)}">
-      <select name="location">
-        <option th:value="${loc.id}" th:each="loc : ${allLocations}" th:text="${loc.country} + ' - ' + ${loc.city}"></option>
-      </select>
-      <br>
-    </div>
-    <input type="submit" value="Підтвердити">
-  </form>
-</tr>
+</div>
+<a href="/documents">Створити документ</a>
 </body>
 </html>

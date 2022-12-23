@@ -27,6 +27,8 @@ public class PromotionController {
         model.addAttribute("promotion",
                 promotionService.findAll(httpSessionBean.getConnection()));
         model.addAttribute("role", httpSessionBean.getRole());
+
+        httpSessionBean.setLastUrl("redirect:/promotions");
         return "promotion-list";
     }
 
@@ -35,20 +37,30 @@ public class PromotionController {
         model.addAttribute("promotion",
                 promotionService.findById(promotionId, httpSessionBean.getConnection()));
         model.addAttribute("role", httpSessionBean.getRole());
+
+        httpSessionBean.setLastUrl("redirect:/promotions/".concat(Integer.toString(promotionId)));
         return "promotion-details";
     }
 
-    @PostMapping("/promotions/create") //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @PostMapping("/promotions/create")
     public String promotionCreate(@RequestParam(name = "dateBeginning") String dateBeginning,
                                   @RequestParam(name = "dateEnd") String dateEnd,
-                                  @RequestParam(name = "creatorId") int creatorId,
                                   @RequestParam(name = "discountPercentage") int discountPercentage){
         dateBeginning = dateBeginning.replace("T", " ");
         dateEnd = dateEnd.replace("T", " ");
         Promotion promotion =
-                new Promotion(0, LocalDateTime.parse(dateBeginning, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                        LocalDateTime.parse(dateEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), creatorId, discountPercentage);
+                new Promotion(0,
+                        LocalDateTime.parse(dateBeginning, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                        LocalDateTime.parse(dateEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                        httpSessionBean.getId(),
+                        discountPercentage);
         promotionService.save(promotion, httpSessionBean.getConnection());
+        return "redirect:/promotions";
+    }
+
+    @PostMapping("/promotions/delete/{promotionId}")
+    public String promotionDelete(@PathVariable int promotionId){
+        promotionService.delete(promotionId, httpSessionBean.getConnection());
         return "redirect:/promotions";
     }
 

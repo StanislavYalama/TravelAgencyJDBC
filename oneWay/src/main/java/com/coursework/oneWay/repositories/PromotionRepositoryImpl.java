@@ -27,7 +27,7 @@ public class PromotionRepositoryImpl extends JDBCCustomRepositoryImpl<Promotion,
             while(resultSet.next()){
                 Promotion promotion = new Promotion();
                 promotion.setId(resultSet.getInt("id"));
-                promotion.setDateBeginning(resultSet.getObject("date_begining", LocalDateTime.class));
+                promotion.setDateBeginning(resultSet.getObject("date_beginning", LocalDateTime.class));
                 promotion.setDateEnd(resultSet.getObject("date_end", LocalDateTime.class));
                 promotion.setCreatorId(resultSet.getInt("creator_id"));
                 promotion.setDiscountPercentage(resultSet.getInt("discount_percentage"));

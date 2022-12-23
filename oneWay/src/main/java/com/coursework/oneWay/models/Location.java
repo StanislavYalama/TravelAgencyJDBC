@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Location {
-    private int id;
+    private Integer id;
     private String country;
     private String city;
     private String description;
     private BigDecimal price;
-    private int creatorId;
+    private Integer creatorId;
 }

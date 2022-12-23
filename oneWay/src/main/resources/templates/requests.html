@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Заявки</title>
@@ -20,7 +20,7 @@
             <th>Статус оплати</th>
         </tr>
         <tr th:each = "el : ${requestUnadmit}">
-            <td th:text="${el.id}" id="id1"></td>
+            <td id="id1"><a th:href="'/requests/' + ${el.id}" th:text="${el.id}"></a></td>
             <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
             <td>
                 <select class="form-control" id="dropDownList" name="status">
