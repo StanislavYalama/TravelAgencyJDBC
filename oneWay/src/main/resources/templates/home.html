@@ -30,7 +30,7 @@
                             <a href="/login">Вхід</a>
                         </li>
                         <li th:if="${role}=='client'">
-                            <a th:href="/cabinet/${userId}">Особистий кабінет</a>
+                            <a th:href="'/cabinet/' + ${userId}">Особистий кабінет</a>
                         </li>
                         <li th:unless="${role}=='client'" th:if="${role}!='guest'">
                             <a href="/logout">Вихід</a>

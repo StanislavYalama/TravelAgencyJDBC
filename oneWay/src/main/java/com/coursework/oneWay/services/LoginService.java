@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 
 @Service
-@RequiredArgsConstructor
 public class LoginService {
 
-    private final ClientService clientService;
-    private final ManagerService managerService;
-    private final TourManagerService tourManagerService;
+    @Autowired
+    private ClientService clientService;
+    @Autowired
+    private ManagerService managerService;
+    @Autowired
+    private TourManagerService tourManagerService;
 
     public Connection getConnection(String name, String password) throws SQLException {
         return DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel_agency", name, password);
@@ -57,18 +59,11 @@ public class LoginService {
         String queryCreateUser = "CREATE USER ".concat(client.getLogin()).concat(" WITH PASSWORD '")
                 .concat(client.getPassword()).concat("' IN GROUP client");
 
-        Connection connectionPostgres = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/travel_agency?currentSchema=public",
-                    "postgres", "1201");
-
-        try (Statement statement = connectionPostgres.createStatement()){
-//            preparedStatement.setString(1, client.getLogin());
-//            preparedStatement.setString(1, client.getPassword());
+        try (Statement statement = connection.createStatement()){
             statement.executeUpdate(queryCreateUser);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        connectionPostgres.close();
 
         clientService.save(client, connection);
     }

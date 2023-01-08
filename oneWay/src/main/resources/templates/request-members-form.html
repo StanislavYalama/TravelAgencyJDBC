@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Request Members</title>
+</head>
+<body>
+    <div>
+
+        <form th:action="'/request/' + ${requestId} + '/addMember'" method="post">
+            <input type="text" name="documentNumber"><br>
+            <input type="date" name="DateOfIssue"><br>
+            <input type="date" name="DateOfExpiry"><br>
+            <button type="submit" value="Підтвердити"></button>
+        </form>
+    </div>
+</body>
+</html>

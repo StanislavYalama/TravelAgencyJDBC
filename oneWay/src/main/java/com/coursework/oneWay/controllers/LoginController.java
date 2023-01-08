@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.sql.SQLException;
 
 @Controller
-@RequiredArgsConstructor
 public class LoginController {
 
     @Autowired
     private HttpSessionBean httpSessionBean;
-    private final LoginService loginService;
+    @Autowired
+    private LoginService loginService;
     @Autowired
     private ClientService clientService;
 
@@ -53,7 +53,10 @@ public class LoginController {
 
     @GetMapping("/registration")
     public String registrationPage(){
-        return "registration";
+        if(httpSessionBean.getRole().equals("guest")){
+            return "registration";
+        }
+        return httpSessionBean.getLastUrl();
     }
 
     @PostMapping("/registration")

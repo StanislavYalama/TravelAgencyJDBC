@@ -20,6 +20,7 @@
             <td th:text="${client.name}"></td>
             <td th:text="${client.phone}"></td>
             <td th:text="${client.email}"></td>
+            <td th:text="${balance}"></td>
         </tr>
     </table>
 </div>
@@ -89,45 +90,6 @@
         </tr>
     </table>
 </div>
-<div id="documents">
-    <div class="downloaded-docs" th:if="${document.size()} &gt; 0">
-        <p>Завантажені документи</p>
-        <table border="1">
-            <tr>
-                <th>Назва</th>
-                <th>Фото</th>
-                <th>Опції</th>
-            </tr>
-            <tr th:each="doc : ${document}">
-                <form th:action="'/cabinet/' + ${client.id} + '/changeDocument/' + ${doc.documentId} + '/' + ${doc.clientDocumentId}"
-                      method="post" enctype="multipart/form-data">
-                    <td th:text="${doc.name}"></td>
-                    <td>
-                        <img th:src="'/img/' + ${doc.photoPath}">
 
-                    </td>
-                    <td>
-                        <input type="file" accept="image/*" name="imageChange">
-                        <input type="submit" value="Змінити">
-                    </td>
-                </form>
-            </tr>
-        </table>
-    </div>
-    <div class="download-docs">
-        <p>Потрібно завантажити наступні документи</p>
-        <ul>
-            <li th:each="reqDoc : ${requiredDocuments}">
-                <form th:action="'/cabinet/' + ${client.id} + '/uploadDocuments/' + ${reqDoc.id}"
-                      method="post" enctype="multipart/form-data">
-                <p th:text="${reqDoc.name}"></p>
-                    <input type="file" accept="image/*" name="imageUpload" value="Обрати файл">
-                    <input type="submit" value="Завантажити">
-                </form>
-            </li>
-        </ul>
-    </div>
-
-</div>
 </body>
 </html>

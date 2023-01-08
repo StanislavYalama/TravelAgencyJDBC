@@ -2,6 +2,7 @@ package com.coursework.oneWay.controllers;
 
 import com.coursework.oneWay.STATUS;
 import com.coursework.oneWay.bean.HttpSessionBean;
+import com.coursework.oneWay.models.Client;
 import com.coursework.oneWay.models.ClientDocument;
 import com.coursework.oneWay.models.ClientDocumentView;
 import com.coursework.oneWay.models.Request;
@@ -43,8 +44,9 @@ public class CabinetController {
 
     @GetMapping("/cabinet/{id}")
     public String cabinet(Model model, @PathVariable int id){
-        model.addAttribute("client", clientService.findById(id,
-                httpSessionBean.getConnection()));
+        Client client = clientService.findById(id, httpSessionBean.getConnection());
+        model.addAttribute("client", client);
+        model.addAttribute("balance", client.getPersonalWallet().getBalance());
         model.addAttribute("request", requestService.findByClientId(id,
                 httpSessionBean.getConnection()).stream().sorted(Comparator.comparing(Request::getDate)).collect(Collectors.toList()));
         model.addAttribute("status_values", EnumSet.allOf(STATUS.class));
