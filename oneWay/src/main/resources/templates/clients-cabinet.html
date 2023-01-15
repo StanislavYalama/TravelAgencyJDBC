@@ -24,6 +24,15 @@
         </tr>
     </table>
 </div>
+<div id="passport">
+    <form th:action="'/cabinet/' + ${client.id} + '/addPassport'" method="post">
+        Повне ім'я <input type="text" name="name"><br><br>
+        Номер документа <input type="text" name="documentNumber"><br><br>
+        Дата придатності <input type="date" name="dateOfExpiry"><br><br>
+        Дата випуску <input type="date" name="dateOfIssue"><br><br>
+        <input type="submit" value="Створити"><br><br>
+    </form>
+</div>
 <div id="request">
     <div class="requests-container" th:if="${request.size()} &gt; 0">
         <p>Надіслані запити</p>

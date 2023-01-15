@@ -28,10 +28,10 @@ public class ClientRepositoryImpl implements ClientRepository {
                 Client client = new Client();
 
                 client.setId(resultSet1.getInt("id"));
-                client.setName(resultSet1.getString("name"));
                 client.setEmail(resultSet1.getString("email"));
                 client.setPhone(resultSet1.getString("phone"));
                 client.setLogin(resultSet1.getString("login"));
+                client.setPassportId(resultSet1.getInt("passport_id"));
 
                 PreparedStatement preparedStatement2 = connection.prepareStatement(queryPersonalWallet);
                 preparedStatement2.setInt(1, client.getId());
@@ -68,10 +68,10 @@ public class ClientRepositoryImpl implements ClientRepository {
             ResultSet resultSet1 = preparedStatement1.executeQuery();
             while(resultSet1.next()){
                 client.setId(resultSet1.getInt("id"));
-                client.setName(resultSet1.getString("name"));
                 client.setEmail(resultSet1.getString("email"));
                 client.setPhone(resultSet1.getString("phone"));
                 client.setLogin(resultSet1.getString("login"));
+                client.setPassportId(resultSet1.getInt("passport_id"));
 
                 PreparedStatement preparedStatement2 = connection.prepareStatement(queryPersonalWallet);
                 preparedStatement2.setInt(1, id);
@@ -119,13 +119,13 @@ public class ClientRepositoryImpl implements ClientRepository {
     @Override
     public void save(Client client, Connection connection) {
         String query = """
-                INSERT INTO client(name, email, phone, login)
+                INSERT INTO client(email, phone, login, passport_id)
                 VALUES(?, ?, ?, ?)""";
         try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, client.getName());
-            preparedStatement.setString(2, client.getEmail());
-            preparedStatement.setString(3, client.getPhone());
-            preparedStatement.setString(4, client.getLogin());
+            preparedStatement.setString(1, client.getEmail());
+            preparedStatement.setString(2, client.getPhone());
+            preparedStatement.setString(3, client.getLogin());
+            preparedStatement.setInt(4, client.getPassportId());
             preparedStatement.executeUpdate();
 
             log.info("Client {} was saved", client);
@@ -142,6 +142,18 @@ public class ClientRepositoryImpl implements ClientRepository {
             preparedStatement.executeUpdate();
 
             log.info("Client with id = {} was deleted", id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePassportId(int clientId, int passportId, Connection connection) {
+        String query = "UPDATE client SET passport_id = ? WHERE id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, passportId);
+            preparedStatement.setInt(2, clientId);
+
+            log.info("PassportId = {} for client with id = {}", passportId, clientId);
         } catch (SQLException e) {
             e.printStackTrace();
         }

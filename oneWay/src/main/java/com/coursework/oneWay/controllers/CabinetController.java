@@ -2,10 +2,7 @@ package com.coursework.oneWay.controllers;
 
 import com.coursework.oneWay.STATUS;
 import com.coursework.oneWay.bean.HttpSessionBean;
-import com.coursework.oneWay.models.Client;
-import com.coursework.oneWay.models.ClientDocument;
-import com.coursework.oneWay.models.ClientDocumentView;
-import com.coursework.oneWay.models.Request;
+import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +38,8 @@ public class CabinetController {
     private TourService tourService;
     @Autowired
     private VoucherService voucherService;
+    @Autowired
+    private PassportService passportService;
 
     @GetMapping("/cabinet/{id}")
     public String cabinet(Model model, @PathVariable int id){
@@ -59,6 +58,13 @@ public class CabinetController {
     @PostMapping("/cabinet/{clientId}/payRequest/{requestId}")
     public String requestPay(@PathVariable int clientId, @PathVariable int requestId){
         requestService.pay(requestId, clientId, httpSessionBean.getConnection());
+        return "redirect:/cabinet/{clientId}";
+    }
+
+    @PostMapping("/cabinet/{clientId}/addPassport")
+    public String addPassport(@PathVariable int clientId, @RequestParam Passport passport){
+        passportService.save(passport, httpSessionBean.getConnection());
+        clientService.updatePassportId(clientId, passport.getId(), httpSessionBean.getConnection());
         return "redirect:/cabinet/{clientId}";
     }
 }

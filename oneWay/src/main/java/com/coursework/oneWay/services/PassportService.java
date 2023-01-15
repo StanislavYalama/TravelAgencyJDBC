@@ -26,4 +26,8 @@ public class PassportService {
     public List<Passport> findByRequestId(int requestId, Connection connection){
         return passportRepository.findByRequestId(requestId, connection);
     }
+
+    public int getCurrentPassportIdSequenceValue(Connection connection) {
+        return passportRepository.getCurrentPassportIdSequenceValue(connection);
+    }
 }

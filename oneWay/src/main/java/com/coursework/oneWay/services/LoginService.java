@@ -14,6 +14,8 @@ public class LoginService {
     @Autowired
     private ClientService clientService;
     @Autowired
+    private PassportService passportService;
+    @Autowired
     private ManagerService managerService;
     @Autowired
     private TourManagerService tourManagerService;
@@ -54,13 +56,36 @@ public class LoginService {
         return role;
     }
 
-    // TO DO (LoginController && registration.html)
-    public void createUser(Client client, Connection connection) throws SQLException {
+    public void createUser(Client client, String clientPassword, String clientName, Connection connection) throws SQLException {
         String queryCreateUser = "CREATE USER ".concat(client.getLogin()).concat(" WITH PASSWORD '")
-                .concat(client.getPassword()).concat("' IN GROUP client");
+                .concat(clientPassword).concat("' IN GROUP client");
+        String queryInsertPassport = "INSERT INTO passport(name) VALUES(?)";
+        int clientId = 0;
+        int passportId = 0;
 
-        try (Statement statement = connection.createStatement()){
+        try {
+            int previousLevel = connection.getTransactionIsolation();
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            connection.setAutoCommit(false);
+
+            Statement statement = connection.createStatement();
             statement.executeUpdate(queryCreateUser);
+            statement.close();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(queryInsertPassport);
+            preparedStatement.setString(1, clientName);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            clientId = clientService.findIdByLogin(client.getLogin(), connection);
+            passportId = passportService.getCurrentPassportIdSequenceValue(connection);
+            if(clientId !=  0 && passportId != 0){
+                clientService.updatePassportId(clientId, passportId, connection);
+            }
+
+            connection.commit();
+            connection.setTransactionIsolation(previousLevel);
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -42,7 +42,9 @@ public class ClientService {
         clientRepository.deleteById(id, connection);
     }
 
-
+    public void updatePassportId(int clientId, int passportId, Connection connection){
+        clientRepository.updatePassportId(clientId, passportId, connection);
+    }
 //    public Collection<FClientRank> showRank() {
 //        return clientRepository.showRank();
 //    }

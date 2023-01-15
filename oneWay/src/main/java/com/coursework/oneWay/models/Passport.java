@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class Passport {
 
     private int id;
+    private String name;
     private String documentNumber;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfIssue;

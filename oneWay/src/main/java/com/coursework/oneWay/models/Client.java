@@ -10,10 +10,9 @@ import java.util.List;
 public class Client {
 
     private Integer id;
-    private String name;
     private String phone;
     private String email;
-    private String password;
     private String login;
+    private Integer passportId;
     private PersonalWallet personalWallet;
 }
