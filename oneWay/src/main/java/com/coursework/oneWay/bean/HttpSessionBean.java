@@ -14,14 +14,14 @@ import java.sql.SQLException;
 public class HttpSessionBean {
     Connection connection;
     int id = 1;
-    String role = "manager";
+    String role = "client";
     String lastUrl = "redirect:/";
 
     {
         try {
             connection = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/travel_agency?currentSchema=public",
-                    "bestsorakaeverbtw", "chesna");
+                    "stasyan", "stasyan");
         } catch (SQLException e) {
             e.printStackTrace();
         }

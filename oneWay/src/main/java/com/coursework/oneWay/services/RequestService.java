@@ -45,8 +45,9 @@ public class RequestService {
         requestRepository.save(request, connection);
     }
 
-    public void save(int clientId, int tourId, Connection connection){
+    public int save(int clientId, int tourId, Connection connection){
         requestRepository.save(new Request(0, clientId, "відпралено", LocalDateTime.now(), tourId, null, false), connection);
+        return requestRepository.getCurrentRequestIdSequenceValue(connection);
     }
 
     public void deleteById(Integer id, Connection connection){

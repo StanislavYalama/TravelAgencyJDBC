@@ -99,4 +99,20 @@ public class RequestRepositoryImpl extends JDBCCustomRepositoryImpl<Request, Int
         }
 
     }
+
+    public int getCurrentRequestIdSequenceValue(Connection connection) {
+        int requestId = 0;
+        String query = "SELECT last_value FROM request_id_seq";
+
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(query);
+            if(resultSet.next()){
+                requestId = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return requestId;
+    }
 }

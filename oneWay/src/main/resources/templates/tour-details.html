@@ -33,7 +33,9 @@
 </div>
 <br>
 <div class="catalog-forms">
-  <form th:action="'/catalog/' + ${tour.id} + '/send-request/' + ${clientId}" th:if="${role}=='client'" method="post">
+  <form th:action="'/catalog/' + ${tourId} + '/addMembers'" th:if="${role}=='client'" method="post">
+    Кількість учасників<br>
+    <input name="members_count" type="number" value="1">
     <input type="submit" value="Замовити">
   </form>
   <form action="/login" th:if="${role}=='guest'">
@@ -114,21 +116,21 @@
   </div>
 </div>
 </br>
-<div th:if="${documentList.size()} &gt; 0">
-  <p>Необхідні документи</p>
-  <ul>
-    <li th:each="document : ${documentList}" th:text="${document.name}"></li>
-  </ul>
-</div>
-<div th:if="${freeDocumentList} and ${role}=='tour_manager'">
-  <form th:action="'/catalog/' + ${tour.id} + '/addDocument/'" method="post">
-    <select class="form-control" id="dropDownList" name="documentAdd">
-      <option value="0">--Оберіть документ--</option>
-      <option th:each="doc : ${freeDocumentList}" th:value="${doc.id}" th:text="${doc.name}"></option>
-    </select>
-    <input type="submit" value="Додати">
-  </form>
-</div>
-<a href="/documents">Створити документ</a>
+<!--<div th:if="${documentList.size()} &gt; 0">-->
+<!--  <p>Необхідні документи</p>-->
+<!--  <ul>-->
+<!--    <li th:each="document : ${documentList}" th:text="${document.name}"></li>-->
+<!--  </ul>-->
+<!--</div>-->
+<!--<div th:if="${freeDocumentList} and ${role}=='tour_manager'">-->
+<!--  <form th:action="'/catalog/' + ${tour.id} + '/addDocument/'" method="post">-->
+<!--    <select class="form-control" id="dropDownList" name="documentAdd">-->
+<!--      <option value="0">&#45;&#45;Оберіть документ&#45;&#45;</option>-->
+<!--      <option th:each="doc : ${freeDocumentList}" th:value="${doc.id}" th:text="${doc.name}"></option>-->
+<!--    </select>-->
+<!--    <input type="submit" value="Додати">-->
+<!--  </form>-->
+<!--</div>-->
+<!--<a href="/documents">Створити документ</a>-->
 </body>
 </html>

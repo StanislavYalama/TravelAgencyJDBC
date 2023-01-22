@@ -49,6 +49,8 @@ public class CabinetController {
         model.addAttribute("request", requestService.findByClientId(id,
                 httpSessionBean.getConnection()).stream().sorted(Comparator.comparing(Request::getDate)).collect(Collectors.toList()));
         model.addAttribute("status_values", EnumSet.allOf(STATUS.class));
+        model.addAttribute("passport", passportService.findById(client.getPassportId(),
+                httpSessionBean.getConnection()));
         model.addAttribute("voucher", voucherService.findByClientId(id,
                 httpSessionBean.getConnection()));
         model.addAttribute("role", httpSessionBean.getRole());
@@ -62,9 +64,9 @@ public class CabinetController {
     }
 
     @PostMapping("/cabinet/{clientId}/addPassport")
-    public String addPassport(@PathVariable int clientId, @RequestParam Passport passport){
-        passportService.save(passport, httpSessionBean.getConnection());
-        clientService.updatePassportId(clientId, passport.getId(), httpSessionBean.getConnection());
+    public String addPassport(Passport passport, @PathVariable int clientId){
+        passport.setId(clientId);
+        passportService.updateData(passport, httpSessionBean.getConnection());
         return "redirect:/cabinet/{clientId}";
     }
 }

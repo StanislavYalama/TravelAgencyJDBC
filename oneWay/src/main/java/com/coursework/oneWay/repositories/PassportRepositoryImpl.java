@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class PassportRepositoryImpl extends JDBCCustomRepositoryImpl<Passport, Integer>{
+public class PassportRepositoryImpl extends JDBCCustomRepositoryImpl<Passport, Integer> implements PassportRepository {
 
 
     public List<Passport> findByRequestId(int requestId, Connection connection) {
@@ -42,18 +42,34 @@ public class PassportRepositoryImpl extends JDBCCustomRepositoryImpl<Passport, I
     }
 
     public int getCurrentPassportIdSequenceValue(Connection connection) {
-        int passport_id = 0;
+        int passportId = 0;
         String query = "SELECT last_value FROM passport_id_seq";
 
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(query);
             if(resultSet.next()){
-                passport_id = resultSet.getInt(1);
+                passportId = resultSet.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return passport_id;
+        return passportId;
+    }
+
+    public void updateData(Passport passport, Connection connection) {
+        String query = "UPDATE passport SET document_number = ?, date_of_expiry = ?, date_of_issue = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, passport.getDocumentNumber());
+            preparedStatement.setDate(2, java.sql.Date.valueOf(passport.getDateOfExpiry()));
+            preparedStatement.setDate(3, java.sql.Date.valueOf(passport.getDateOfIssue()));
+            preparedStatement.setInt(4, passport.getId());
+            preparedStatement.executeUpdate();
+
+            log.info("Updated data in table passport:\n{}", passport);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

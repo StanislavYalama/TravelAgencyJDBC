@@ -17,7 +17,7 @@
         </tr>
         <tr>
             <td th:text="${client.id}" id="id1"></td>
-            <td th:text="${client.name}"></td>
+            <td th:text="${passport.name}"></td>
             <td th:text="${client.phone}"></td>
             <td th:text="${client.email}"></td>
             <td th:text="${balance}"></td>
@@ -26,7 +26,7 @@
 </div>
 <div id="passport">
     <form th:action="'/cabinet/' + ${client.id} + '/addPassport'" method="post">
-        Повне ім'я <input type="text" name="name"><br><br>
+<!--        Повне ім'я <input type="text" name="name"><br><br>-->
         Номер документа <input type="text" name="documentNumber"><br><br>
         Дата придатності <input type="date" name="dateOfExpiry"><br><br>
         Дата випуску <input type="date" name="dateOfIssue"><br><br>

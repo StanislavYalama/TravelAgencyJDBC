@@ -5,6 +5,7 @@ import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.ClientService;
 import com.coursework.oneWay.services.MailSenderService;
+import com.coursework.oneWay.services.PassportService;
 import com.coursework.oneWay.services.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,8 @@ public class RequestController {
     private RequestService requestService;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private PassportService passportService;
     @Autowired
     private MailSenderService mailSenderService;
 
@@ -74,7 +77,8 @@ public class RequestController {
         Request request = requestService.findById(requestId, httpSessionBean.getConnection());
         Client client = clientService.findById(request.getClientId(), httpSessionBean.getConnection());
 
-        mailSenderService.sendMailToTourOperator(client.getEmail(), client.getName());
+        mailSenderService.sendMailToTourOperator(client.getEmail(),
+                passportService.findById(client.getPassportId(), httpSessionBean.getConnection()).getName());
         return "redirect:/requests/{requestId}";
     }
 

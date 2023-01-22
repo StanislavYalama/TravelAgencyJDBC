@@ -17,8 +17,9 @@ public class PassportService {
     public List<Passport> findAll(Connection connection){
         return passportRepository.findAll(Passport.class, connection);
     }
-    public void save(Passport passport, Connection connection){
+    public int save(Passport passport, Connection connection){
         passportRepository.save(passport, connection);
+        return passportRepository.getCurrentPassportIdSequenceValue(connection);
     }
     public void delete(Integer id, Connection connection){
         passportRepository.deleteById(Passport.class, id, connection);
@@ -29,5 +30,13 @@ public class PassportService {
 
     public int getCurrentPassportIdSequenceValue(Connection connection) {
         return passportRepository.getCurrentPassportIdSequenceValue(connection);
+    }
+
+    public Passport findById(Integer passportId, Connection connection) {
+        return passportRepository.findById(Passport.class, passportId, connection);
+    }
+
+    public void updateData(Passport passport, Connection connection) {
+        passportRepository.updateData(passport, connection);
     }
 }
