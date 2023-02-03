@@ -51,43 +51,59 @@
             </tr>
             <tr>
                 <td th:text="${client.id}"></td>
-                <td th:text="${client.name}"></td>
+                <td th:text="${passports.get(client.passportId).name}"></td>
                 <td th:text="${client.phone}"></td>
                 <td th:text="${client.email}"></td>
                 <td th:text="${balance}"></td>
             </tr>
         </table>
     </div>
-    <div class="uploadedDocuments">
-        <div th:if="${documentList}">
-            <table >
-                <tr>
-                    <th>Doc name</th>
-                    <th>Img</th>
-                </tr>
-                <tr th:each="document : ${documentList}">
-                    <td th:text="${document.name}"></td>
-                    <td>
-                        <img th:src="'/img/' + ${document.photoPath}" alt="">
-                    </td>
-                </tr>
-            </table>
-            <br>
 
-            <form th:action="'/requests/sendDocuments/' + ${request.id}" method="post">
-                <button type="submit">Надіслати документи туроператору</button>
+    <div class="passportList">
+        <table>
+            <tr>
+                <th>id</th>
+                <th>ФІО</th>
+                <th>Номер документа</th>
+                <th>Дійсний до:</th>
+                <th>Дата випуску</th>
+            </tr>
+            <tr th:each="passport: ${passports}">
+                <td th:text="${passport.id}"></td>
+                <td th:text="${passport.name}"></td>
+                <td th:text="${passport.documentNumber}"></td>
+                <td th:text="${passport.dateOfExpiry}"></td>
+                <td th:text="${passport.dateOfIssue}"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div>
+        <form th:action="'/requests/sendDocuments/' + ${request.id}" method="post">
+            <button type="submit">Надіслати документи туроператору</button>
+        </form>
+
+        <div>
+            <p>Надіслати клієнту документи для подорожі</p>
+            <form th:action="'/requests/' + ${request.id} + '/sendTravelDocuments'" method="post"
+                  enctype="multipart/form-data">
+                <select name="passportId">
+                    <option value=0>Не обрано</option>
+                    <option th:each="passport : ${passports}" th:value="${passport.id}"
+                            th:text="${passport.name}"></option>
+                </select><br>
+                <p>Страховий поліс</p>
+                <input type="file" accept="application/pdf, image/jpeg, image/png" name="insurance">
+                <p>Ваучер(-и)</p>
+                <input type="file" accept="application/pdf, image/jpeg, image/png" name="vouchers" multiple>
+                <p>Квиток(-и)</p>
+                <input type="file" accept="application/pdf, image/jpeg, image/png" name="tickets" multiple>
+
+                <script src="../static/js/request-details.js"></script>
+                <br>
+                <input type="submit" value="Надіслати">
             </form>
-
-            <div>
-                <p>Надіслати клієнту документи для подорожі</p>
-                <form action="'/requests/sendTravelDocuments/' + ${client.id}" method="post" enctype="multipart/form-data">
-                    <input type="file" accept="application/pdf, image/jpeg, image/png" th:each="${travelDocuments}">
-                    <input type="submit" value="Надіслати">
-                </form>
-            </div>
         </div>
-
-        <p th:unless="${documentList}">Клієнт не завантажив жодного документу</p>
     </div>
 </div>
 

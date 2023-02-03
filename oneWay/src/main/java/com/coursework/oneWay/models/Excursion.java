@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Excursion {
-    private int id;
-    private int locationId;
+    private Integer id;
+    private Integer locationId;
     private String contentType;
-    private int countPlaces;
+    private Integer countPlaces;
     private String placeName;
 }

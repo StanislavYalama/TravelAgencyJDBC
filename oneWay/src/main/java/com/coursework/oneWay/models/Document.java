@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Manager{
-    private Integer id;
+public class Document {
+    private int id;
     private String name;
-    private String phone;
-    private String email;
-    private String password;
+    private String nameEng;
 }

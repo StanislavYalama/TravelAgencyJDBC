@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TourManager{
-    private int id;
+    private Integer id;
     private String name;
     private String phone;
     private String email;

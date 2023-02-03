@@ -3,10 +3,7 @@ package com.coursework.oneWay.controllers;
 import com.coursework.oneWay.STATUS;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
-import com.coursework.oneWay.services.ClientService;
-import com.coursework.oneWay.services.MailSenderService;
-import com.coursework.oneWay.services.PassportService;
-import com.coursework.oneWay.services.RequestService;
+import com.coursework.oneWay.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.EnumSet;
 
 @Controller
@@ -27,11 +27,18 @@ public class RequestController {
     @Autowired
     private RequestService requestService;
     @Autowired
+    private TourService tourService;
+    @Autowired
     private ClientService clientService;
+    @Autowired
+    private TourOperatorService tourOperatorService;
     @Autowired
     private PassportService passportService;
     @Autowired
     private MailSenderService mailSenderService;
+    @Autowired
+    private HotelService hotelService;
+    @Autowired private RequestPassportService requestPassportService;
 
     @GetMapping("/requests")
     public String requests(Model model){
@@ -52,6 +59,11 @@ public class RequestController {
         model.addAttribute("request", request);
         model.addAttribute("client", client);
         model.addAttribute("balance", client.getPersonalWallet().getBalance());
+        model.addAttribute("passports", passportService.findByRequestId(requestId,
+                httpSessionBean.getConnection()));
+        model.addAttribute("hotels", hotelService.findByTourId(request.getTourId(),
+                httpSessionBean.getConnection()));
+
         return "request-details";
     }
 
@@ -77,15 +89,25 @@ public class RequestController {
         Request request = requestService.findById(requestId, httpSessionBean.getConnection());
         Client client = clientService.findById(request.getClientId(), httpSessionBean.getConnection());
 
-        mailSenderService.sendMailToTourOperator(client.getEmail(),
-                passportService.findById(client.getPassportId(), httpSessionBean.getConnection()).getName());
+        mailSenderService.sendMailToTourOperator(
+                tourOperatorService.findById(
+                        tourService.findById(
+                                requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()).getTourOperatorId(), httpSessionBean.getConnection()).getEmail(),
+                passportService.findByRequestId(requestId, httpSessionBean.getConnection()),
+                tourService.findById(
+                        requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()));
         return "redirect:/requests/{requestId}";
     }
 
-    @PostMapping("/requests/sendTravelDocuments/{requestId}")
+    @PostMapping("/requests/{requestId}/sendTravelDocuments")
     public String sendTravelDocuments(@PathVariable int requestId,
-                                      @RequestParam MultipartFile multipartFile){
+                                      @RequestParam(name = "passportId") int passportId,
+                                      @RequestParam MultipartFile[] tickets,
+                                      @RequestParam MultipartFile[] vouchers,
+                                      @RequestParam MultipartFile insurance){
 
+        requestPassportService.saveClientDocuments(requestId, passportId, tickets, vouchers, insurance,
+                httpSessionBean.getConnection());
 
         return "redirect:/requests/{requestId}";
     }

@@ -1,6 +1,8 @@
 package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.ClientDocumentView;
+import com.coursework.oneWay.models.Passport;
+import com.coursework.oneWay.models.Tour;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,7 +33,7 @@ public class MailSenderService {
     @Value("${upload.path}")
     private String filePath;
 
-    public void sendMailToTourOperator(String emailTo, String clientName) throws MessagingException {
+    public void sendMailToTourOperator(String emailTo, List<Passport> passportList, Tour tour) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
 
@@ -41,35 +43,25 @@ public class MailSenderService {
         MimeMultipart multipart = new MimeMultipart("related");
         MimeBodyPart textBodyPart = new MimeBodyPart();
 
-        String textHtml = "<html lang=\"uk\"><head><title>Client Documents</title></head><body><h1>Замовлення тура для клієнта "
-                .concat(clientName)
-                .concat("</h1><h3>Нижче наведені необхідні документи:<h3><br>");
-//        for(int i = 0; i < listClientDocumentView.size(); i++) {
-//
-//            textHtml = textHtml.concat("<div>")
-//                    .concat(listClientDocumentView.get(i).getName()).concat("<br>")
-//                    .concat("<img src=\"cid:").concat(Integer.toString(i + 1))
-//                    .concat("\"><br>") //width="500" height="500"
-//                    .concat("</div>");
-//        }
+        String textHtml = "<html lang=\"uk\"><head><title>Client Documents</title></head><body><h1>Замовлення тура</h1><br><br>"
+                .concat("<h3>Інформація по туру</h3><br>")
+                .concat("Дата початку: ").concat(tour.getDateStart().toString()).concat("<br>")
+                .concat("Дата кінця: ").concat(tour.getDateEnd().toString()).concat("<br>")
+                .concat("Опис: ").concat(tour.getDescription()).concat("<br><br>")
+                .concat("<h3>Нижче наведені необхідні документи:<h3><br>");
+
+        for(int i = 0; i < passportList.size(); i++) {
+            textHtml = textHtml.concat("<div>")
+                    .concat("Учасник ").concat(Integer.toString(i + 1)).concat("<br>")
+                    .concat("ФІО: ").concat(passportList.get(i).getName()).concat("<br>")
+                    .concat("Номер документа: ").concat(passportList.get(i).getDocumentNumber()).concat("<br>")
+                    .concat("Дійсний до: ").concat(passportList.get(i).getDateOfExpiry().toString()).concat("<br>")
+                    .concat("Дата випуску: ").concat(passportList.get(i).getDateOfIssue().toString()).concat("<br>")
+                    .concat("</div>").concat("<br>");
+        }
         textHtml = textHtml.concat("</body></html>");
         textBodyPart.setText(textHtml, "UTF-8", "html");    //"US-ASCII",
         multipart.addBodyPart(textBodyPart);
-
-//        for(int i = 0; i < listClientDocumentView.size(); i++) {
-//
-//            MimeBodyPart imagePart = new MimeBodyPart();
-////            imagePart.setHeader("Content-ID", Integer.toString(i + 1));
-//            try {
-//                imagePart.attachFile(filePath.concat("/")
-//                        .concat(listClientDocumentView.get(i).getPhotoPath()));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            imagePart.setContentID("<".concat(Integer.toString(i+1)).concat(">"));
-//            imagePart.setDisposition(MimeBodyPart.INLINE);
-//            multipart.addBodyPart(imagePart);
-//        }
 
         mimeMessage.setContent(multipart);
         mailSender.send(mimeMessage);

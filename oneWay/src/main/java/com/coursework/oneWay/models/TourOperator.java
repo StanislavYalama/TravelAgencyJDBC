@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TourOperator {
-    private int id;
+    private Integer id;
     private String name;
     private String email;
     private String phone;

@@ -40,8 +40,6 @@ public class LoginController {
         return httpSessionBean.getLastUrl();
     }
 
-
-
     @GetMapping("/logout")
     public String logout() throws SQLException {
         httpSessionBean.getConnection().close();
