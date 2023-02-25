@@ -1,25 +1,20 @@
 package com.coursework.oneWay.controllers;
 
-import com.coursework.oneWay.STATUS;
+import com.coursework.oneWay.Status;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.EnumSet;
 
 @Controller
+@RequestMapping(value = "/requests")
 public class RequestController {
 
     @Autowired
@@ -38,18 +33,19 @@ public class RequestController {
     private MailSenderService mailSenderService;
     @Autowired
     private HotelService hotelService;
-    @Autowired private RequestPassportService requestPassportService;
+    @Autowired
+    private RequestPassportService requestPassportService;
 
-    @GetMapping("/requests")
+    @GetMapping
     public String requests(Model model){
         model.addAttribute("requestAdmit",
                 requestService.findAdmitted(httpSessionBean.getConnection()));
         model.addAttribute("requestUnadmit",
                 requestService.findUnadmitted(httpSessionBean.getConnection()));
-        model.addAttribute("status_values", EnumSet.allOf(STATUS.class));
+        model.addAttribute("status_values", EnumSet.allOf(Status.class));
         return "requests";
     }
-    @GetMapping("/requests/{requestId}")
+    @GetMapping("/{requestId}")
     public String requestDetails(@PathVariable int requestId, Model model){
 
         Request request = requestService.findById(requestId, httpSessionBean.getConnection());
@@ -67,24 +63,20 @@ public class RequestController {
         return "request-details";
     }
 
-    @PostMapping("/requests/admit/{id}")
+    @PostMapping("/admit/{id}")
     public String requestsAdmit(@RequestParam(name = "status") String status,
                                 @PathVariable(name = "id") int id){
-        System.out.println("status = " + status);
-        System.out.println("id = " + id);
-
-        requestService.setStatus(id, status.toLowerCase(), httpSessionBean.getConnection());
+        requestService.setStatus(id, status.toLowerCase(), httpSessionBean.getId(), httpSessionBean.getConnection());
         return "redirect:/requests/";
     }
 
-    @GetMapping("/requests/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String requestDeleteCheck(@PathVariable int id){
         requestService.deleteById(id, httpSessionBean.getConnection());
         return "redirect:/requests";
     }
 
-    // TODO
-    @PostMapping("/requests/sendDocuments/{requestId}")
+    @PostMapping("/sendDocuments/{requestId}")
     public String sendDocuments(@PathVariable int requestId) throws MessagingException {
         Request request = requestService.findById(requestId, httpSessionBean.getConnection());
         Client client = clientService.findById(request.getClientId(), httpSessionBean.getConnection());
@@ -99,8 +91,8 @@ public class RequestController {
         return "redirect:/requests/{requestId}";
     }
 
-    @PostMapping("/requests/{requestId}/sendTravelDocuments")
-    public String sendTravelDocuments(@PathVariable int requestId,
+    @PostMapping("/{requestId}/saveTravelDocuments")
+    public String saveTravelDocuments(@PathVariable int requestId,
                                       @RequestParam(name = "passportId") int passportId,
                                       @RequestParam MultipartFile[] tickets,
                                       @RequestParam MultipartFile[] vouchers,
@@ -108,7 +100,15 @@ public class RequestController {
 
         requestPassportService.saveClientDocuments(requestId, passportId, tickets, vouchers, insurance,
                 httpSessionBean.getConnection());
+        return "redirect:/requests/{requestId}";
+    }
 
+    @PostMapping("/{requestId}/sendTravelDocuments")
+    public String sendTravelDocuments(@PathVariable int requestId){
+        Client client = clientService.findByRequestId(requestId, httpSessionBean.getConnection());
+
+        mailSenderService.sendMailToClientWithTravelDocuments(client.getEmail(), requestId,
+                httpSessionBean.getConnection());
         return "redirect:/requests/{requestId}";
     }
 }

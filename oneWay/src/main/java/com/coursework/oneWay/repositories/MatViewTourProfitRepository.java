@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class FTourProfitRepository {
-    public List<TourProfit> call(Connection connection) {
+public class MatViewTourProfitRepository implements MaterializedViewRepository<TourProfit>{
+
+    @Override
+    public List<TourProfit> show(Connection connection) {
         List<TourProfit> profitList = new ArrayList<>();
-        String query = "SELECT * FROM tour_profit()";
+        String query = "SELECT * FROM tour_profit";
 
         try(Statement statement = connection.createStatement()){
             statement.execute(query);
@@ -30,5 +32,16 @@ public class FTourProfitRepository {
             e.printStackTrace();
         }
         return profitList;
+    }
+
+    @Override
+    public void refresh(Connection connection) {
+        String query = "REFRESH MATERIALIZED VIEW tour_profit";
+
+        try(Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

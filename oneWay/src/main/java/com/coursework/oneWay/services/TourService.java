@@ -39,4 +39,7 @@ public class TourService {
     public void deleteLocation(int tourId, int locationId, Connection connection){
         tourRepository.deleteLocation(tourId, locationId, connection);
     }
+    public void saveExcursion(int tourId, int excursionId, Connection connection){
+        tourRepository.saveExcursion(tourId, excursionId, connection);
+    }
 }

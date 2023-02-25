@@ -10,5 +10,5 @@ public class ClientRank {
 
     private Integer clientId;
     private String clientName;
-    private Integer countVisits;
+    private Integer countRequestAdmit;
 }

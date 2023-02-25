@@ -12,16 +12,16 @@ import java.sql.SQLException;
 @SessionScope
 @Component
 public class HttpSessionBean {
-    Connection connection;
-    int id = 1;
-    String role = "manager";
+    int id = 0;
+    String role = "guest";
     String lastUrl = "redirect:/";
+    Connection connection;
 
     {
         try {
             connection = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/travel_agency?currentSchema=public",
-                    "pupok", "pupok");
+                    "guest", "guest");
         } catch (SQLException e) {
             e.printStackTrace();
         }

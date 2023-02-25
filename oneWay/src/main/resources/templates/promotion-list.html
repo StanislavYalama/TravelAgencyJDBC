@@ -28,7 +28,7 @@
                 <td th:text="${el.dateEnd}"></td>
                 <td th:text="${el.creatorId}"></td>
                 <td th:text="${el.discountPercentage}"></td>
-                <td>
+                <td th:if="${role}=='tour_manager'">
                     <form th:action="'/promotions/delete/' + ${el.id}" method="post">
                         <input type="submit" value="Delete">
                     </form>

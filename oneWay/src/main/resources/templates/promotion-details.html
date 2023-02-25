@@ -4,35 +4,35 @@
     <meta charset="UTF-8">
     <title>Catalog</title>
 </head>
-<body>
-<h1 th:text="'Promotion #' + ${promotion.id}"></h1>
-<br/><br/>
-<table border="1">
-    <tr>
-        <th>Id</th>
-        <th>DateStart</th>
-        <th>DateEnd</th>
-        <th>Discount Percentage</th>
-    </tr>
-    <td th:text="${promotion.id}"></td>
-    <td th:text="${promotion.dateBeginning}"></td>
-    <td th:text="${promotion.dateEnd}"></td>
-    <td th:text="${promotion.discountPercentage}"></td>
-</table>
-<form th:action="'/promotion/delete/' + ${promotion.id}" th:if="${role}=='tour_manager'" method="post">
-    <input type="submit" value="Delete">
-</form>
-<br>
+    <body>
+    <h1 th:text="'Promotion #' + ${promotion.id}"></h1>
+    <br/><br/>
+    <table border="1">
+        <tr>
+            <th>Id</th>
+            <th>DateStart</th>
+            <th>DateEnd</th>
+            <th>Discount Percentage</th>
+        </tr>
+        <td th:text="${promotion.id}"></td>
+        <td th:text="${promotion.dateBeginning}"></td>
+        <td th:text="${promotion.dateEnd}"></td>
+        <td th:text="${promotion.discountPercentage}"></td>
+    </table>
+    <form th:action="'/promotion/delete/' + ${promotion.id}" th:if="${role}=='tour_manager'" method="post">
+        <input type="submit" value="Delete">
+    </form>
+    <br>
 
-<!--Form update-->
-<!--<form th:action="'/promotions/' + ${promotion.id} + '/update/'" th:if="${role}=='tour_manager'" method="post">-->
-<!--    <select class="form-control" id="dropDownListPromotion" name="column">-->
-<!--        <option th:value="date_begining" th:text="Дата_початку"></option>-->
-<!--        <option th:value="date_end" th:text="Дата_кінця"></option>-->
-<!--        <option th:value="discount_percentage" th:text="Відсоток_знижки"></option>-->
-<!--    </select>-->
-<!--    <input type="text" name="value">-->
-<!--    <input type="submit" value="Надіслати">-->
-<!--</form>-->
-</body>
+    <!--Form update-->
+    <!--<form th:action="'/promotions/' + ${promotion.id} + '/update/'" th:if="${role}=='tour_manager'" method="post">-->
+    <!--    <select class="form-control" id="dropDownListPromotion" name="column">-->
+    <!--        <option th:value="date_begining" th:text="Дата_початку"></option>-->
+    <!--        <option th:value="date_end" th:text="Дата_кінця"></option>-->
+    <!--        <option th:value="discount_percentage" th:text="Відсоток_знижки"></option>-->
+    <!--    </select>-->
+    <!--    <input type="text" name="value">-->
+    <!--    <input type="submit" value="Надіслати">-->
+    <!--</form>-->
+    </body>
 </html>

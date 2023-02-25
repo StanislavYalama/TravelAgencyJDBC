@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RequestPassport {
 
-    private int id;
-    private int requestId;
-    private int passportId;
+    private Integer id;
+    private Integer requestId;
+    private Integer passportId;
 }

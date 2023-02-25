@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class FTourManagerRankRepository {
-    public List<TourManagerRank> call(Connection connection) {
+public class MatViewTourManagerRankRepository implements MaterializedViewRepository<TourManagerRank> {
+
+    @Override
+    public List<TourManagerRank> show(Connection connection) {
         List<TourManagerRank> rankList = new ArrayList<>();
-        String query = "SELECT * FROM tour_manager_rank()";
+        String query = "SELECT * FROM tour_manager_rank";
 
         try(Statement statement = connection.createStatement()){
             statement.execute(query);
@@ -31,5 +33,16 @@ public class FTourManagerRankRepository {
             e.printStackTrace();
         }
         return rankList;
+    }
+
+    @Override
+    public void refresh(Connection connection) {
+        String query = "REFRESH MATERIALIZED VIEW tour_manager_rank";
+
+        try(Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

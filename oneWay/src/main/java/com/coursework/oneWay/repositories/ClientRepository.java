@@ -19,6 +19,10 @@ public interface ClientRepository {
     void deleteById(int id, Connection connection);
 
     void updatePassportId(int clientId, int passportId, Connection connection);
+
+    Client findByRequestId(int requestId, Connection connection);
+
+    void changeBalanceByClientId(int clientId, double newBalance, Connection connection);
 //    @Query(nativeQuery = true, value = "select * from client_rank()")
 //    List<Map<String, List>> showRank();
 

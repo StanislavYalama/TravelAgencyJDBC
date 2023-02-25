@@ -7,7 +7,7 @@ p{
     font-family: 'Mina', sans-serif;
 }
 body {
-    min-width: 100%;
+    min-width: 1vw;
     min-height: 100%;
     background: rgb(224, 228, 206);
     overflow-x: hidden;
@@ -46,9 +46,8 @@ header{
     padding-left: 10px;
     padding-right: 10px;
 }
-.navigate ul li:last-child{
-    position: relative;
-    left: 880px;
+.navigate_right-div{
+    margin-left: auto;
 }
 .navigate ul li a:hover{
     color: orange;

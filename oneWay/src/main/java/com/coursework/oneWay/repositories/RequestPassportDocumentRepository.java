@@ -2,5 +2,10 @@ package com.coursework.oneWay.repositories;
 
 import com.coursework.oneWay.models.RequestPassportDocument;
 
-public interface RequestPassportDocumentRepository extends JDBCCustomRepository<RequestPassportDocument, Integer>{
+import java.sql.Connection;
+import java.util.List;
+
+public interface RequestPassportDocumentRepository{
+
+    List<RequestPassportDocument> findByRequestId(int requestId, Connection connection);
 }

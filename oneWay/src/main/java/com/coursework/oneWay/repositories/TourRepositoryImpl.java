@@ -59,4 +59,18 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             e.printStackTrace();
         }
     }
+
+    public void saveExcursion(int tourId, int excursionId, Connection connection) {
+        String query = """
+                INSERT INTO tour_excursion(tour_id, excursion_id)
+                VALUES(?, ?)""";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+            preparedStatement.setInt(1, tourId);
+            preparedStatement.setInt(2, excursionId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

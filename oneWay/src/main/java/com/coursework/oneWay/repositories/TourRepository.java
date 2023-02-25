@@ -15,4 +15,6 @@ public interface TourRepository {
     void saveLocations(List<Location> locationList, int tourId, Connection connection);
 
     void deleteLocation(int tourId, int locationId, Connection connection);
+
+    void saveExcursion(int tourId, int excursionId, Connection connection);
 }

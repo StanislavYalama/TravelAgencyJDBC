@@ -45,10 +45,6 @@ header{
     padding-left: 10px;
     padding-right: 10px;
 }
-.navigate ul li:last-child{
-    position: relative;
-    left: 880px;
-}
 .navigate ul li a:hover{
     color: orange;
 }
@@ -146,6 +142,7 @@ header{
     height: 22px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
     margin-left: 70px;
+    text-indent: 10px;
 }
 .reg-form-conteiner button{
     background-color: orange;

@@ -1,5 +1,5 @@
 package com.coursework.oneWay;
 
-public enum STATUS {
+public enum Status {
     ПРИЙНЯТО, ВІДПРАВЛЕНО, ВІДМОВЛЕНО
 }

@@ -158,4 +158,57 @@ public class ClientRepositoryImpl implements ClientRepository {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public Client findByRequestId(int requestId, Connection connection) {
+        String queryClient = """
+                SELECT * from client 
+                WHERE id IN (SELECT client_id FROM request
+                WHERE id = ?)""";
+        String queryPersonalWallet = "SELECT * FROM personal_wallet WHERE client_id = ?";
+        Client client = new Client();
+        PersonalWallet personalWallet = new PersonalWallet();
+
+        try(PreparedStatement preparedStatementClient = connection.prepareStatement(queryClient)) {
+            preparedStatementClient.setInt(1, requestId);
+
+            ResultSet resultSetClient = preparedStatementClient.executeQuery();
+            resultSetClient.next();
+
+            client.setId(resultSetClient.getInt("id"));
+            client.setEmail(resultSetClient.getString("email"));
+            client.setLogin(resultSetClient.getString("login"));
+            client.setPassportId(resultSetClient.getInt("passport_id"));
+
+            PreparedStatement preparedStatementPersonalWallet = connection.prepareStatement(queryPersonalWallet);
+            preparedStatementPersonalWallet.setInt(1, client.getId());
+
+            ResultSet resultSetPersonalWallet = preparedStatementPersonalWallet.executeQuery();
+            resultSetPersonalWallet.next();
+
+            personalWallet.setId(resultSetPersonalWallet.getInt("id"));
+            personalWallet.setBalance(resultSetPersonalWallet.getDouble("balance"));
+            personalWallet.setId(resultSetPersonalWallet.getInt("client_id"));
+
+            client.setPersonalWallet(personalWallet);
+            preparedStatementPersonalWallet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return client;
+    }
+
+    @Override
+    public void changeBalanceByClientId(int clientId, double newBalance, Connection connection) {
+        String query = "UPDATE personal_wallet SET balance = ? WHERE client_id = ?";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+            preparedStatement.setDouble(1, newBalance);
+            preparedStatement.setInt(2, clientId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

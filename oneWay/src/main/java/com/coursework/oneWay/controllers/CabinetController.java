@@ -1,31 +1,19 @@
 package com.coursework.oneWay.controllers;
 
-import com.coursework.oneWay.STATUS;
+import com.coursework.oneWay.Status;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping(value = "/cabinet")
 public class CabinetController {
 
     @Autowired
@@ -41,32 +29,52 @@ public class CabinetController {
     @Autowired
     private PassportService passportService;
 
-    @GetMapping("/cabinet/{id}")
+    @GetMapping("/{id}")
     public String cabinet(Model model, @PathVariable int id){
         Client client = clientService.findById(id, httpSessionBean.getConnection());
+        double balance = client.getPersonalWallet().getBalance();
+        balance = Math.floor(balance * 100) / 100;
+
+        model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("client", client);
-        model.addAttribute("balance", client.getPersonalWallet().getBalance());
+        model.addAttribute("balance", balance);
         model.addAttribute("request", requestService.findByClientId(id,
                 httpSessionBean.getConnection()).stream().sorted(Comparator.comparing(Request::getDate)).collect(Collectors.toList()));
-        model.addAttribute("status_values", EnumSet.allOf(STATUS.class));
+        model.addAttribute("status_values", EnumSet.allOf(Status.class));
         model.addAttribute("passport", passportService.findById(client.getPassportId(),
                 httpSessionBean.getConnection()));
         model.addAttribute("voucher", voucherService.findByClientId(id,
                 httpSessionBean.getConnection()));
-        model.addAttribute("role", httpSessionBean.getRole());
         return "clients-cabinet";
     }
 
-    @PostMapping("/cabinet/{clientId}/payRequest/{requestId}")
+    @PostMapping("/{clientId}/changeBalance")
+    public String changeBalance(@PathVariable int clientId, @RequestParam double newBalance){
+        clientService.changeBalanceByClientId(clientId, newBalance, httpSessionBean.getConnection());
+        return "redirect:/cabinet/{clientId}";
+    }
+
+    @PostMapping("/{clientId}/updatePassport")
+    public String addPassport(Passport passport, @PathVariable int clientId){
+        passportService.updateDataByClientId(passport, clientId, httpSessionBean.getConnection());
+        return "redirect:/cabinet/{clientId}";
+    }
+
+    @PostMapping("/{clientId}/dropPassport")
+    public String dropPassport(@PathVariable int clientId){
+        passportService.clearDataByClientId(clientId, httpSessionBean.getConnection());
+        return "redirect:/cabinet/{clientId}";
+    }
+
+    @PostMapping("/{clientId}/payRequest/{requestId}")
     public String requestPay(@PathVariable int clientId, @PathVariable int requestId){
         requestService.pay(requestId, clientId, httpSessionBean.getConnection());
         return "redirect:/cabinet/{clientId}";
     }
 
-    @PostMapping("/cabinet/{clientId}/addPassport")
-    public String addPassport(Passport passport, @PathVariable int clientId){
-        passport.setId(clientId);
-        passportService.updateData(passport, httpSessionBean.getConnection());
+    @PostMapping("/{clientId}/deleteRequest/{requestId}")
+    String deleteRequest(@PathVariable(name = "clientId") int clientId, @PathVariable(name = "requestId") int requestId){
+        requestService.deleteById(requestId, httpSessionBean.getConnection());
         return "redirect:/cabinet/{clientId}";
     }
 }

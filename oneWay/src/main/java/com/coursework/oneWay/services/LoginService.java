@@ -16,25 +16,17 @@ public class LoginService {
     @Autowired
     private PassportService passportService;
     @Autowired
-    private ManagerService managerService;
-    @Autowired
-    private TourManagerService tourManagerService;
+    private WorkerService workerService;
 
     public Connection getConnection(String name, String password) throws SQLException {
         return DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel_agency", name, password);
     }
 
-    public int getUserId(String name, Connection connection){
+    public int getUserId(String login, Connection connection){
         int userId = 0;
-        userId = clientService.findIdByLogin(name, connection);
+        userId = clientService.findIdByLogin(login, connection);
         if(userId == 0){
-            userId = managerService.findIdByLogin(name, connection);
-            if(userId == 0){
-                userId = tourManagerService.findIdByLogin(name, connection);
-                if(userId == 0){
-                    System.out.println("Login not found");
-                }
-            }
+            userId = workerService.findIdByLogin(login, connection);
         }
 
         return userId;
@@ -56,6 +48,7 @@ public class LoginService {
         return role;
     }
 
+    //TODO
     public void createUser(Client client, String clientPassword, String clientName, Connection connection) throws SQLException {
         String queryCreateUser = "CREATE USER ".concat(client.getLogin()).concat(" WITH PASSWORD '")
                 .concat(clientPassword).concat("' IN GROUP client");

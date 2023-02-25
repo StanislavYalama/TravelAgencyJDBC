@@ -96,14 +96,14 @@ public class JDBCCustomRepositoryImpl<T, ID> extends ReadOnlyRepositoryImpl<T, I
     }
 
     @Override
-    public void update(Class<T> tClass, ID id, String columnName, String value, Connection connection) {
+    public void update(Class<T> tClass, ID id, String columnName, Object value, Connection connection) {
         String tableName = getTableName(tClass.getSimpleName());
         String query = "UPDATE ".concat(tableName.toLowerCase()).concat(" SET ").concat(columnName).concat(" = ? WHERE id = ?");
         System.out.println("table_name: " + tableName.toLowerCase());
         System.out.println("query: " + query);
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
-            preparedStatement.setString(1, value);
+            preparedStatement.setObject(1, value);
             preparedStatement.setInt(2, (Integer) id);
             preparedStatement.executeUpdate();
             log.info("Set value {} for column {} of table{}", value, columnName, tableName);

@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class FManagerRankRepository {
-    public List<ManagerRank> call(Connection connection) {
+public class MatViewManagerRankRepository implements MaterializedViewRepository<ManagerRank> {
+
+    @Override
+    public List<ManagerRank> show(Connection connection) {
         List<ManagerRank> rankList = new ArrayList<>();
-        String query = "SELECT * FROM manager_rank()";
+        String query = "SELECT * FROM manager_rank";
 
         try(Statement statement = connection.createStatement()){
             statement.execute(query);
@@ -32,5 +34,16 @@ public class FManagerRankRepository {
             e.printStackTrace();
         }
         return rankList;
+    }
+
+    @Override
+    public void refresh(Connection connection) {
+        String query = "REFRESH MATERIALIZED VIEW manager_rank";
+
+        try(Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

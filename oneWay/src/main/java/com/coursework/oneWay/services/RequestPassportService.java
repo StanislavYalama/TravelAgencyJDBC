@@ -27,17 +27,21 @@ import java.util.Objects;
 @Service
 public class RequestPassportService {
 
-    @Value("${travelDocuments.path}")
-    String uploadPackage;
-    @Value("${path.length}")
-    int pathLength;
-
     @Autowired
     private RequestPassportRepositoryImpl requestPassportRepository;
     @Autowired
     private RequestPassportDocumentRepositoryImpl requestPassportDocumentRepository;
     @Autowired
     private DocumentRepositoryImpl documentRepository;
+
+    @Value("${travelDocuments.path}")
+    String uploadPackage;
+    @Value("${path.length}")
+    int pathLength;
+
+    public List<RequestPassportDocument> findByRequestId(int requestId, Connection connection){
+        return requestPassportDocumentRepository.findByRequestId(requestId, connection);
+    }
 
     public int getIdByPassportAndRequest(int passportId, int requestId, Connection connection){
         return requestPassportRepository.getIdByPassportAndRequest(passportId, requestId, connection);

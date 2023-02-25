@@ -36,7 +36,11 @@ public class PassportService {
         return passportRepository.findById(Passport.class, passportId, connection);
     }
 
-    public void updateData(Passport passport, Connection connection) {
-        passportRepository.updateData(passport, connection);
+    public void updateDataByClientId(Passport passport, int clientId, Connection connection) {
+        passportRepository.updateDataByClientId(passport, clientId, connection);
+    }
+
+    public void clearDataByClientId(int clientId, Connection connection){
+        passportRepository.clearDataByClientId(clientId, connection);
     }
 }

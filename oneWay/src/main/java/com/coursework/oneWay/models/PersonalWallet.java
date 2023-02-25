@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PersonalWallet {
 
-    private int id;
-    private int clientId;
-    private double balance;
+    private Integer id;
+    private Integer clientId;
+    private Double balance;
 }

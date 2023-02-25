@@ -78,14 +78,14 @@
         </table>
     </div>
 
-    <div>
+    <div th:if="${role}=='manager'">
         <form th:action="'/requests/sendDocuments/' + ${request.id}" method="post">
             <button type="submit">Надіслати документи туроператору</button>
         </form>
 
         <div>
-            <p>Надіслати клієнту документи для подорожі</p>
-            <form th:action="'/requests/' + ${request.id} + '/sendTravelDocuments'" method="post"
+            <p>Зберегти файли клієнта в базі</p>
+            <form th:action="'/requests/' + ${request.id} + '/saveTravelDocuments'" method="post"
                   enctype="multipart/form-data">
                 <select name="passportId">
                     <option value=0>Не обрано</option>
@@ -101,6 +101,11 @@
 
                 <script src="../static/js/request-details.js"></script>
                 <br>
+                <input type="submit" value="Надіслати">
+            </form>
+
+            <p>Надіслати клієнту документи для подорожі</p>
+            <form th:action="'/requests/' + ${request.id} + '/sendTravelDocuments'" method="post">
                 <input type="submit" value="Надіслати">
             </form>
         </div>

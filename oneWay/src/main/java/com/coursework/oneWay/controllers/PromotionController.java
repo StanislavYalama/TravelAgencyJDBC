@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Controller
+@RequestMapping(value = "/promotions")
 public class PromotionController {
 
     @Autowired
@@ -22,7 +23,7 @@ public class PromotionController {
     @Autowired
     private HttpSessionBean httpSessionBean;
 
-    @GetMapping("/promotions")
+    @GetMapping
     public String promotionList(Model model){
         model.addAttribute("promotion",
                 promotionService.findAll(httpSessionBean.getConnection()));
@@ -32,7 +33,7 @@ public class PromotionController {
         return "promotion-list";
     }
 
-    @GetMapping("/promotions/{promotionId}")
+    @GetMapping("/{promotionId}")
     public String promotionDetails(Model model, @PathVariable int promotionId){
         model.addAttribute("promotion",
                 promotionService.findById(promotionId, httpSessionBean.getConnection()));
@@ -42,7 +43,7 @@ public class PromotionController {
         return "promotion-details";
     }
 
-    @PostMapping("/promotions/create")
+    @PostMapping("/create")
     public String promotionCreate(@RequestParam(name = "dateBeginning") String dateBeginning,
                                   @RequestParam(name = "dateEnd") String dateEnd,
                                   @RequestParam(name = "discountPercentage") int discountPercentage){
@@ -58,7 +59,7 @@ public class PromotionController {
         return "redirect:/promotions";
     }
 
-    @PostMapping("/promotions/delete/{promotionId}")
+    @PostMapping("/delete/{promotionId}")
     public String promotionDelete(@PathVariable int promotionId){
         promotionService.delete(promotionId, httpSessionBean.getConnection());
         return "redirect:/promotions";

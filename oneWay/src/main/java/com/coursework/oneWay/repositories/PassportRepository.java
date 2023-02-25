@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 public interface PassportRepository extends JDBCCustomRepository<Passport, Integer>{
 
-    void updateData(Passport passport, Connection connection);
+    void updateDataByClientId(Passport passport, int clientId, Connection connection);
 
     int getCurrentPassportIdSequenceValue(Connection connection);
 }

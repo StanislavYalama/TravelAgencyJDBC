@@ -5,100 +5,122 @@
     <title>Особистий кабінет</title>
 </head>
 <body>
-<div id="content1">
-    <p>Особисті дані</p>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>ФІО</th>
-            <th>Телефон</th>
-            <th>Ел. скринька</th>
-            <th>Баланс</th>
-        </tr>
-        <tr>
-            <td th:text="${client.id}" id="id1"></td>
-            <td th:text="${passport.name}"></td>
-            <td th:text="${client.phone}"></td>
-            <td th:text="${client.email}"></td>
-            <td th:text="${balance}"></td>
-        </tr>
-    </table>
-</div>
-<div id="passport">
-    <form th:action="'/cabinet/' + ${client.id} + '/addPassport'" method="post">
-<!--        Повне ім'я <input type="text" name="name"><br><br>-->
-        Номер документа <input type="text" name="documentNumber"><br><br>
-        Дата придатності <input type="date" name="dateOfExpiry"><br><br>
-        Дата випуску <input type="date" name="dateOfIssue"><br><br>
-        <input type="submit" value="Створити"><br><br>
-    </form>
-</div>
-<div id="request">
-    <div class="requests-container" th:if="${request.size()} &gt; 0">
-        <p>Надіслані запити</p>
-        <table border="1">
-            <tr>
-                <th>id</th>
-                <th>Номер клієнта</th>
-                <th>Статус</th>
-                <th>Дата</th>
-                <th>Номер тура</th>
-                <th>Номер менеджера</th>
-                <th>Статус оплати</th>
-            </tr>
-            <tr th:each="el : ${request}">
-                <form th:action="'/cabinet/' + ${client.id} + '/payRequest/' + ${el.id}" method="post">
-                    <td th:text="${el.id}" id="id2"></td>
-                    <td th:text="${el.clientId}"></td>
-                    <td th:if="${role}=='manager'">
-                        <select class="form-control" id="dropDownList" name="status">
-                            <option th:each="el_status : ${status_values}" th:value="${el_status}"
-                                    th:text="${el_status}" th:if="${el_status}!='відпралено'"></option>
-                        </select>
-                    </td>
-                    <td th:text="${el.status}" th:unless="${role}=='manager'"></td>
-                    <td th:text="${el.date}"></td>
-                    <td th:text="${el.tourId}"></td>
-                    <td th:text="${el.managerId}"></td>
-                    <td th:text="${el.paymentStatus}"></td>
-                    <td th:if="${role} ? 'client' : 'manager'">
-                        <form th:action="'/requests/delete/' + ${el.id}" method="post">
-                            <input type="submit" value="Скасувати заявку">
-                        </form>
-                    </td>
-                    <td th:if="${role}=='client'">
-                        <input type="submit" value="Оплатити">
-                    </td>
+<!--th:if="${role} ? 'client' : 'manager' and ${client.id} == ${userId}" class="access-confirm"-->
+    <div>
+        <div id="content1">
+            <p>Особисті дані</p>
+            <table border="1">
+                <tr>
+                    <th>id</th>
+                    <th>ФІО</th>
+                    <th>Телефон</th>
+                    <th>Ел. скринька</th>
+                    <th>Баланс</th>
+                </tr>
+                <tr>
+                    <td th:text="${client.id}" id="id1"></td>
+                    <td th:text="${passport.name}"></td>
+                    <td th:text="${client.phone}"></td>
+                    <td th:text="${client.email}"></td>
+                    <td th:text="${balance}"></td>
+                </tr>
+            </table>
+        </div>
+        <div id="passport" th:if="${role} ? 'client' : 'manager'">
+            <div>
+                <form th:action="'/cabinet/' + ${client.id} + '/updatePassport'" method="post">
+                    <!--        Повне ім'я <input type="text" name="name"><br><br>-->
+                    Номер документа <input type="text" name="documentNumber" th:value="${passport.documentNumber}"><br><br>
+                    Дата придатності <input type="date" name="dateOfExpiry" th:value="${passport.dateOfExpiry}"><br><br>
+                    Дата випуску <input type="date" name="dateOfIssue" th:value="${passport.dateOfIssue}"><br><br>
+                    <input type="submit" value="Створити" th:if="${passport.documentNumber}==null"><br><br>
                 </form>
-            </tr>
-        </table>
+            </div>
+            <div th:unless="${passport.documentNumber}==null">
+                <form th:action="'/cabinet/' + ${client.id} + '/dropPassport'" method="post">
+                    <input type="submit" value="Видалити паспортні дані">
+                </form>
+            </div>
+        </div>
+        <div th:if="${role}=='manager'">
+            <form th:action="'/cabinet/' + ${client.id} + '/changeBalance'" method="post">
+                Введіть новий баланс гаманця: <input type="number" name="newBalance">
+                <input type="submit" value="Змінити">
+            </form>
+        </div>
+        <div id="request">
+            <div class="requests-container" th:if="${request.size()} &gt; 0">
+                <p>Надіслані запити</p>
+                <table border="1">
+                    <tr>
+                        <th>id</th>
+                        <th>Номер клієнта</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                        <th>Номер тура</th>
+                        <th>Номер менеджера</th>
+                        <th>Статус оплати</th>
+                    </tr>
+                    <tr th:each="el : ${request}">
+                        <td th:text="${el.id}" id="id2"></td>
+                        <td th:text="${el.clientId}"></td>
+                        <td th:if="${role}=='manager'">
+                            <form th:action="'/requests/admit/' + ${el.id}" method="post">
+                                <select class="form-control" id="dropDownList" name="status">
+                                    <option th:each="el_status : ${status_values}" th:value="${el_status}"
+                                            th:text="${el_status}" th:if="${el_status}!='відпралено'"></option>
+                                </select>
+                                <input type="submit" value="Змінити">
+                            </form>
+                        </td>
+                        <td th:text="${el.status}" th:unless="${role}=='manager'"></td>
+                        <td th:text="${el.date}"></td>
+                        <td th:text="${el.tourId}"></td>
+                        <td th:text="${el.managerId}"></td>
+                        <td th:text="${el.paymentStatus}"></td>
+                        <td th:if="${role}=='client'">
+                            <form th:action="'/cabinet/' + ${client.id} + '/payRequest/' + ${el.id}" method="post">
+                                <input type="submit" value="Оплатити">
+                            </form>
+                        </td>
+                        <td th:if="${role} ? 'client' : 'manager'">
+                            <form th:action="'/cabinet/' + ${client.id} + '/deleteRequest/' + ${el.id}" method="post">
+                                <input type="submit" value="Скасувати заявку">
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div th:unless="${request.size()} &gt; 0">
+                <p>Не подано жодної заявки</p>
+            </div>
+        </div>
+        <div id="voucher" th:if="${voucher.size()} &gt; 0">
+            <p>Ваучери</p>
+            <table border="1">
+                <tr>
+                    <th>id</th>
+                    <th>tourOperatorId</th>
+                    <th>date</th>
+                    <th>country</th>
+                    <th>photo</th>
+                </tr>
+                <tr th:each="el : ${voucher}">
+                    <td th:text="${el.id}" id="id3"></td>
+                    <td th:text="${el.tourOperatorId}"></td>
+                    <td th:text="${el.date}"></td>
+                    <td th:text="${el.country}"></td>
+                    <td>
+                        <img th:src="'image/voucher' + ${el.photo}">
+                    </td>
+                    <td th:text="${el.requestId}"></td>
+                </tr>
+            </table>
+        </div>
     </div>
-    <div th:unless="${request.size()} &gt; 0">
-        <p>Не подано жодної заявки</p>
-    </div>
-</div>
-<div id="voucher" th:if="${voucher.size()} &gt; 0">
-    <p>Ваучери</p>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>tourOperatorId</th>
-            <th>date</th>
-            <th>country</th>
-            <th>photo</th>
-        </tr>
-        <tr th:each="el : ${voucher}">
-            <td th:text="${el.id}" id="id3"></td>
-            <td th:text="${el.tourOperatorId}"></td>
-            <td th:text="${el.date}"></td>
-            <td th:text="${el.country}"></td>
-            <td>
-                <img th:src="'image/voucher' + ${el.photo}">
-            </td>
-            <td th:text="${el.requestId}"></td>
-        </tr>
-    </table>
-</div>
-
+<!--    <div th:unless="${role} ? 'client' : 'manager' and ${client.id} == ${userId}" class="access-denied">-->
+<!--        <h1>Ви не маєте доступу до цієї сторінки</h1>-->
+<!--        <p>Якщо це ваша сторінка, то <a href="/login">Увійдіть</a></p>-->
+<!--    </div>-->
 </body>
 </html>

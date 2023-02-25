@@ -1,11 +1,9 @@
 package com.coursework.oneWay.controllers;
 
 import com.coursework.oneWay.bean.HttpSessionBean;
-import com.coursework.oneWay.models.Location;
-import com.coursework.oneWay.models.Passport;
-import com.coursework.oneWay.models.RequestPassport;
-import com.coursework.oneWay.models.Tour;
+import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequestMapping(value = "/catalog")
 public class CatalogController {
 
     @Autowired
@@ -37,8 +36,10 @@ public class CatalogController {
     private RequestPassportService requestPassportService;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private ExcursionService excursionService;
 
-    @GetMapping("/catalog")
+    @GetMapping
     public String catalog(Model model) throws SQLException {
 
         model.addAttribute("role", httpSessionBean.getRole());
@@ -48,39 +49,43 @@ public class CatalogController {
         httpSessionBean.setLastUrl("redirect:/catalog");
         return "catalog";
     }
-    @GetMapping("/catalog/{tourId}")
+    @GetMapping("/{tourId}")
     public String catalogTourDetails(Model model, @PathVariable int tourId){
+        List<Location> locationList = locationService.findByTourId(tourId, httpSessionBean.getConnection());
         model.addAttribute("tour",
                 tourService.findById(tourId, httpSessionBean.getConnection()));
-        model.addAttribute("locations",
-                locationService.findByTourId(tourId, httpSessionBean.getConnection()));
+        model.addAttribute("locations", locationList);
         model.addAttribute("clientId", httpSessionBean.getId());
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("promotions",
                 promotionService.findByTourId(tourId, httpSessionBean.getConnection()));
         model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
 
+        List<Excursion> excursionList = excursionService.findByTourId(tourId, httpSessionBean.getConnection());
+        model.addAttribute("excursionList", excursionList);
+        model.addAttribute("excursionsGson", new Gson().toJson(excursionList));
+
         httpSessionBean.setLastUrl("redirect:/catalog/".concat(Integer.toString(tourId)));
         return "tour-details";
     }
-    @PostMapping("/catalog/save")
+    @PostMapping("/save")
     public String catalogSave(Tour tour){
         tour.setCreatorId(httpSessionBean.getId());
         tourService.save(tour, httpSessionBean.getConnection());
         return "redirect:/catalog";
     }
-    @PostMapping("/catalog/delete/{tourId}")
+    @PostMapping("/delete/{tourId}")
     public String catalogDelete(@PathVariable int tourId){
         tourService.deleteById(tourId, httpSessionBean.getConnection());
         return "redirect:/catalog";
     }
 
-    @PostMapping("/catalog/{tourId}/addMembers")
+    @PostMapping("/{tourId}/addMembers")
     public String catalogAddMembersPage(@PathVariable(name = "tourId") int tourId,
                                         @RequestParam(name = "members_count") int members_count, Model model){
 
         if(members_count == 1){
-            return "redirect:/catalog/" + tourId + "/addMembers/" + members_count + "/processing";
+            return "redirect:/catalog/" + tourId + "/addOneMember/processing";
         }
         model.addAttribute("tourId", tourId);
         model.addAttribute("members_count", members_count);
@@ -92,8 +97,18 @@ public class CatalogController {
         return "form-members";
     }
 
-    // TODO
-    @PostMapping("/catalog/{tourId}/addMembers/{members_count}/processing")
+    @GetMapping("/{tourId}/addOneMember/processing")
+    public String catalogAddOneMember(@PathVariable(name = "tourId") int tourId){
+        int requestId = requestService.save(httpSessionBean.getId(), tourId, httpSessionBean.getConnection());
+
+        requestPassportService.save(new RequestPassport(0, requestId,
+                        clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection()).getPassportId()),
+                httpSessionBean.getConnection());
+
+        return "redirect:/catalog/{tourId}";
+    }
+
+    @PostMapping("/{tourId}/addMembers/{members_count}/processing")
     public String catalogAddMembers(@PathVariable(name = "tourId") int tourId,
                                     @RequestParam(name = "name") List<String> nameList,
                                     @RequestParam(name = "documentNumber") List<String> documentNumberList,
@@ -121,13 +136,13 @@ public class CatalogController {
         return "redirect:/catalog/{tourId}";
     }
 
-    @PostMapping("/catalog/addPromotion/{tourId}")
+    @PostMapping("/addPromotion/{tourId}")
     public String catalogAddPromotion(@PathVariable int tourId, @RequestParam int promotionId){
         promotionService.linkWithTour(promotionId, tourId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
 
-    @PostMapping("/catalog/addLocation/{tourId}")
+    @PostMapping("/addLocation/{tourId}")
     public String catalogAddLocation(@PathVariable int tourId,
                                       @RequestParam(name = "location") List<Integer> locationIdList){
         List<Location> locationList = new ArrayList<>();
@@ -145,9 +160,17 @@ public class CatalogController {
         return "redirect:/catalog/{tourId}";
     }
 
-    @PostMapping("/catalog/{tourId}/deleteLocation/{locationId}")
+    @PostMapping("/{tourId}/deleteLocation/{locationId}")
     public String catalogDeleteLocation(@PathVariable int tourId, @PathVariable int locationId){
         tourService.deleteLocation(tourId, locationId, httpSessionBean.getConnection());
+        return "redirect:/catalog/{tourId}";
+    }
+
+    @PostMapping("/{tourId}/addExcursion")
+    public String addExcursion(@PathVariable int tourId,
+                               @RequestParam(name = "addExcursion_excursion") int excursionId){
+
+        tourService.saveExcursion(tourId, excursionId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
 }

@@ -26,13 +26,16 @@
                         <li>
                             <a href="/promotions">Акції</a>
                         </li>
-                        <li>
-                            <a href="/login">Вхід</a>
+                        <li th:if="${role}=='manager'">
+                            <a href="/requests">Заявки</a>
                         </li>
-                        <li th:if="${role}=='client'">
+                        <li th:if="${role}=='client'" class="navigate_right">
                             <a th:href="'/cabinet/' + ${userId}">Особистий кабінет</a>
                         </li>
-                        <li th:unless="${role}=='client'" th:if="${role}!='guest'">
+                        <li th:if="${role}=='guest'" class="navigate_right">
+                            <a href="/login">Вхід</a>
+                        </li>
+                        <li th:unless="${role}=='guest'" class="navigate_right">
                             <a href="/logout">Вихід</a>
                         </li>
                     </ul>        

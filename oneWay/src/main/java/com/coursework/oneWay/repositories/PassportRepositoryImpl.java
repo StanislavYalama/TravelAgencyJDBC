@@ -57,17 +57,41 @@ public class PassportRepositoryImpl extends JDBCCustomRepositoryImpl<Passport, I
         return passportId;
     }
 
-    public void updateData(Passport passport, Connection connection) {
-        String query = "UPDATE passport SET document_number = ?, date_of_expiry = ?, date_of_issue = ? WHERE id = ?";
+    public void updateDataByClientId(Passport passport, int clientId, Connection connection) {
+        String query = """
+                UPDATE passport
+                SET document_number = ?, date_of_expiry = ?, date_of_issue = ?
+                WHERE id = (SELECT passport_id FROM client
+                WHERE id = ?)""";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, passport.getDocumentNumber());
             preparedStatement.setDate(2, java.sql.Date.valueOf(passport.getDateOfExpiry()));
             preparedStatement.setDate(3, java.sql.Date.valueOf(passport.getDateOfIssue()));
-            preparedStatement.setInt(4, passport.getId());
+            preparedStatement.setInt(4, clientId);
             preparedStatement.executeUpdate();
 
             log.info("Updated data in table passport:\n{}", passport);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearDataByClientId(int clientId, Connection connection){
+        String query = """
+                UPDATE passport
+                SET document_number = ?, date_of_expiry = ?, date_of_issue = ?
+                WHERE id = (SELECT passport_id FROM client
+                WHERE id = ?)""";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, null);
+            preparedStatement.setDate(2, null);
+            preparedStatement.setDate(3, null);
+            preparedStatement.setInt(4, clientId);
+            preparedStatement.executeUpdate();
+
+            log.info("Cleared passport data of client with id = {}", clientId);
         } catch (SQLException e) {
             e.printStackTrace();
         }

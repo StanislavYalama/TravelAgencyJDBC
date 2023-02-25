@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml"><head>
+    <meta charset="UTF-8">
+    <title>Панель Адміністратора</title>
+</head>
+<body>
+    <nav>
+        <a href="/statistics/client">Статисника по клієнтах</a>
+        <a href="/statistics/tour">Статисника по турам</a>
+        <a href="/statistics/worker">Статисника по працівникам</a>
+    </nav>
+
+    <div>
+        <form action="/adminPanel/createWorker" method="post">
+            <input type="text" name="login" placeholder="Логін">
+            <input type="text" name="password" placeholder="Пароль">
+            <br>
+            <input type="text" name="name" placeholder="ФІО">
+            <input type="text" name="email" placeholder="Ел. почта">
+            <input type="text" name="phone" placeholder="Моб. телефон">
+            <select name="role">
+                <option th:each="role : ${roles}" th:value="${role}" th:text="${#strings.toLowerCase(role)}"></option>
+            </select>
+            <input type="submit" value="Створити">
+        </form>
+    </div>
+
+    <div>
+        <p>Працівники</p>
+        <table border="1">
+            <tr>
+                <th>id</th>
+                <th>ФІО</th>
+                <th>Ел. пошта</th>
+                <th>Моб. телефон</th>
+                <th>Роль</th>
+            </tr>
+            <tr th:each = "el : ${workerList}">
+                <td th:text="${el.id}"></td>
+                <td th:text="${el.name}"></td>
+                <td th:text="${el.email}"></td>
+                <td th:text="${el.phone}"></td>
+                <td th:text="${el.role}"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

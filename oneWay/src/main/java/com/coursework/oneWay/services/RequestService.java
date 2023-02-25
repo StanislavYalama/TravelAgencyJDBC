@@ -46,7 +46,7 @@ public class RequestService {
     }
 
     public int save(int clientId, int tourId, Connection connection){
-        requestRepository.save(new Request(0, clientId, "відпралено", LocalDateTime.now(), tourId, null, false), connection);
+        requestRepository.save(new Request(0, clientId, "ВІДПРАВЛЕНО", LocalDateTime.now(), tourId, null, false), connection);
         return requestRepository.getCurrentRequestIdSequenceValue(connection);
     }
 
@@ -54,9 +54,10 @@ public class RequestService {
         requestRepository.deleteById(Request.class, id, connection);
     }
 
-    public void setStatus(int id, String value, Connection connection){
-        requestRepository.update(Request.class, id, "status", value, connection);
-        log.info("Request status with id {} was updated to {}", id, value);
+    public void setStatus(int id, String newStatus, Integer managerId, Connection connection){
+        requestRepository.update(Request.class, id, "status", newStatus, connection);
+        requestRepository.update(Request.class, id, "manager_id", managerId, connection);
+        log.info("Request status with id {} was updated to {} by manager {}", id, newStatus, managerId);
     }
 
     public void pay(int requestId, int clientId, Connection connection) {

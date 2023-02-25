@@ -116,21 +116,24 @@
   </div>
 </div>
 </br>
-<!--<div th:if="${documentList.size()} &gt; 0">-->
-<!--  <p>Необхідні документи</p>-->
-<!--  <ul>-->
-<!--    <li th:each="document : ${documentList}" th:text="${document.name}"></li>-->
-<!--  </ul>-->
-<!--</div>-->
-<!--<div th:if="${freeDocumentList} and ${role}=='tour_manager'">-->
-<!--  <form th:action="'/catalog/' + ${tour.id} + '/addDocument/'" method="post">-->
-<!--    <select class="form-control" id="dropDownList" name="documentAdd">-->
-<!--      <option value="0">&#45;&#45;Оберіть документ&#45;&#45;</option>-->
-<!--      <option th:each="doc : ${freeDocumentList}" th:value="${doc.id}" th:text="${doc.name}"></option>-->
-<!--    </select>-->
-<!--    <input type="submit" value="Додати">-->
-<!--  </form>-->
-<!--</div>-->
-<!--<a href="/documents">Створити документ</a>-->
+</br>
+<div class="excursions" th:if="${role}=='tour_manager'">
+  <div class="addExcursion">
+    <form th:action="'/catalog/' + ${tour.id} + '/addExcursion'" method="post">
+      <select name="addExcursion_location" id="addExcursion_location">
+        <option th:each="el : ${locations}" th:value="${el.id}" th:text="${el.city}"
+                onclick="fillSelectByExcursions()"></option>
+      </select>
+      <select name="addExcursion_excursion" id="addExcursion_excursion">
+        <option value=0>--Excursion--</option>
+        <option th:each="el : ${excursionList}" th:value="${el.id}"
+                th:text="${el.id} + ' - ' + ${el.placeName}" name="optionExcursion"></option>
+<!--        style="visibility: hidden"-->
+      </select>
+      <input type="submit" value="Додати">
+    </form>
+    <script src="js/addExcursion.js"></script>
+  </div>
+</div>
 </body>
 </html>

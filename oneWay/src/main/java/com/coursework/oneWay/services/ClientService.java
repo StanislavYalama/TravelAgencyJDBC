@@ -45,6 +45,14 @@ public class ClientService {
     public void updatePassportId(int clientId, int passportId, Connection connection){
         clientRepository.updatePassportId(clientId, passportId, connection);
     }
+
+    public Client findByRequestId(int requestId, Connection connection){
+        return clientRepository.findByRequestId(requestId, connection);
+    }
+
+    public void changeBalanceByClientId(int clientId, double newBalance, Connection connection) {
+        clientRepository.changeBalanceByClientId(clientId, newBalance, connection);
+    }
 //    public Collection<FClientRank> showRank() {
 //        return clientRepository.showRank();
 //    }
