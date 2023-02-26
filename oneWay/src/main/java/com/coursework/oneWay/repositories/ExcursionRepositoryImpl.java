@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ExcursionRepositoryImpl implements ExcursionRepository {
+public class ExcursionRepositoryImpl extends JDBCCustomRepositoryImpl<Excursion, Integer> implements ExcursionRepository {
 
     public List<Excursion> findByTourId(int tourId, Connection connection){
         List<Excursion> excursionList = new ArrayList<>();

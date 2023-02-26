@@ -17,4 +17,8 @@ public class ExcursionService {
     public List<Excursion> findByTourId(int id, Connection connection){
         return excursionRepository.findByTourId(id, connection);
     }
+
+    public void save(Excursion excursion, Connection connection) {
+        excursionRepository.save(excursion, connection);
+    }
 }

@@ -34,17 +34,43 @@
             <td><a th:href="'/catalog/' + ${el.id}">Details</a></td>
         </tr>
     </table>
-    <form action="/catalog/save" th:if="${role}=='tour_manager'" method="post">
-<!--        Номер тура<input type="number" name="id" value="12"><br><br>-->
-        Дата початку<input type="date" name="dateStart"><br><br>
-        Дата кінця<input type="date" name="dateEnd"><br><br>
-        Ціна<input type="number" name="price" value="4555"><br><br>
-        Ціна за знижкою<input type="number" name="priceWithPromotion" value="4400"><br><br>
-        Опис<input type="text" name="description" value="descr"><br><br>
-<!--        Номер творця<input type="number" name="creatorId" value="1"><br><br>-->
-        Номер туроператора<input type="number" name="tourOperatorId" value="1"><br><br>
-        Кількість локацій<input type="number" name="locationCount" value="1"><br><br>
-        <input type="submit" value="Створити"><br><br>
-    </form>
+    <div th:if="${role}=='tour_manager'">
+        <div>
+            <p>Створення тура</p>
+            <form action="/catalog/save" method="post">
+                Дата початку<input type="date" name="dateStart"><br><br>
+                Дата кінця<input type="date" name="dateEnd"><br><br>
+                Ціна<input type="number" name="price" value="4555"><br><br>
+                Ціна за знижкою<input type="number" name="priceWithPromotion" value="4400"><br><br>
+                Опис<input type="text" name="description" value="descr"><br><br>
+                Номер туроператора<input type="number" name="tourOperatorId" value="1"><br><br>
+                Кількість локацій<input type="number" name="locationCount" value="1"><br><br>
+                <input type="submit" value="Створити"><br><br>
+            </form>
+        </div>
+        <br>
+        <div>
+            <p>Створення локації</p>
+            <form action="/catalog/saveLocation" method="post">
+                <input type="text" name="country" placeholder="Країна">
+                <input type="text" name="city" placeholder="Місто">
+                <input type="text" name="description" placeholder="Опис">
+                <input type="submit" value="Створити">
+            </form>
+        </div>
+        <br>
+        <div>
+            <p>Створення екскурсії</p>
+            <form action="/catalog/saveExcursion" method="post">
+                <select name="locationId">
+                    <option th:each="el : ${allLocations}" th:value="${el.id}"
+                            th:text="${el.country}-${el.city}"></option>
+                </select>
+                <input type="text" name="contentType" placeholder="Тип контенту">
+                <input type="number" name="countPlaces" placeholder="К-ть місць">
+                <input type="text" name="placeName" placeholder="Назва місця">
+            </form>
+        </div>
+    </div>
 </body>
 </html>

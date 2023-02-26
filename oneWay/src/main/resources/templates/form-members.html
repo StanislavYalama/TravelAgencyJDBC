@@ -10,10 +10,10 @@
               th:if="${members_count} &gt; 0" name="passports">
             <div>
                 <div th:each="i, itemStat : ${#numbers.sequence(2, members_count, 1)}">
-                    Повне ім'я <input type="text" name="name"><br><br>
-                    Номер документа <input type="text" name="documentNumber"><br><br>
-                    Дійсний до <input type="date" name="dateOfExpiry"><br><br>
-                    Дата випуску <input type="date" name="dateOfIssue"><br><br>
+                    Повне ім'я <input type="text" name="name" required><br><br>
+                    Номер документа <input type="text" name="documentNumber" required><br><br>
+                    Дійсний до <input type="date" name="dateOfExpiry" required><br><br>
+                    Дата випуску <input type="date" name="dateOfIssue" required><br><br>
                 </div>
             </div>
             <input type="submit" value="Надіслати">

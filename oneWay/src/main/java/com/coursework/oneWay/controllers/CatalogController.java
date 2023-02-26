@@ -45,6 +45,8 @@ public class CatalogController {
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("tours",
                 tourService.findAll(httpSessionBean.getConnection()));
+        model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+
 
         httpSessionBean.setLastUrl("redirect:/catalog");
         return "catalog";
@@ -100,12 +102,12 @@ public class CatalogController {
     @GetMapping("/{tourId}/addOneMember/processing")
     public String catalogAddOneMember(@PathVariable(name = "tourId") int tourId){
         int requestId = requestService.save(httpSessionBean.getId(), tourId, httpSessionBean.getConnection());
+        Client client = clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection());
 
-        requestPassportService.save(new RequestPassport(0, requestId,
-                        clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection()).getPassportId()),
+        requestPassportService.save(new RequestPassport(0, requestId, client.getPassportId()),
                 httpSessionBean.getConnection());
 
-        return "redirect:/catalog/{tourId}";
+        return "redirect:/cabinet/" + client.getId();
     }
 
     @PostMapping("/{tourId}/addMembers/{members_count}/processing")
@@ -116,6 +118,7 @@ public class CatalogController {
                                     @RequestParam(name = "dateOfIssue") List<String> dateOfIssueList,
                                     @PathVariable(name = "members_count") int membersCount){
         int requestId = requestService.save(httpSessionBean.getId(), tourId, httpSessionBean.getConnection());
+        Client client = clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection());
 
         requestPassportService.save(new RequestPassport(0, requestId,
                 clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection()).getPassportId()),
@@ -133,7 +136,7 @@ public class CatalogController {
             requestPassportService.save(new RequestPassport(0, requestId, passportId), httpSessionBean.getConnection());
         }
 
-        return "redirect:/catalog/{tourId}";
+        return "redirect:/cabinet/" + client.getId();
     }
 
     @PostMapping("/addPromotion/{tourId}")
@@ -172,5 +175,18 @@ public class CatalogController {
 
         tourService.saveExcursion(tourId, excursionId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
+    }
+
+    @PostMapping("/saveLocation")
+    public String saveLocation(Location location){
+        location.setCreatorId(httpSessionBean.getId());
+        locationService.save(location, httpSessionBean.getConnection());
+        return httpSessionBean.getLastUrl();
+    }
+
+    @PostMapping("/saveExcursion")
+    public String saveExcursion(Excursion excursion){
+        excursionService.save(excursion, httpSessionBean.getConnection());
+        return httpSessionBean.getLastUrl();
     }
 }

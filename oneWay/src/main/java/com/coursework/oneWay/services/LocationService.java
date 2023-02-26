@@ -24,4 +24,8 @@ public class LocationService {
     public Location findById(int id, Connection connection) {
         return locationRepository.findById(Location.class, id, connection);
     }
+
+    public void save(Location location, Connection connection) {
+        locationRepository.save(location, connection);
+    }
 }
