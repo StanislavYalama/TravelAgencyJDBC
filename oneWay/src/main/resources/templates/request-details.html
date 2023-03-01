@@ -23,8 +23,10 @@
                     <td><a th:text="${request.clientId}" th:href="'/cabinet/' + ${request.clientId}"></a></td>
                     <td>
                         <select class="form-control" id="dropDownList" name="status">
-                            <option value="0">Не опрацьовано</option>
-                            <option th:each="el_status : ${status_values}" th:value="${el_status}" th:text="${el_status}"></option>
+                            <option th:value="${el.status}" th:text="${el.status}"></option>
+                            <option th:each="el_status : ${status_values}" th:value="${el_status}"
+                                    th:text="${#strings.toLowerCase(el_status)}"
+                                    th:if="${el.status}!=${#strings.toLowerCase(el_status)}"></option>
                         </select>
                     </td>
                     <td th:text="${request.date}"></td>

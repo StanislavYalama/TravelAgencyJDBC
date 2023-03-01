@@ -77,17 +77,25 @@ public class RequestController {
     }
 
     @PostMapping("/sendDocuments/{requestId}")
-    public String sendDocuments(@PathVariable int requestId) throws MessagingException {
+    public String sendDocuments(@PathVariable int requestId) {
         Request request = requestService.findById(requestId, httpSessionBean.getConnection());
         Client client = clientService.findById(request.getClientId(), httpSessionBean.getConnection());
 
-        mailSenderService.sendMailToTourOperator(
-                tourOperatorService.findById(
-                        tourService.findById(
-                                requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()).getTourOperatorId(), httpSessionBean.getConnection()).getEmail(),
-                passportService.findByRequestId(requestId, httpSessionBean.getConnection()),
-                tourService.findById(
-                        requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()));
+        try {
+            mailSenderService.sendMailToTourOperator(
+                    tourOperatorService.findById(
+                            tourService.findById(
+                                    requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()).getTourOperatorId(), httpSessionBean.getConnection()).getEmail(),
+                    passportService.findByRequestId(requestId, httpSessionBean.getConnection()),
+                    tourService.findById(
+                            requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()));
+
+            requestService.setStatus(requestId, Status.БРОНЮВАННЯ.name().toLowerCase(),
+                    httpSessionBean.getId(), httpSessionBean.getConnection());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
         return "redirect:/requests/{requestId}";
     }
 
@@ -107,8 +115,17 @@ public class RequestController {
     public String sendTravelDocuments(@PathVariable int requestId){
         Client client = clientService.findByRequestId(requestId, httpSessionBean.getConnection());
 
-        mailSenderService.sendMailToClientWithTravelDocuments(client.getEmail(), requestId,
-                httpSessionBean.getConnection());
+        try {
+            mailSenderService.sendMailToClientWithTravelDocuments(client.getEmail(), requestId,
+                    httpSessionBean.getConnection());
+
+            requestService.setStatus(requestId, Status.ПРИЙНЯТО.name(),
+                    httpSessionBean.getId(), httpSessionBean.getConnection());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+
         return "redirect:/requests/{requestId}";
     }
 }

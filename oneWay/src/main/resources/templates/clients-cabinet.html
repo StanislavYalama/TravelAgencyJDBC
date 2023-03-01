@@ -84,7 +84,7 @@
                             </form>
                         </td>
                         <td th:if="${role} ? 'client' : 'manager'">
-                            <form th:action="'/cabinet/' + ${client.id} + '/deleteRequest/' + ${el.id}" method="post">
+                            <form th:action="'/cabinet/' + ${client.id} + '/denyRequest/' + ${el.id}" method="post">
                                 <input type="submit" value="Скасувати заявку">
                             </form>
                         </td>

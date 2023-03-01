@@ -56,7 +56,7 @@ public class MailSenderService {
                 .concat("Опис: ").concat(tour.getDescription()).concat("<br><br>")
                 .concat("<h3>Нижче наведені необхідні документи:<h3><br>");
 
-        for(int i = 0; i < passportList.size(); i++) {
+        for (int i = 0; i < passportList.size(); i++) {
             textHtml = textHtml.concat("<div>")
                     .concat("Учасник ").concat(Integer.toString(i + 1)).concat("<br>")
                     .concat("ФІО: ").concat(passportList.get(i).getName()).concat("<br>")
@@ -73,36 +73,32 @@ public class MailSenderService {
         mailSender.send(mimeMessage);
     }
 
-    public void sendMailToClientWithTravelDocuments(String emailTo, int requestId, Connection connection){
+    public void sendMailToClientWithTravelDocuments(String emailTo, int requestId, Connection connection) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
 
+        helper.setTo(emailTo);
+        helper.setFrom(emailFrom);
+        helper.setSubject("Документи для участі в турі");
+        MimeMultipart multipart = new MimeMultipart("related");
+        MimeBodyPart textBodyPart = new MimeBodyPart();
+
+        String textHtml = "<html lang=\"uk\"><head><title>[Request#" + requestId + "] Документи для участі в турі</title></head><body><h1 style=\"text-align: center\">Ваші документи для участі в турі прикріплені до листа</h1></body></html>";
+
+        textBodyPart.setText(textHtml, "UTF-8", "html");
+        multipart.addBodyPart(textBodyPart);
+
         try {
-            helper.setTo(emailTo);
-            helper.setFrom(emailFrom);
-            helper.setSubject("Документи для участі в турі");
-            MimeMultipart multipart = new MimeMultipart("related");
-            MimeBodyPart textBodyPart = new MimeBodyPart();
+            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
 
-            String textHtml = "<html lang=\"uk\"><head><title>[Request#" + requestId + "] Документи для участі в турі</title></head><body><h1 style=\"text-align: center\">Ваші документи для участі в турі прикріплені до листа</h1></body></html>";
-
-            textBodyPart.setText(textHtml, "UTF-8", "html");
-            multipart.addBodyPart(textBodyPart);
-
-            try {
-                MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-
-                attachmentBodyPart.attachFile(zipDir(requestId));
-                multipart.addBodyPart(attachmentBodyPart);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mimeMessage.setContent(multipart);
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
+            attachmentBodyPart.attachFile(zipDir(requestId));
+            multipart.addBodyPart(attachmentBodyPart);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+        mimeMessage.setContent(multipart);
+        mailSender.send(mimeMessage);
 
     }
 
@@ -112,7 +108,7 @@ public class MailSenderService {
 
 //        File newFIle = new File(sourceZipFile);
 
-        try{
+        try {
 //            if(!newFIle.exists()){
 //                newFIle.mkdirs();
 //                newFIle.createNewFile();
@@ -126,7 +122,7 @@ public class MailSenderService {
             zipFile(fileToZip, fileToZip.getName(), zipOut);
             zipOut.close();
             fos.close();
-        } catch (IOException  e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return new File(sourceZipFile);

@@ -72,6 +72,23 @@ public class CabinetController {
         return "redirect:/cabinet/{clientId}";
     }
 
+    @PostMapping("/{clientId}/denyRequest/{requestId}")
+    public String requestDenyByClient(@PathVariable int clientId, @PathVariable int requestId){
+        String newStatus = switch (httpSessionBean.getRole()) {
+            case "manager" -> Status.СКАСОВАНО_АГЕНСТВОМ.name();
+            case "client" -> Status.СКАСОВАНО_КЛІЄНТОМ.name();
+            default -> "";
+        };
+
+        if(!newStatus.equals("")){
+            Request request = requestService.findById(requestId, httpSessionBean.getConnection());
+            requestService.setStatus(requestId, newStatus, request.getManagerId(),
+                    httpSessionBean.getConnection());
+        }
+
+        return "redirect:/cabinet/{clientId}";
+    }
+
     @PostMapping("/{clientId}/deleteRequest/{requestId}")
     String deleteRequest(@PathVariable(name = "clientId") int clientId, @PathVariable(name = "requestId") int requestId){
         requestService.deleteById(requestId, httpSessionBean.getConnection());
