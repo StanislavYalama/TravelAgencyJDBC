@@ -83,12 +83,9 @@ public class RequestController {
 
         try {
             mailSenderService.sendMailToTourOperator(
-                    tourOperatorService.findById(
-                            tourService.findById(
-                                    requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()).getTourOperatorId(), httpSessionBean.getConnection()).getEmail(),
+                    tourOperatorService.findByRequestId(requestId, httpSessionBean.getConnection()).getEmail(),
                     passportService.findByRequestId(requestId, httpSessionBean.getConnection()),
-                    tourService.findById(
-                            requestService.findById(requestId, httpSessionBean.getConnection()).getTourId(), httpSessionBean.getConnection()));
+                    tourService.findByRequestId(requestId, httpSessionBean.getConnection()));
 
             requestService.setStatus(requestId, Status.БРОНЮВАННЯ.name().toLowerCase(),
                     httpSessionBean.getId(), httpSessionBean.getConnection());

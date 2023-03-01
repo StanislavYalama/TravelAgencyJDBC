@@ -14,6 +14,32 @@ import java.util.List;
 @Component
 @Slf4j
 public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> implements TourRepository {
+
+    @Override
+    public Tour findByRequestId(int requestId, Connection connection) {
+        Tour tour = new Tour();
+        String query = "SELECT * FROM tour WHERE id = (SELECT tour_id FROM request WHERE id = ?)";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, requestId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            tour.setId(resultSet.getInt("id"));
+            tour.setDateStart(resultSet.getDate("date_start").toLocalDate());
+            tour.setDateEnd(resultSet.getDate("date_end").toLocalDate());
+            tour.setDescription(resultSet.getString("description"));
+            tour.setCreatorId(resultSet.getInt("creator_id"));
+            tour.setLocationCount(resultSet.getInt("location_count"));
+            tour.setPrice(resultSet.getDouble("price"));
+            tour.setPriceWithPromotion(resultSet.getDouble("price_with_promotion"));
+            tour.setTourOperatorId(resultSet.getInt("tour_operator_id"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tour;
+    }
+
     @Override
     public void saveLocations(List<Location> locationList, int tourId, Connection connection) {
         String query = "INSERT INTO tour_location(tour_id, location_id, location_order) VALUES";

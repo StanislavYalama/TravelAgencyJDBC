@@ -27,6 +27,9 @@ public class TourService {
     public Tour findById(int tourId, Connection connection){
         return tourRepository.findById(Tour.class, tourId, connection);
     }
+    public Tour findByRequestId(int requestId, Connection connection){
+        return tourRepository.findByRequestId(requestId, connection);
+    }
     public void save(Tour tour, Connection connection){
         tourRepository.save(tour, connection);
     }

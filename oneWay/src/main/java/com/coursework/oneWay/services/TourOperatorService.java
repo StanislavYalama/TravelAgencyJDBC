@@ -16,4 +16,8 @@ public class TourOperatorService {
     public TourOperator findById(int tourOperatorId, Connection connectionn){
         return tourOperatorRepository.findById(TourOperator.class, tourOperatorId, connectionn);
     }
+
+    public TourOperator findByRequestId(int requestId, Connection connection){
+        return tourOperatorRepository.findByRequestId(requestId, connection);
+    }
 }

@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface TourRepository {
 
+    Tour findByRequestId(int requestId, Connection connection);
+
     void save(Tour tour, Connection connection);
 
     void saveLocations(List<Location> locationList, int tourId, Connection connection);
