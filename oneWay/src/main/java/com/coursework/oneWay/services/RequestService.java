@@ -1,12 +1,9 @@
 package com.coursework.oneWay.services;
 
-import com.coursework.oneWay.Status;
+import com.coursework.oneWay.RequestStatus;
 import com.coursework.oneWay.models.Request;
-import com.coursework.oneWay.repositories.RequestRepository;
 import com.coursework.oneWay.repositories.RequestRepositoryImpl;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import java.sql.Connection;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -103,14 +99,14 @@ public class RequestService {
         }
         if (!isUpdated) {
             requestList.forEach(el -> {
-                if(el.getStatus().equals(Status.ВІДПРАВЛЕНО.toDBStatus())){
+                if(el.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBStatus()) || !el.isPaymentStatus()){
                     long duration = Duration.between(
                             tourService.findByRequestId(el.getId(), connection).getDateStart(),
                             LocalDate.now()).toMillis();
 
                     if (duration < denyInterval) {
                         requestRepository.update(Request.class, el.getId(), "status",
-                                Status.СКАСОВАНО_АГЕНСТВОМ.toDBStatus(), connection);
+                                RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBStatus(), connection);
                     }
                 }
             });
@@ -124,14 +120,14 @@ public class RequestService {
             isUpdated = false;
         }
         if (!isUpdated) {
-            if(request.getStatus().equals(Status.ВІДПРАВЛЕНО.toDBStatus())){
+            if(request.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBStatus()) || !request.isPaymentStatus()){
                 long duration = Duration.between(
                         tourService.findByRequestId(request.getId(), connection).getDateStart(),
                         LocalDate.now()).toMillis();
 
                 if (duration < denyInterval) {
                     requestRepository.update(Request.class, request.getId(), "status",
-                            Status.СКАСОВАНО_АГЕНСТВОМ.toDBStatus(), connection);
+                            RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBStatus(), connection);
                 }
             }
 

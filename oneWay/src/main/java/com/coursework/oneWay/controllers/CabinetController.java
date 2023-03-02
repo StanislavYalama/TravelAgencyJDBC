@@ -1,6 +1,6 @@
 package com.coursework.oneWay.controllers;
 
-import com.coursework.oneWay.Status;
+import com.coursework.oneWay.RequestStatus;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
@@ -40,7 +40,7 @@ public class CabinetController {
         model.addAttribute("balance", balance);
         model.addAttribute("request", requestService.findByClientId(id,
                 httpSessionBean.getConnection()).stream().sorted(Comparator.comparing(Request::getDate)).collect(Collectors.toList()));
-        model.addAttribute("status_values", EnumSet.allOf(Status.class));
+        model.addAttribute("status_values", EnumSet.allOf(RequestStatus.class));
         model.addAttribute("passport", passportService.findById(client.getPassportId(),
                 httpSessionBean.getConnection()));
         model.addAttribute("voucher", voucherService.findByClientId(id,
@@ -73,10 +73,10 @@ public class CabinetController {
     }
 
     @PostMapping("/{clientId}/denyRequest/{requestId}")
-    public String requestDenyByClient(@PathVariable int clientId, @PathVariable int requestId){
+    public String requestDeny(@PathVariable int clientId, @PathVariable int requestId){
         String newStatus = switch (httpSessionBean.getRole()) {
-            case "manager" -> Status.СКАСОВАНО_АГЕНСТВОМ.name();
-            case "client" -> Status.СКАСОВАНО_КЛІЄНТОМ.name();
+            case "manager" -> RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBStatus();
+            case "client" -> RequestStatus.СКАСОВАНО_КЛІЄНТОМ.toDBStatus();
             default -> "";
         };
 

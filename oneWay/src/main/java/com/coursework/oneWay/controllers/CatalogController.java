@@ -124,13 +124,13 @@ public class CatalogController {
                 clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection()).getPassportId()),
                 httpSessionBean.getConnection());
 
-        for(int i = 1; i < membersCount; i++){
+        for(int i = 0; i < membersCount - 1; i++){
             Passport passport = new Passport(
                     0,
-                    nameList.get(i - 1),
-                    documentNumberList.get(i - 1),
-                    LocalDate.parse(dateOfExpiryList.get(i - 1)),
-                    LocalDate.parse(dateOfIssueList.get(i - 1))
+                    nameList.get(i),
+                    documentNumberList.get(i),
+                    LocalDate.parse(dateOfExpiryList.get(i)),
+                    LocalDate.parse(dateOfIssueList.get(i))
             );
             int passportId = passportService.save(passport, httpSessionBean.getConnection());
             requestPassportService.save(new RequestPassport(0, requestId, passportId), httpSessionBean.getConnection());

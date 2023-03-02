@@ -1,6 +1,6 @@
 package com.coursework.oneWay.controllers;
 
-import com.coursework.oneWay.Status;
+import com.coursework.oneWay.RequestStatus;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
@@ -42,7 +42,7 @@ public class RequestController {
                 requestService.findAdmitted(httpSessionBean.getConnection()));
         model.addAttribute("requestUnadmit",
                 requestService.findUnadmitted(httpSessionBean.getConnection()));
-        model.addAttribute("status_values", EnumSet.allOf(Status.class));
+        model.addAttribute("status_values", EnumSet.allOf(RequestStatus.class));
         return "requests";
     }
     @GetMapping("/{requestId}")
@@ -87,7 +87,7 @@ public class RequestController {
                     passportService.findByRequestId(requestId, httpSessionBean.getConnection()),
                     tourService.findByRequestId(requestId, httpSessionBean.getConnection()));
 
-            requestService.setStatus(requestId, Status.БРОНЮВАННЯ.name().toLowerCase(),
+            requestService.setStatus(requestId, RequestStatus.БРОНЮВАННЯ.toDBStatus(),
                     httpSessionBean.getId(), httpSessionBean.getConnection());
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -116,7 +116,7 @@ public class RequestController {
             mailSenderService.sendMailToClientWithTravelDocuments(client.getEmail(), requestId,
                     httpSessionBean.getConnection());
 
-            requestService.setStatus(requestId, Status.ПРИЙНЯТО.name(),
+            requestService.setStatus(requestId, RequestStatus.ПРИЙНЯТО.toDBStatus(),
                     httpSessionBean.getId(), httpSessionBean.getConnection());
         } catch (MessagingException e) {
             e.printStackTrace();

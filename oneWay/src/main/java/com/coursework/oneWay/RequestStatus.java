@@ -1,6 +1,6 @@
 package com.coursework.oneWay;
 
-public enum Status {
+public enum RequestStatus {
     ВІДПРАВЛЕНО, БРОНЮВАННЯ, ПРИЙНЯТО, СКАСОВАНО_КЛІЄНТОМ, СКАСОВАНО_АГЕНСТВОМ;
 
     public String toDBStatus(){
