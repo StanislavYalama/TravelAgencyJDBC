@@ -71,6 +71,17 @@
                 <input type="text" name="placeName" placeholder="Назва місця">
             </form>
         </div>
+        <br>
+        <div>
+            <p>Створення документу</p>
+            <form action="/catalog/saveDocument" method="post">
+                <select name="documentType">
+                    <option th:each="el : ${documentTypes}" th:value="${el}" th:text="${#strings.toLowerCase(el)}"></option>
+                </select>
+                <input type="text" placeholder="Назва документу">
+                <input type="submit" value="Зберегти">
+            </form>
+        </div>
     </div>
 </body>
 </html>

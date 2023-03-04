@@ -1,5 +1,6 @@
 package com.coursework.oneWay.controllers;
 
+import com.coursework.oneWay.DocumentType;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 @Controller
@@ -38,6 +40,8 @@ public class CatalogController {
     private ClientService clientService;
     @Autowired
     private ExcursionService excursionService;
+    @Autowired
+    private DocumentService documentService;
 
     @GetMapping
     public String catalog(Model model) throws SQLException {
@@ -46,6 +50,7 @@ public class CatalogController {
         model.addAttribute("tours",
                 tourService.findAll(httpSessionBean.getConnection()));
         model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+        model.addAttribute("documentTypes", EnumSet.allOf(DocumentType.class));
 
 
         httpSessionBean.setLastUrl("redirect:/catalog");
@@ -177,6 +182,19 @@ public class CatalogController {
         return "redirect:/catalog/{tourId}";
     }
 
+    @PostMapping("/{tourId}/addDocument")
+    public String addDocument(@PathVariable int tourId,
+                              @RequestParam(name = "documentList", required = false) List<Integer> documentIdList){
+
+        if(documentIdList != null){
+            List<TourDocument> tourDocumentList = new ArrayList<>();
+            documentIdList.forEach(el -> tourDocumentList.add(new TourDocument(0, tourId, el)));
+            documentService.saveTourDocumentList(tourDocumentList, httpSessionBean.getConnection());
+        }
+
+        return "redirect:/catalog/{tourId}";
+    }
+
     @PostMapping("/saveLocation")
     public String saveLocation(Location location){
         location.setCreatorId(httpSessionBean.getId());
@@ -187,6 +205,12 @@ public class CatalogController {
     @PostMapping("/saveExcursion")
     public String saveExcursion(Excursion excursion){
         excursionService.save(excursion, httpSessionBean.getConnection());
+        return httpSessionBean.getLastUrl();
+    }
+
+    @PostMapping("/saveDocument")
+    public String saveDocument(Document document){
+        documentService.save(document, httpSessionBean.getConnection());
         return httpSessionBean.getLastUrl();
     }
 }

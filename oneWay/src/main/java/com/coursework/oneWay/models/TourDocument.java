@@ -5,11 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Document {
+@AllArgsConstructor
+public class TourDocument {
     private int id;
-    private String name;
-    private String nameEng;
-    private String type;
+    private int tourId;
+    private int documentId;
 }

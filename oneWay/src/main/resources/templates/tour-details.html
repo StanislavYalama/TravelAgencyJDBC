@@ -95,14 +95,14 @@
 <br>
 <div class="forms" th:if="${role}=='tour_manager'">
   <div>
-    Form linking promotion
+    Приєднати знижки
     <form th:action="'/catalog/addPromotion/' + ${tour.id}" method="post">
       Номер знижки: <input type="number" name="promotionId"><br>
       <input type="submit" value="Link">
     </form>
   </div>
   <div th:if="${locations.size()} &lt; ${tour.locationCount}">
-    Form linking locations
+    Приєднати локації до тура
     <form th:action="'/catalog/addLocation/' + ${tour.id}" method="post">
       <div th:each="i, itemStat : ${#numbers.sequence(1, tour.locationCount - locations.size(), 1)}">
         <select name="location">
@@ -112,6 +112,15 @@
         <br>
       </div>
       <input type="submit" value="Підтвердити">
+    </form>
+  </div>
+  <div>
+    Вказати потрібні документи
+    <form action="'/catalog/' + ${tourId} + '/addDocument'" method="post">
+      <div th:each="el : ${documentList}">
+        <input type="checkbox"  name="documentIdList" th:id="${el.id}" th:value="${el.id}">
+        <label th:for="${el.id}" th:text="${el.name}"></label>
+      </div>
     </form>
   </div>
 </div>
