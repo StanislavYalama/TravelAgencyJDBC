@@ -99,14 +99,14 @@ public class RequestService {
         }
         if (!isUpdated) {
             requestList.forEach(el -> {
-                if(el.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBStatus()) || !el.isPaymentStatus()){
+                if(el.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBFormat()) || !el.isPaymentStatus()){
                     long duration = Duration.between(
                             tourService.findByRequestId(el.getId(), connection).getDateStart(),
                             LocalDate.now()).toMillis();
 
                     if (duration < denyInterval) {
                         requestRepository.update(Request.class, el.getId(), "status",
-                                RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBStatus(), connection);
+                                RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBFormat(), connection);
                     }
                 }
             });
@@ -120,14 +120,14 @@ public class RequestService {
             isUpdated = false;
         }
         if (!isUpdated) {
-            if(request.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBStatus()) || !request.isPaymentStatus()){
+            if(request.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBFormat()) || !request.isPaymentStatus()){
                 long duration = Duration.between(
                         tourService.findByRequestId(request.getId(), connection).getDateStart(),
                         LocalDate.now()).toMillis();
 
                 if (duration < denyInterval) {
                     requestRepository.update(Request.class, request.getId(), "status",
-                            RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBStatus(), connection);
+                            RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBFormat(), connection);
                 }
             }
 

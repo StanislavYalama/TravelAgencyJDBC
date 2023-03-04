@@ -71,6 +71,9 @@ public class CatalogController {
         List<Excursion> excursionList = excursionService.findByTourId(tourId, httpSessionBean.getConnection());
         model.addAttribute("excursionList", excursionList);
         model.addAttribute("excursionsGson", new Gson().toJson(excursionList));
+        model.addAttribute("documentList", documentService.findAll(httpSessionBean.getConnection()));
+        model.addAttribute("tourDocumentList",
+                documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection()));
 
         httpSessionBean.setLastUrl("redirect:/catalog/".concat(Integer.toString(tourId)));
         return "tour-details";
@@ -184,9 +187,11 @@ public class CatalogController {
 
     @PostMapping("/{tourId}/addDocument")
     public String addDocument(@PathVariable int tourId,
-                              @RequestParam(name = "documentList", required = false) List<Integer> documentIdList){
+                              @RequestParam(name = "documentIdList") List<Integer> documentIdList){
 
-        if(documentIdList != null){
+        System.out.println(documentIdList);
+        if(!documentIdList.isEmpty()){
+            System.out.println(documentIdList.get(0));
             List<TourDocument> tourDocumentList = new ArrayList<>();
             documentIdList.forEach(el -> tourDocumentList.add(new TourDocument(0, tourId, el)));
             documentService.saveTourDocumentList(tourDocumentList, httpSessionBean.getConnection());

@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TourDocument {
-    private Integer id;
+public class TourDocumentView {
+
     private Integer tourId;
     private Integer documentId;
+    private String name;
 }

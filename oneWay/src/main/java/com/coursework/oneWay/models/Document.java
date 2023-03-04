@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Document {
-    private int id;
+    private Integer id;
     private String name;
     private String nameEng;
     private String type;

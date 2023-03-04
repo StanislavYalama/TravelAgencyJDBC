@@ -64,7 +64,7 @@
             <form action="/catalog/saveExcursion" method="post">
                 <select name="locationId">
                     <option th:each="el : ${allLocations}" th:value="${el.id}"
-                            th:text="${el.country}-${el.city}"></option>
+                            th:text="${el.country} + ' - ' + ${el.city}"></option>
                 </select>
                 <input type="text" name="contentType" placeholder="Тип контенту">
                 <input type="number" name="countPlaces" placeholder="К-ть місць">
@@ -75,10 +75,12 @@
         <div>
             <p>Створення документу</p>
             <form action="/catalog/saveDocument" method="post">
-                <select name="documentType">
-                    <option th:each="el : ${documentTypes}" th:value="${el}" th:text="${#strings.toLowerCase(el)}"></option>
+                <select name="type">
+                    <option th:each="el : ${documentTypes}" th:value="${el.toDBFormat()}"
+                            th:text="${el.toDBFormat()}"></option>
                 </select>
-                <input type="text" placeholder="Назва документу">
+                <input type="text" name="name" placeholder="Назва документу">
+                <input type="text" name="nameEng" placeholder="Назва документу англ.">
                 <input type="submit" value="Зберегти">
             </form>
         </div>

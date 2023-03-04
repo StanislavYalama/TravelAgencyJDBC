@@ -46,6 +46,12 @@
   </form>
 </div>
 <br><br>
+<div class="tour-documents" th:if="${tourDocumentList.size()} &gt; 0">
+  <ul>
+    <li th:each="el : ${tourDocumentList}" th:text="${el.name}"></li>
+  </ul>
+</div>
+<br>
 <div class="locations" th:if="${locations.size()} &gt; 0">
   <p>Locations</p>
   <table border="1">
@@ -116,11 +122,12 @@
   </div>
   <div>
     Вказати потрібні документи
-    <form action="'/catalog/' + ${tourId} + '/addDocument'" method="post">
+    <form th:action="'/catalog/' + ${tour.id} + '/addDocument'" method="post">
       <div th:each="el : ${documentList}">
         <input type="checkbox"  name="documentIdList" th:id="${el.id}" th:value="${el.id}">
         <label th:for="${el.id}" th:text="${el.name}"></label>
       </div>
+      <input type="submit" value="Зберегти">
     </form>
   </div>
 </div>

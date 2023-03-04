@@ -75,8 +75,8 @@ public class CabinetController {
     @PostMapping("/{clientId}/denyRequest/{requestId}")
     public String requestDeny(@PathVariable int clientId, @PathVariable int requestId){
         String newStatus = switch (httpSessionBean.getRole()) {
-            case "manager" -> RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBStatus();
-            case "client" -> RequestStatus.СКАСОВАНО_КЛІЄНТОМ.toDBStatus();
+            case "manager" -> RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBFormat();
+            case "client" -> RequestStatus.СКАСОВАНО_КЛІЄНТОМ.toDBFormat();
             default -> "";
         };
 

@@ -87,7 +87,7 @@ public class RequestController {
                     passportService.findByRequestId(requestId, httpSessionBean.getConnection()),
                     tourService.findByRequestId(requestId, httpSessionBean.getConnection()));
 
-            requestService.setStatus(requestId, RequestStatus.БРОНЮВАННЯ.toDBStatus(),
+            requestService.setStatus(requestId, RequestStatus.БРОНЮВАННЯ.toDBFormat(),
                     httpSessionBean.getId(), httpSessionBean.getConnection());
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -116,7 +116,7 @@ public class RequestController {
             mailSenderService.sendMailToClientWithTravelDocuments(client.getEmail(), requestId,
                     httpSessionBean.getConnection());
 
-            requestService.setStatus(requestId, RequestStatus.ПРИЙНЯТО.toDBStatus(),
+            requestService.setStatus(requestId, RequestStatus.ПРИЙНЯТО.toDBFormat(),
                     httpSessionBean.getId(), httpSessionBean.getConnection());
         } catch (MessagingException e) {
             e.printStackTrace();

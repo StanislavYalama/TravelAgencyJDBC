@@ -2,6 +2,7 @@ package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Document;
 import com.coursework.oneWay.models.TourDocument;
+import com.coursework.oneWay.models.TourDocumentView;
 import com.coursework.oneWay.repositories.DocumentRepositoryImpl;
 import com.coursework.oneWay.repositories.TourDocumentRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ public class DocumentService {
     @Autowired
     private TourDocumentRepositoryImpl tourDocumentRepository;
 
+    public List<Document> findAll(Connection connection){
+        return documentRepository.findAll(Document.class, connection);
+    }
+
     public void save(Document document, Connection connection){
         documentRepository.save(document, connection);
     }
@@ -26,4 +31,7 @@ public class DocumentService {
         tourDocumentList.forEach(el -> tourDocumentRepository.save(el, connection));
     }
 
+    public List<TourDocumentView> findTourDocumentByTourId(int tourId, Connection connection) {
+        return tourDocumentRepository.findByTourId(tourId, connection);
+    }
 }
