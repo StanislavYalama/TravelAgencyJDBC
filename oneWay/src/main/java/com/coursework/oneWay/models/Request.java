@@ -16,7 +16,7 @@ public class Request {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
     private Integer tourId;
-    private Integer managerId;
+    private Integer workerId;
     private boolean paymentStatus;
 
 }

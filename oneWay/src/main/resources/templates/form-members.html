@@ -6,18 +6,18 @@
 </head>
 <body>
     <div>
+        <p>Завантажте фото документів, потрібних для оформлення тура</p>
         <form th:action="'/catalog/' + ${tourId} + '/addMembers/' + ${members_count} + '/processing'" method="post"
-              th:if="${members_count} &gt; 0" name="passports">
-            <div>
-                <div th:each="i, itemStat : ${#numbers.sequence(2, members_count, 1)}">
-                    Повне ім'я <input type="text" name="name" required><br><br>
-                    Номер документа <input type="text" name="documentNumber" required><br><br>
-                    Дійсний до <input type="date" name="dateOfExpiry" required><br><br>
-                    Дата випуску <input type="date" name="dateOfIssue" required><br><br>
-                </div>
+              enctype="multipart/form-data">
+            <div th:each="i, itemStat : ${#numbers.sequence(1, members_count, 1)}">
+                <p th:text="'Учасник ' + ${i}"></p>
+                <input th:each="el : ${requiredTourDocumentList}"
+                       name="requiredDocuments" type="file" th:placeholder="'Завантажте ' + ${el.name}"
+                       accept="application/pdf, image/jpeg, image/png"><br>
             </div>
-            <input type="submit" value="Надіслати">
+            <input type="submit" value="Завантажити">
         </form>
     </div>
 </body>
 </html>
+

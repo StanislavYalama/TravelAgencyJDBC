@@ -35,8 +35,8 @@ public class LoginService {
     public String getRole(String name, Connection connection) throws SQLException {
         String role = "";
         String query = """
-                SELECT rolname FROM pg_roles 
-                WHERE pg_has_role( ?, oid, 'member') AND rolname != ?""";
+                SELECT rolname FROM pg_roles
+                WHERE pg_has_role(?, oid, 'member') AND rolname != ?""";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, name);
         preparedStatement.setString(2, name);

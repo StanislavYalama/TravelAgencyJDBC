@@ -2,13 +2,10 @@ package com.coursework.oneWay.repositories;
 
 import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
-import com.coursework.oneWay.services.LoginService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -28,7 +25,7 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             tour.setDateStart(resultSet.getDate("date_start").toLocalDate());
             tour.setDateEnd(resultSet.getDate("date_end").toLocalDate());
             tour.setDescription(resultSet.getString("description"));
-            tour.setCreatorId(resultSet.getInt("creator_id"));
+            tour.setWorkerId(resultSet.getInt("worker_id"));
             tour.setLocationCount(resultSet.getInt("location_count"));
             tour.setPrice(resultSet.getDouble("price"));
             tour.setPriceWithPromotion(resultSet.getDouble("price_with_promotion"));

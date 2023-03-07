@@ -31,7 +31,7 @@
                     </td>
                     <td th:text="${request.date}"></td>
                     <td th:text="${request.tourId}"></td>
-<!--                    <td th:text="${request.managerId}"></td>-->
+<!--                    <td th:text="${request.workerId}"></td>-->
                     <td th:text="${request.paymentStatus}"></td>
                     <td>
                         <input type="submit" value="Надіслати">
@@ -90,7 +90,6 @@
             <form th:action="'/requests/' + ${request.id} + '/saveTravelDocuments'" method="post"
                   enctype="multipart/form-data">
                 <select name="passportId">
-                    <option value=0>Не обрано</option>
                     <option th:each="passport : ${passports}" th:value="${passport.id}"
                             th:text="${passport.name}"></option>
                 </select><br>

@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.Date;
@@ -63,16 +65,20 @@ public class JDBCCustomRepositoryImpl<T, ID> extends ReadOnlyRepositoryImpl<T, I
         try(PreparedStatement statement = connection.prepareStatement(queryInsert)) {
 
             for(int i = 0; i < columnList.size(); i++){
-//                if(methodList.get(i).invoke(t) instanceof java.time.LocalDateTime){
-//                    java.sql.Timestamp timestamp = new Timestamp(((Date) methodList.get(i).invoke(t)).getTime());
-//                    statement.setTimestamp(i+1, timestamp);
-//                } else if(methodList.get(i).invoke(t) instanceof java.time.LocalTime){
-//                    Time time = Time.valueOf((LocalTime) methodList.get(i).invoke(t));
-//                    statement.setTime(i+1, time);
-//                }
-//                else{
-                    statement.setObject(i+1, methodList.get(i).invoke(t));
-//                }
+                Object objectFieldValue = methodList.get(i).invoke(t);
+                if(objectFieldValue instanceof java.time.LocalDate){
+                    java.sql.Date date = java.sql.Date.valueOf(((LocalDate) objectFieldValue));
+                    statement.setDate(i+1, date);
+                } else if(objectFieldValue instanceof java.time.LocalDateTime){
+                    Timestamp date = Timestamp.valueOf(((LocalDateTime) objectFieldValue));
+                    statement.setTimestamp(i+1, date);
+                } else if(objectFieldValue instanceof java.time.LocalTime){
+                    Time time = Time.valueOf((LocalTime) objectFieldValue);
+                    statement.setTime(i+1, time);
+                }
+                else{
+                    statement.setObject(i+1, objectFieldValue);
+                }
             }
 
             statement.executeUpdate();

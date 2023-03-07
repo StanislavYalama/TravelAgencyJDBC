@@ -6,15 +6,15 @@ import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/catalog")
@@ -42,6 +42,11 @@ public class CatalogController {
     private ExcursionService excursionService;
     @Autowired
     private DocumentService documentService;
+    @Autowired
+    private MultipartFileUtils multipartFileUtils;
+
+    @Value("${upload.path}")
+    String toClientDocumentPackage;
 
     @GetMapping
     public String catalog(Model model) throws SQLException {
@@ -51,7 +56,6 @@ public class CatalogController {
                 tourService.findAll(httpSessionBean.getConnection()));
         model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
         model.addAttribute("documentTypes", EnumSet.allOf(DocumentType.class));
-
 
         httpSessionBean.setLastUrl("redirect:/catalog");
         return "catalog";
@@ -80,7 +84,7 @@ public class CatalogController {
     }
     @PostMapping("/save")
     public String catalogSave(Tour tour){
-        tour.setCreatorId(httpSessionBean.getId());
+        tour.setWorkerId(httpSessionBean.getId());
         tourService.save(tour, httpSessionBean.getConnection());
         return "redirect:/catalog";
     }
@@ -94,57 +98,55 @@ public class CatalogController {
     public String catalogAddMembersPage(@PathVariable(name = "tourId") int tourId,
                                         @RequestParam(name = "members_count") int members_count, Model model){
 
-        if(members_count == 1){
-            return "redirect:/catalog/" + tourId + "/addOneMember/processing";
+        if(members_count > 0){
+            List<TourDocumentView> tourDocumentViewList = documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection())
+                    .stream().filter(el -> el.getType().equals(DocumentType.ДЛЯ_ЗАЯВКИ.toDBFormat())).toList();
+            model.addAttribute("requiredTourDocumentList", tourDocumentViewList);
+            model.addAttribute("members_count", members_count);
+//            model.addAttribute("requiredTourDocumentListSize", tourDocumentViewList.size());
+
+            return "form-members";
         }
-        model.addAttribute("tourId", tourId);
-        model.addAttribute("members_count", members_count);
-        model.addAttribute("passport", passportService.findById(
-                clientService.findById(httpSessionBean.getId(),
-                        httpSessionBean.getConnection()).getPassportId(),
-                httpSessionBean.getConnection()));
-        model.addAttribute("new_passport", new Passport());
-        return "form-members";
+
+        return "redirect:/catalog/{tourId}";
+
     }
 
-    @GetMapping("/{tourId}/addOneMember/processing")
-    public String catalogAddOneMember(@PathVariable(name = "tourId") int tourId){
+    @PostMapping("/{tourId}/addMembers/{membersCount}/processing")
+    public String catalogAddMembers(@PathVariable int tourId,
+                                    @PathVariable int membersCount,
+                                    @RequestParam(name = "requiredDocuments") MultipartFile[] requiredDocuments,
+                                    Model model){
         int requestId = requestService.save(httpSessionBean.getId(), tourId, httpSessionBean.getConnection());
         Client client = clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection());
 
-        requestPassportService.save(new RequestPassport(0, requestId, client.getPassportId()),
-                httpSessionBean.getConnection());
+        if(requiredDocuments != null){
+            List<TourDocumentView> requiredTourDocuments =
+                     documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection())
+                            .stream().filter(el -> el.getType().equals(DocumentType.ДЛЯ_ЗАЯВКИ.toDBFormat())).toList();
 
-        return "redirect:/cabinet/" + client.getId();
-    }
+            int k = 0;
+            for(int i = 0; i < membersCount; i++){
+                for(TourDocumentView el : requiredTourDocuments){
+                    String toFilePath = "request" + requestId + "/member" + (i + 1) + "/";
+                    String fullToFilePath = toClientDocumentPackage +  toFilePath;
 
-    @PostMapping("/{tourId}/addMembers/{members_count}/processing")
-    public String catalogAddMembers(@PathVariable(name = "tourId") int tourId,
-                                    @RequestParam(name = "name") List<String> nameList,
-                                    @RequestParam(name = "documentNumber") List<String> documentNumberList,
-                                    @RequestParam(name = "dateOfExpiry") List<String> dateOfExpiryList,
-                                    @RequestParam(name = "dateOfIssue") List<String> dateOfIssueList,
-                                    @PathVariable(name = "members_count") int membersCount){
-        int requestId = requestService.save(httpSessionBean.getId(), tourId, httpSessionBean.getConnection());
-        Client client = clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection());
+                    try {
+                        String filePathDB = toFilePath + multipartFileUtils.uploadFile(requiredDocuments[k], fullToFilePath, el.getName());
 
-        requestPassportService.save(new RequestPassport(0, requestId,
-                clientService.findById(httpSessionBean.getId(), httpSessionBean.getConnection()).getPassportId()),
-                httpSessionBean.getConnection());
-
-        for(int i = 0; i < membersCount - 1; i++){
-            Passport passport = new Passport(
-                    0,
-                    nameList.get(i),
-                    documentNumberList.get(i),
-                    LocalDate.parse(dateOfExpiryList.get(i)),
-                    LocalDate.parse(dateOfIssueList.get(i))
-            );
-            int passportId = passportService.save(passport, httpSessionBean.getConnection());
-            requestPassportService.save(new RequestPassport(0, requestId, passportId), httpSessionBean.getConnection());
+                        documentService.saveRequestTourDocument(
+                                new RequestTourDocument(0, requestId, el.getTourDocumentId(), filePathDB, i + 1),
+                                httpSessionBean.getConnection());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    k++;
+                }
+            }
         }
 
-        return "redirect:/cabinet/" + client.getId();
+        return "redirect:/catalog/{tourId}";
+//        return "redirect:/cabinet/" + client.getId();
     }
 
     @PostMapping("/addPromotion/{tourId}")
@@ -202,7 +204,7 @@ public class CatalogController {
 
     @PostMapping("/saveLocation")
     public String saveLocation(Location location){
-        location.setCreatorId(httpSessionBean.getId());
+        location.setWorkerId(httpSessionBean.getId());
         locationService.save(location, httpSessionBean.getConnection());
         return httpSessionBean.getLastUrl();
     }

@@ -29,7 +29,7 @@ public class PromotionRepositoryImpl extends JDBCCustomRepositoryImpl<Promotion,
                 promotion.setId(resultSet.getInt("id"));
                 promotion.setDateBeginning(resultSet.getObject("date_beginning", LocalDateTime.class));
                 promotion.setDateEnd(resultSet.getObject("date_end", LocalDateTime.class));
-                promotion.setCreatorId(resultSet.getInt("creator_id"));
+                promotion.setWorkerId(resultSet.getInt("worker_id"));
                 promotion.setDiscountPercentage(resultSet.getInt("discount_percentage"));
                 promotionList.add(promotion);
             }

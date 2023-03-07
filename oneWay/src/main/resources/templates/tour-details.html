@@ -26,7 +26,7 @@
     <td th:text="${tour.price}"></td>
     <td th:text="${tour.priceWithPromotion}"></td>
     <td th:text="${tour.description}"></td>
-    <td th:text="${tour.creatorId}"></td>
+    <td th:text="${tour.workerId}"></td>
     <td th:text="${tour.tourOperatorId}"></td>
     <td th:text="${tour.locationCount}"></td>
   </table>
@@ -69,7 +69,7 @@
       <td th:text="${el.city}"></td>
       <td th:text="${el.description}"></td>
       <td th:text="${el.price}"></td>
-      <td th:text="${el.creatorId}"></td>
+      <td th:text="${el.workerId}"></td>
       <td>
         <form th:action="'/catalog/' + ${tour.id} + '/deleteLocation/' + ${el.id}" method="post">
           <input type="submit" value="Відкріпити">
@@ -93,7 +93,7 @@
       <td th:text="${el.id}"></td>
       <td th:text="${el.dateBeginning}"></td>
       <td th:text="${el.dateEnd}"></td>
-      <td th:text="${el.creatorId}"></td>
+      <td th:text="${el.workerId}"></td>
       <td th:text="${el.discountPercentage}"></td>
     </tr>
   </table>

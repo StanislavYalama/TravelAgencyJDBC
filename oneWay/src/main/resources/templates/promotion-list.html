@@ -26,7 +26,7 @@
                 <td><a th:href="'/promotions/' + ${el.id}" th:text="${el.id}"></a></td>
                 <td th:text="${el.dateBeginning}"></td>
                 <td th:text="${el.dateEnd}"></td>
-                <td th:text="${el.creatorId}"></td>
+                <td th:text="${el.workerId}"></td>
                 <td th:text="${el.discountPercentage}"></td>
                 <td th:if="${role}=='tour_manager'">
                     <form th:action="'/promotions/delete/' + ${el.id}" method="post">

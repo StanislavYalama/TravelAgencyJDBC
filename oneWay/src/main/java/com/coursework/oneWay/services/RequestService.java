@@ -36,38 +36,33 @@ public class RequestService {
     private RequestRepositoryImpl requestRepository;
 
     public List<Request> findAll(Connection connection) {
-        List<Request> requestList = requestRepository.findAll(Request.class, connection);
 
-        checkDenyStatus(requestList, connection);
-        return requestList;
+//        checkDenyStatus(requestList, connection);
+        return requestRepository.findAll(Request.class, connection);
     }
 
     public Request findById(int requestId, Connection connection) {
-        Request requestList = requestRepository.findById(Request.class, requestId, connection);
 
-        checkDenyStatus(requestList, connection);
-        return requestList;
+//        checkDenyStatus(requestList, connection);
+        return requestRepository.findById(Request.class, requestId, connection);
     }
 
     public List<Request> findUnadmitted(Connection connection) {
-        List<Request> requestList = requestRepository.findUnadmitted(connection);
 
-        checkDenyStatus(requestList, connection);
-        return requestList;
+//        checkDenyStatus(requestList, connection);
+        return requestRepository.findUnadmitted(connection);
     }
 
     public List<Request> findAdmitted(Connection connection) {
-        List<Request> requestList = requestRepository.findAdmitted(connection);
 
-        checkDenyStatus(requestList, connection);
-        return requestList;
+//        checkDenyStatus(requestList, connection);
+        return requestRepository.findAdmitted(connection);
     }
 
     public List<Request> findByClientId(int id, Connection connection) {
-        List<Request> requestList = requestRepository.findByClientId(id, connection);
 
-        checkDenyStatus(requestList, connection);
-        return requestList;
+//        checkDenyStatus(requestList, connection);
+        return requestRepository.findByClientId(id, connection);
     }
 
     public void save(Request request, Connection connection) {
@@ -75,7 +70,7 @@ public class RequestService {
     }
 
     public int save(int clientId, int tourId, Connection connection) {
-        requestRepository.save(new Request(0, clientId, "ВІДПРАВЛЕНО", LocalDateTime.now(), tourId, null, false), connection);
+        requestRepository.save(new Request(0, clientId, RequestStatus.ВІДПРАВЛЕНО.toDBFormat(), LocalDateTime.now(), tourId, null, false), connection);
         return requestRepository.getCurrentRequestIdSequenceValue(connection);
     }
 
@@ -93,6 +88,7 @@ public class RequestService {
         requestRepository.pay(requestId, clientId, connection);
     }
 
+    //TODO
     private void checkDenyStatus(List<Request> requestList, Connection connection) {
         if (Duration.between(LocalDate.now(), dateOfLastUpdate).toMillis() > updateInterval) {
             isUpdated = false;

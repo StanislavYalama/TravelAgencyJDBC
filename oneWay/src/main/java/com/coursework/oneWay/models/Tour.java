@@ -4,10 +4,7 @@ package com.coursework.oneWay.models;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,7 +18,7 @@ public class Tour {
     private Double price;
     private Double priceWithPromotion;
     private String description;
-    private Integer creatorId;
+    private Integer workerId;
     private Integer tourOperatorId;
     private Integer locationCount;
 }

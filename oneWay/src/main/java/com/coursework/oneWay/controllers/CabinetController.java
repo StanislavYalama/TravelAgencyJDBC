@@ -82,7 +82,7 @@ public class CabinetController {
 
         if(!newStatus.equals("")){
             Request request = requestService.findById(requestId, httpSessionBean.getConnection());
-            requestService.setStatus(requestId, newStatus, request.getManagerId(),
+            requestService.setStatus(requestId, newStatus, request.getWorkerId(),
                     httpSessionBean.getConnection());
         }
 

@@ -32,6 +32,8 @@ public class TourDocumentRepositoryImpl extends JDBCCustomRepositoryImpl<TourDoc
                 tourDocumentView.setTourId(resultSet.getInt("tour_id"));
                 tourDocumentView.setDocumentId(resultSet.getInt("document_id"));
                 tourDocumentView.setName(resultSet.getString("name"));
+                tourDocumentView.setType(resultSet.getString("type"));
+                tourDocumentView.setTourDocumentId(resultSet.getInt("tour_document_id"));
 
                 tourDocumentViewList.add(tourDocumentView);
             }

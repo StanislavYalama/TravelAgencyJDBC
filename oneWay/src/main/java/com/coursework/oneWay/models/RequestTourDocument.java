@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TourDocumentView {
-
-    private Integer tourId;
-    private Integer documentId;
-    private String name;
-    private String type;
+public class RequestTourDocument {
+    private Integer id;
+    private Integer requestId;
     private Integer tourDocumentId;
+    private String path;
+    private Integer memberNumber;
 }

@@ -33,11 +33,11 @@ public class RequestPassportService {
     private RequestPassportDocumentRepositoryImpl requestPassportDocumentRepository;
     @Autowired
     private DocumentRepositoryImpl documentRepository;
+    @Autowired
+    private MultipartFileUtils multipartFileUtils;
 
     @Value("${travelDocuments.path}")
     String uploadPackage;
-    @Value("${path.length}")
-    int pathLength;
 
     public List<RequestPassportDocument> findByRequestId(int requestId, Connection connection){
         return requestPassportDocumentRepository.findByRequestId(requestId, connection);
@@ -91,16 +91,7 @@ public class RequestPassportService {
 
         Arrays.stream(files).forEach(el -> {
             try {
-                String newFileName = el.getOriginalFilename();
-                if(newFileName != null && newFileName.length() > pathLength){
-                    newFileName = newFileName.substring(newFileName.length() - pathLength);
-                }
-
-                File newFile = new File(fullFilePath  + newFileName);
-                if(!newFile.exists()){
-                    newFile.mkdirs();
-                }
-                el.transferTo(newFile);
+                String newFileName = multipartFileUtils.uploadFile(el, fullFilePath, "");
 
                 saveRequestPassportDocument(new RequestPassportDocument(0, requestPassportId,
                         documentId,inPackagePath + newFileName), connection);
@@ -110,22 +101,15 @@ public class RequestPassportService {
         });
     }
 
+
+
     private void saveDocument(MultipartFile file, String filePath, int requestPassportId,
                               int documentId, Connection connection){
         String inPackagePath = filePath + "insurance/";
         String fullFilePath = uploadPackage + inPackagePath;
 
         try {
-            String newFileName = file.getOriginalFilename();
-            if(newFileName != null && newFileName.length() > pathLength){
-                newFileName = newFileName.substring(newFileName.length() - pathLength);
-            }
-            File newFile = new File(fullFilePath  + newFileName);
-
-            if(!newFile.exists()){
-                newFile.mkdirs();
-            }
-            file.transferTo(newFile);
+            String newFileName = multipartFileUtils.uploadFile(file, fullFilePath, "");
 
             saveRequestPassportDocument(new RequestPassportDocument(0, requestPassportId, documentId,
                     inPackagePath + newFileName), connection);

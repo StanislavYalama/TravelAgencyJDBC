@@ -76,7 +76,7 @@
                         <td th:text="${el.status}" th:unless="${role}=='manager'"></td>
                         <td th:text="${el.date}"></td>
                         <td th:text="${el.tourId}"></td>
-                        <td th:text="${el.managerId}"></td>
+                        <td th:text="${el.workerId}"></td>
                         <td th:text="${el.paymentStatus}"></td>
                         <td th:if="${role}=='client'">
                             <form th:action="'/cabinet/' + ${client.id} + '/payRequest/' + ${el.id}" method="post">

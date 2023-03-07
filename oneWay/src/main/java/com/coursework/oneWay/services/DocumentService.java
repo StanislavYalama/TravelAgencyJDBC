@@ -1,9 +1,11 @@
 package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Document;
+import com.coursework.oneWay.models.RequestTourDocument;
 import com.coursework.oneWay.models.TourDocument;
 import com.coursework.oneWay.models.TourDocumentView;
 import com.coursework.oneWay.repositories.DocumentRepositoryImpl;
+import com.coursework.oneWay.repositories.RequestTourDocumentRepositoryImpl;
 import com.coursework.oneWay.repositories.TourDocumentRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ public class DocumentService {
     private DocumentRepositoryImpl documentRepository;
     @Autowired
     private TourDocumentRepositoryImpl tourDocumentRepository;
+    @Autowired
+    private RequestTourDocumentRepositoryImpl requestTourDocumentRepository;
 
     public List<Document> findAll(Connection connection){
         return documentRepository.findAll(Document.class, connection);
@@ -33,5 +37,9 @@ public class DocumentService {
 
     public List<TourDocumentView> findTourDocumentByTourId(int tourId, Connection connection) {
         return tourDocumentRepository.findByTourId(tourId, connection);
+    }
+
+    public void saveRequestTourDocument(RequestTourDocument requestTourDocument, Connection connection) {
+        requestTourDocumentRepository.save(requestTourDocument, connection);
     }
 }
