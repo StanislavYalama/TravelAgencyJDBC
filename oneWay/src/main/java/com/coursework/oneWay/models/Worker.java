@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Worker {
+public class Worker{
     private Integer id;
     private String name;
     private String email;
     private String phone;
-    private WorkerRole role;
+    private String role;
     private String login;
 }

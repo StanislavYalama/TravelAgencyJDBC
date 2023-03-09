@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -27,19 +28,15 @@ public class MailSenderService {
 
     @Autowired
     private JavaMailSender mailSender;
-    @Autowired
-    private com.coursework.oneWay.services.RequestPassportService requestPassportService;
 
     @Value("${spring.mail.username}")
     private String emailFrom;
-
     @Value("${upload.path}")
-    private String filePath;
+    private String uploadPath;
+    @Value("${uploadTravelDoc.path}")
+    private String uploadTravelDocPath;
 
-    @Value("${travelDocuments.path}")
-    private String travelDocumentPath;
-
-    public void sendMailToTourOperator(String emailTo, List<Passport> passportList, Tour tour) throws MessagingException {
+    public void sendMailToTourOperator(String emailTo, int requestId, Tour tour) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
 
@@ -56,24 +53,23 @@ public class MailSenderService {
                 .concat("Опис: ").concat(tour.getDescription()).concat("<br><br>")
                 .concat("<h3>Нижче наведені необхідні документи:<h3><br>");
 
-        for (int i = 0; i < passportList.size(); i++) {
-            textHtml = textHtml.concat("<div>")
-                    .concat("Учасник ").concat(Integer.toString(i + 1)).concat("<br>")
-                    .concat("ФІО: ").concat(passportList.get(i).getName()).concat("<br>")
-                    .concat("Номер документа: ").concat(passportList.get(i).getDocumentNumber()).concat("<br>")
-                    .concat("Дійсний до: ").concat(passportList.get(i).getDateOfExpiry().toString()).concat("<br>")
-                    .concat("Дата випуску: ").concat(passportList.get(i).getDateOfIssue().toString()).concat("<br>")
-                    .concat("</div>").concat("<br>");
-        }
-        textHtml = textHtml.concat("</body></html>");
-        textBodyPart.setText(textHtml, "UTF-8", "html");    //"US-ASCII",
+        textBodyPart.setText(textHtml, "UTF-8", "html");
         multipart.addBodyPart(textBodyPart);
+
+        try {
+            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+
+            attachmentBodyPart.attachFile(zipDir(requestId, uploadPath));
+            multipart.addBodyPart(attachmentBodyPart);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         mimeMessage.setContent(multipart);
         mailSender.send(mimeMessage);
     }
 
-    public void sendMailToClientWithTravelDocuments(String emailTo, int requestId, Connection connection) throws MessagingException {
+    public void sendMailToClientWithTravelDocuments(String emailTo, int requestId) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
 
@@ -91,7 +87,7 @@ public class MailSenderService {
         try {
             MimeBodyPart attachmentBodyPart = new MimeBodyPart();
 
-            attachmentBodyPart.attachFile(zipDir(requestId));
+            attachmentBodyPart.attachFile(zipDir(requestId, uploadTravelDocPath));
             multipart.addBodyPart(attachmentBodyPart);
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,17 +98,19 @@ public class MailSenderService {
 
     }
 
-    private File zipDir(int requestId) {
-        String sourceFile = travelDocumentPath + "request" + requestId + "/";
-        String sourceZipFile = travelDocumentPath + "zip/request" + requestId + ".zip";
+    private File zipDir(int requestId, String pathDir) {
+        String sourceFile = pathDir + "request" + requestId + "/";
+        String sourceZipFile = pathDir + "zip/request" + requestId + ".zip";
 
-//        File newFIle = new File(sourceZipFile);
+        File newFIle = new File(sourceZipFile);
 
         try {
-//            if(!newFIle.exists()){
-//                newFIle.mkdirs();
-//                newFIle.createNewFile();
-//            }
+            if(!newFIle.exists()){
+                newFIle.mkdirs();
+            }
+            newFIle.delete();
+            newFIle.createNewFile();
+
 
             FileOutputStream fos = new FileOutputStream(sourceZipFile);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
@@ -142,7 +140,7 @@ public class MailSenderService {
                 zipOut.closeEntry();
             }
             File[] children = fileToZip.listFiles();
-            for (File childFile : children) {
+            for (File childFile : Objects.requireNonNull(children)) {
                 zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
             }
             return;

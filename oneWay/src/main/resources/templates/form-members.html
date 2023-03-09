@@ -11,9 +11,12 @@
               enctype="multipart/form-data">
             <div th:each="i, itemStat : ${#numbers.sequence(1, members_count, 1)}">
                 <p th:text="'Учасник ' + ${i}"></p>
-                <input th:each="el : ${requiredTourDocumentList}"
-                       name="requiredDocuments" type="file" th:placeholder="'Завантажте ' + ${el.name}"
-                       accept="application/pdf, image/jpeg, image/png"><br>
+                <div th:each="el : ${requiredTourDocumentList}">
+                    <input th:id="${el.tourDocumentId}"
+                           name="requiredDocuments" type="file"
+                           accept="application/pdf, image/jpeg, image/png">
+                    <label th:for="${el.tourDocumentId}" th:text="'Завантажте ' + ${el.name}"></label><br>
+                </div>
             </div>
             <input type="submit" value="Завантажити">
         </form>

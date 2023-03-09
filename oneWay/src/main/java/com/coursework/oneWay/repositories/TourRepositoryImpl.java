@@ -28,7 +28,7 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             tour.setWorkerId(resultSet.getInt("worker_id"));
             tour.setLocationCount(resultSet.getInt("location_count"));
             tour.setPrice(resultSet.getDouble("price"));
-            tour.setPriceWithPromotion(resultSet.getDouble("price_with_promotion"));
+            tour.setPricePromotion(resultSet.getDouble("price_promotion"));
             tour.setTourOperatorId(resultSet.getInt("tour_operator_id"));
         } catch (SQLException e) {
             e.printStackTrace();

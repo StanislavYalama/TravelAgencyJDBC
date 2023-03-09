@@ -23,10 +23,10 @@
                     <td><a th:text="${request.clientId}" th:href="'/cabinet/' + ${request.clientId}"></a></td>
                     <td>
                         <select class="form-control" id="dropDownList" name="status">
-                            <option th:value="${el.status}" th:text="${el.status}"></option>
+                            <option th:value="${request.status}" th:text="${request.status}"></option>
                             <option th:each="el_status : ${status_values}" th:value="${el_status}"
                                     th:text="${#strings.toLowerCase(el_status)}"
-                                    th:if="${el.status}!=${#strings.toLowerCase(el_status)}"></option>
+                                    th:if="${request.status}!=${#strings.toLowerCase(el_status)}"></option>
                         </select>
                     </td>
                     <td th:text="${request.date}"></td>
@@ -53,29 +53,10 @@
             </tr>
             <tr>
                 <td th:text="${client.id}"></td>
-                <td th:text="${passports.get(client.passportId).name}"></td>
+                <td th:text="${client.name}"></td>
                 <td th:text="${client.phone}"></td>
                 <td th:text="${client.email}"></td>
                 <td th:text="${balance}"></td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="passportList">
-        <table>
-            <tr>
-                <th>id</th>
-                <th>ФІО</th>
-                <th>Номер документа</th>
-                <th>Дійсний до:</th>
-                <th>Дата випуску</th>
-            </tr>
-            <tr th:each="passport: ${passports}">
-                <td th:text="${passport.id}"></td>
-                <td th:text="${passport.name}"></td>
-                <td th:text="${passport.documentNumber}"></td>
-                <td th:text="${passport.dateOfExpiry}"></td>
-                <td th:text="${passport.dateOfIssue}"></td>
             </tr>
         </table>
     </div>
@@ -86,28 +67,20 @@
         </form>
 
         <div>
-            <p>Зберегти файли клієнта в базі</p>
-            <form th:action="'/requests/' + ${request.id} + '/saveTravelDocuments'" method="post"
+            <p>Надіслати файли клієнта для участі в турі</p>
+            <form th:action="'/requests/' + ${request.id} + '/sendTravelDocuments'" method="post"
                   enctype="multipart/form-data">
-                <select name="passportId">
-                    <option th:each="passport : ${passports}" th:value="${passport.id}"
-                            th:text="${passport.name}"></option>
-                </select><br>
-                <p>Страховий поліс</p>
-                <input type="file" accept="application/pdf, image/jpeg, image/png" name="insurance">
-                <p>Ваучер(-и)</p>
-                <input type="file" accept="application/pdf, image/jpeg, image/png" name="vouchers" multiple>
-                <p>Квиток(-и)</p>
-                <input type="file" accept="application/pdf, image/jpeg, image/png" name="tickets" multiple>
-
-                <script src="../static/js/request-details.js"></script>
-                <br>
-                <input type="submit" value="Надіслати">
-            </form>
-
-            <p>Надіслати клієнту документи для подорожі</p>
-            <form th:action="'/requests/' + ${request.id} + '/sendTravelDocuments'" method="post">
-                <input type="submit" value="Надіслати">
+                <div th:each="i, itemStat : ${#numbers.sequence(1, members_count, 1)}">
+                    <p th:text="'Учасник ' + ${i}"></p>
+                    <div th:each="el : ${requiredTourDocumentList}">
+                        <label th:for="${el.tourDocumentId}" th:text="'Завантажте ' + ${el.name}"></label>
+                        <input th:id="${el.tourDocumentId}"
+                               name="requiredDocuments" type="file"
+                               accept="application/pdf, image/jpeg, image/png"><br>
+                    </div>
+                </div>
+                <br><br>
+                <input type="submit" value="Завантажити">
             </form>
         </div>
     </div>

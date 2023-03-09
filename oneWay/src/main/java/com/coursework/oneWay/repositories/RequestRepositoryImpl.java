@@ -98,6 +98,26 @@ public class RequestRepositoryImpl extends JDBCCustomRepositoryImpl<Request, Int
 
     }
 
+    @Override
+    public int getMembersCountById(int requestId, Connection connection) {
+        int membersCount = 0;
+        String query = """
+                SELECT DISTINCT MAX(member_number) OVER(PARTITION BY request_id)
+                FROM request_tour_document
+                WHERE request_id = ?""";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, requestId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            membersCount = resultSet.getInt(1);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return membersCount;
+    }
+
     public int getCurrentRequestIdSequenceValue(Connection connection) {
         int requestId = 0;
         String query = "SELECT last_value FROM request_id_seq";

@@ -16,7 +16,7 @@ public class Tour {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateEnd;
     private Double price;
-    private Double priceWithPromotion;
+    private Double pricePromotion;
     private String description;
     private Integer workerId;
     private Integer tourOperatorId;

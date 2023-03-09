@@ -80,7 +80,7 @@ public class RequestService {
 
     public void setStatus(int id, String newStatus, Integer managerId, Connection connection) {
         requestRepository.update(Request.class, id, "status", newStatus, connection);
-        requestRepository.update(Request.class, id, "manager_id", managerId, connection);
+        requestRepository.update(Request.class, id, "worker_id", managerId, connection);
         log.info("Request status with id {} was updated to {} by manager {}", id, newStatus, managerId);
     }
 
@@ -129,6 +129,10 @@ public class RequestService {
 
             isUpdated = true;
         }
+    }
+
+    public int getMembersCountById(int requestId, Connection connection) {
+        return requestRepository.getMembersCountById(requestId, connection);
     }
 }
 

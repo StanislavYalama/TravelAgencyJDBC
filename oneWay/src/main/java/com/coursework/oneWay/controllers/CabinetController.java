@@ -26,13 +26,12 @@ public class CabinetController {
     private TourService tourService;
     @Autowired
     private VoucherService voucherService;
-    @Autowired
-    private PassportService passportService;
 
     @GetMapping("/{id}")
     public String cabinet(Model model, @PathVariable int id){
         Client client = clientService.findById(id, httpSessionBean.getConnection());
-        double balance = client.getPersonalWallet().getBalance();
+        double balance = clientService.getPersonalWalletByClinetId(client.getId(), httpSessionBean.getConnection())
+                .getBalance();
         balance = Math.floor(balance * 100) / 100;
 
         model.addAttribute("role", httpSessionBean.getRole());
@@ -41,8 +40,6 @@ public class CabinetController {
         model.addAttribute("request", requestService.findByClientId(id,
                 httpSessionBean.getConnection()).stream().sorted(Comparator.comparing(Request::getDate)).collect(Collectors.toList()));
         model.addAttribute("status_values", EnumSet.allOf(RequestStatus.class));
-        model.addAttribute("passport", passportService.findById(client.getPassportId(),
-                httpSessionBean.getConnection()));
         model.addAttribute("voucher", voucherService.findByClientId(id,
                 httpSessionBean.getConnection()));
         return "clients-cabinet";
@@ -51,18 +48,6 @@ public class CabinetController {
     @PostMapping("/{clientId}/changeBalance")
     public String changeBalance(@PathVariable int clientId, @RequestParam double newBalance){
         clientService.changeBalanceByClientId(clientId, newBalance, httpSessionBean.getConnection());
-        return "redirect:/cabinet/{clientId}";
-    }
-
-    @PostMapping("/{clientId}/updatePassport")
-    public String addPassport(Passport passport, @PathVariable int clientId){
-        passportService.updateDataByClientId(passport, clientId, httpSessionBean.getConnection());
-        return "redirect:/cabinet/{clientId}";
-    }
-
-    @PostMapping("/{clientId}/dropPassport")
-    public String dropPassport(@PathVariable int clientId){
-        passportService.clearDataByClientId(clientId, httpSessionBean.getConnection());
         return "redirect:/cabinet/{clientId}";
     }
 

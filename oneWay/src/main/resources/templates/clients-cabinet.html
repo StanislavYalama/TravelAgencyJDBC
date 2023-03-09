@@ -19,28 +19,12 @@
                 </tr>
                 <tr>
                     <td th:text="${client.id}" id="id1"></td>
-                    <td th:text="${passport.name}"></td>
+                    <td th:text="${client.name}"></td>
                     <td th:text="${client.phone}"></td>
                     <td th:text="${client.email}"></td>
                     <td th:text="${balance}"></td>
                 </tr>
             </table>
-        </div>
-        <div id="passport" th:if="${role} ? 'client' : 'manager'">
-            <div>
-                <form th:action="'/cabinet/' + ${client.id} + '/updatePassport'" method="post">
-                    <!--        Повне ім'я <input type="text" name="name"><br><br>-->
-                    Номер документа <input type="text" name="documentNumber" th:value="${passport.documentNumber}"><br><br>
-                    Дата придатності <input type="date" name="dateOfExpiry" th:value="${passport.dateOfExpiry}"><br><br>
-                    Дата випуску <input type="date" name="dateOfIssue" th:value="${passport.dateOfIssue}"><br><br>
-                    <input type="submit" value="Створити" th:if="${passport.documentNumber}==null"><br><br>
-                </form>
-            </div>
-            <div th:unless="${passport.documentNumber}==null">
-                <form th:action="'/cabinet/' + ${client.id} + '/dropPassport'" method="post">
-                    <input type="submit" value="Видалити паспортні дані">
-                </form>
-            </div>
         </div>
         <div th:if="${role}=='manager'">
             <form th:action="'/cabinet/' + ${client.id} + '/changeBalance'" method="post">

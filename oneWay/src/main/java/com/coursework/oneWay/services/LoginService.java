@@ -2,7 +2,7 @@ package com.coursework.oneWay.services;
 
 
 import com.coursework.oneWay.models.Client;
-import lombok.RequiredArgsConstructor;
+import com.coursework.oneWay.models.Worker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +13,6 @@ public class LoginService {
 
     @Autowired
     private ClientService clientService;
-    @Autowired
-    private PassportService passportService;
     @Autowired
     private WorkerService workerService;
 
@@ -48,41 +46,34 @@ public class LoginService {
         return role;
     }
 
-    //TODO
-    public void createUser(Client client, String clientPassword, String clientName, Connection connection) throws SQLException {
-        String queryCreateUser = "CREATE USER ".concat(client.getLogin()).concat(" WITH PASSWORD '")
-                .concat(clientPassword).concat("' IN GROUP client");
-        String queryInsertPassport = "INSERT INTO passport(name) VALUES(?)";
-        int clientId = 0;
-        int passportId = 0;
+    public void registerClient(Client client, String password, Connection connection){
+        createDBUser(client.getLogin(), password, "client", connection);
+        clientService.save(client, connection);
+    }
 
-        try {
-            int previousLevel = connection.getTransactionIsolation();
-            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-            connection.setAutoCommit(false);
+    public void registerWorker(Worker worker, String password, Connection connection){
+        createDBUser(worker.getLogin(), password, worker.getRole(), connection);
+        workerService.save(worker, connection);
+    }
 
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(queryCreateUser);
-            statement.close();
+    private void createDBUser(String login, String password, String role, Connection connection){
+        String query = "CREATE USER ".concat(login).concat(" WITH ENCRYPTED PASSWORD '")
+                .concat(password).concat("' IN GROUP ").concat(role);
 
-            PreparedStatement preparedStatement = connection.prepareStatement(queryInsertPassport);
-            preparedStatement.setString(1, clientName);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-
-            clientId = clientService.findIdByLogin(client.getLogin(), connection);
-            passportId = passportService.getCurrentPassportIdSequenceValue(connection);
-            if(clientId !=  0 && passportId != 0){
-                clientService.updatePassportId(clientId, passportId, connection);
-            }
-
-            connection.commit();
-            connection.setTransactionIsolation(previousLevel);
-            connection.setAutoCommit(true);
+        try(Statement statement = connection.createStatement()){
+            statement.executeUpdate(query);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
-        clientService.save(client, connection);
+    private void fireTheWorker(String login, Connection connection){
+        String query = "ALTER USER ".concat(login).concat("WITH ENCRYPTED PASSWORD '".concat("ppooopp3222").concat("'"));
+
+        try(Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

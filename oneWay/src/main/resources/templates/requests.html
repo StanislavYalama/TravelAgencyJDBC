@@ -55,7 +55,7 @@
         </tr>
         <tr th:each = "el : ${requestAdmit}">
             <form th:action="'/requests/admit/' + ${el.id}" method="post">
-                <td th:text="${el.id}" id="id"></td>
+                <td id="id2"><a th:href="'/requests/' + ${el.id}" th:text="${el.id}"></a></td>
                 <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
                 <td>
                     <select class="form-control" id="dropDownList2" name="status">

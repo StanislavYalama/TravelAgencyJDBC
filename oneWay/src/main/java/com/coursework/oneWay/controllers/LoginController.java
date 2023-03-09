@@ -59,9 +59,8 @@ public class LoginController {
 
     @PostMapping("/registration")
     public String registrationProcess(Client client,
-                                      @RequestParam("password") String clientPassword,
-                                      @RequestParam("name") String clientName) throws SQLException {
-        loginService.createUser(client, clientPassword, clientName, httpSessionBean.getConnection());
+                                      @RequestParam("password") String password) {
+        loginService.registerClient(client, password, httpSessionBean.getConnection());
         return "redirect:/login";
     }
 }

@@ -14,4 +14,6 @@ public interface RequestRepository extends JDBCCustomRepository<Request, Integer
     List<Request> findByClientId(int id, Connection connection);
 
     void pay(int requestId, int clientId, Connection connection);
+
+    int getMembersCountById(int requestId, Connection connection);
 }

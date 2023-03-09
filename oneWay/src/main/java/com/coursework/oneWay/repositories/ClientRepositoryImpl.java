@@ -12,89 +12,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ClientRepositoryImpl implements ClientRepository {
-    @Override
-    public List<Client> findAll(Connection connection) {
-        List<Client> clientList = new ArrayList<>();
-
-        String queryClientTable = "SELECT * FROM client";
-        String queryPersonalWallet = "SELECT * FROM personal_wallet WHERE client_id = ?";
-
-        try{
-            Statement statement = connection.createStatement();
-            statement.execute(queryClientTable);
-            ResultSet resultSet1 = statement.getResultSet();
-            while(resultSet1.next()){
-                Client client = new Client();
-
-                client.setId(resultSet1.getInt("id"));
-                client.setEmail(resultSet1.getString("email"));
-                client.setPhone(resultSet1.getString("phone"));
-                client.setLogin(resultSet1.getString("login"));
-                client.setPassportId(resultSet1.getInt("passport_id"));
-
-                PreparedStatement preparedStatement2 = connection.prepareStatement(queryPersonalWallet);
-                preparedStatement2.setInt(1, client.getId());
-                ResultSet resultSet2 = preparedStatement2.executeQuery();
-                while(resultSet2.next()){
-                    PersonalWallet personalWallet = new PersonalWallet();
-                    personalWallet.setId(resultSet2.getInt("id"));
-                    personalWallet.setClientId(resultSet2.getInt("client_id"));
-                    personalWallet.setBalance(resultSet2.getDouble("balance"));
-
-                    client.setPersonalWallet(personalWallet);
-                }
-//                resultSet2.close();
-//                preparedStatement2.close();
-            }
-//            resultSet1.close();
-//            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return clientList;
-    }
-
-    @Override
-    public Client findById(int id, Connection connection) {
-        Client client = new Client();
-        String queryClientTable = "SELECT * FROM client WHERE id = ?";
-        String queryPersonalWallet = "SELECT * FROM personal_wallet WHERE client_id = ?";
-
-        try{
-            PreparedStatement preparedStatement1 = connection.prepareStatement(queryClientTable);
-            preparedStatement1.setInt(1, id);
-            ResultSet resultSet1 = preparedStatement1.executeQuery();
-            while(resultSet1.next()){
-                client.setId(resultSet1.getInt("id"));
-                client.setEmail(resultSet1.getString("email"));
-                client.setPhone(resultSet1.getString("phone"));
-                client.setLogin(resultSet1.getString("login"));
-                client.setPassportId(resultSet1.getInt("passport_id"));
-
-                PreparedStatement preparedStatement2 = connection.prepareStatement(queryPersonalWallet);
-                preparedStatement2.setInt(1, id);
-                ResultSet resultSet2 = preparedStatement2.executeQuery();
-                while(resultSet2.next()){
-                    PersonalWallet personalWallet = new PersonalWallet();
-                    personalWallet.setId(resultSet2.getInt("id"));
-                    personalWallet.setClientId(resultSet2.getInt("client_id"));
-                    personalWallet.setBalance(resultSet2.getDouble("balance"));
-
-                    client.setPersonalWallet(personalWallet);
-                }
-                resultSet2.close();
-                preparedStatement2.close();
-            }
-//            resultSet1.close();
-//            preparedStatement1.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return client;
-    }
+public class ClientRepositoryImpl extends JDBCCustomRepositoryImpl<Client, Integer> implements ClientRepository {
 
     @Override
     public int findIdByLogin(String login, Connection connection) {
@@ -117,81 +35,24 @@ public class ClientRepositoryImpl implements ClientRepository {
     }
 
     @Override
-    public void save(Client client, Connection connection) {
-        String query = """
-                INSERT INTO client(email, phone, login, passport_id)
-                VALUES(?, ?, ?, ?)""";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, client.getEmail());
-            preparedStatement.setString(2, client.getPhone());
-            preparedStatement.setString(3, client.getLogin());
-            preparedStatement.setInt(4, client.getPassportId());
-            preparedStatement.executeUpdate();
-
-            log.info("Client {} was saved", client);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteById(int id, Connection connection) {
-        String query = "DELETE FROM client WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-
-            log.info("Client with id = {} was deleted", id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updatePassportId(int clientId, int passportId, Connection connection) {
-        String query = "UPDATE client SET passport_id = ? WHERE id = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, passportId);
-            preparedStatement.setInt(2, clientId);
-
-            log.info("PassportId = {} for client with id = {}", passportId, clientId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public Client findByRequestId(int requestId, Connection connection) {
         String queryClient = """
                 SELECT * from client 
                 WHERE id IN (SELECT client_id FROM request
                 WHERE id = ?)""";
-        String queryPersonalWallet = "SELECT * FROM personal_wallet WHERE client_id = ?";
         Client client = new Client();
-        PersonalWallet personalWallet = new PersonalWallet();
 
         try(PreparedStatement preparedStatementClient = connection.prepareStatement(queryClient)) {
             preparedStatementClient.setInt(1, requestId);
 
-            ResultSet resultSetClient = preparedStatementClient.executeQuery();
-            resultSetClient.next();
+            ResultSet resultSet = preparedStatementClient.executeQuery();
+            resultSet.next();
 
-            client.setId(resultSetClient.getInt("id"));
-            client.setEmail(resultSetClient.getString("email"));
-            client.setLogin(resultSetClient.getString("login"));
-            client.setPassportId(resultSetClient.getInt("passport_id"));
+            client.setId(resultSet.getInt("id"));
+            client.setEmail(resultSet.getString("email"));
+            client.setLogin(resultSet.getString("login"));
+            client.setPhone(resultSet.getString("phone"));
 
-            PreparedStatement preparedStatementPersonalWallet = connection.prepareStatement(queryPersonalWallet);
-            preparedStatementPersonalWallet.setInt(1, client.getId());
-
-            ResultSet resultSetPersonalWallet = preparedStatementPersonalWallet.executeQuery();
-            resultSetPersonalWallet.next();
-
-            personalWallet.setId(resultSetPersonalWallet.getInt("id"));
-            personalWallet.setBalance(resultSetPersonalWallet.getDouble("balance"));
-            personalWallet.setId(resultSetPersonalWallet.getInt("client_id"));
-
-            client.setPersonalWallet(personalWallet);
-            preparedStatementPersonalWallet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -210,5 +71,26 @@ public class ClientRepositoryImpl implements ClientRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public PersonalWallet getPersonalWalletByClientId(int clientId, Connection connection) {
+        String query = "SELECT * FROM personal_wallet WHERE client_id = ?";
+        PersonalWallet personalWallet = new PersonalWallet();
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, clientId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+
+            personalWallet.setId(resultSet.getInt("id"));
+            personalWallet.setClientId(resultSet.getInt("client_id"));
+            personalWallet.setBalance(resultSet.getDouble("balance"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return personalWallet;
     }
 }

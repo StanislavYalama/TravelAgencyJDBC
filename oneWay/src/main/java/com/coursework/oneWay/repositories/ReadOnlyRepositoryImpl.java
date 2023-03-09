@@ -37,7 +37,7 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
             // get result data from required entity
             ResultSet rs2 = statement.executeQuery(queryResult);
             while(rs2.next()){
-                T t = tClass.newInstance();
+                T t = tClass.getConstructor().newInstance();
                 List<Class<?>[]> paramTypes = new ArrayList<>();
 
                 for (Method method : methodList) {
@@ -64,7 +64,7 @@ public class ReadOnlyRepositoryImpl<T, ID> implements ReadOnlyRepository<T, ID>{
                 result.add(t);
             }
         }
-        catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
 

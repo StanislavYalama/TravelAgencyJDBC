@@ -33,10 +33,6 @@ public class CatalogController {
     @Autowired
     private PromotionService promotionService;
     @Autowired
-    private PassportService passportService;
-    @Autowired
-    private RequestPassportService requestPassportService;
-    @Autowired
     private ClientService clientService;
     @Autowired
     private ExcursionService excursionService;
@@ -132,7 +128,10 @@ public class CatalogController {
                     String fullToFilePath = toClientDocumentPackage +  toFilePath;
 
                     try {
-                        String filePathDB = toFilePath + multipartFileUtils.uploadFile(requiredDocuments[k], fullToFilePath, el.getName());
+                        String subStr = toClientDocumentPackage.substring(0, toClientDocumentPackage.length() - 1);
+                        String filePathDB = subStr.substring(subStr.lastIndexOf('/')) + "/" +
+                                toFilePath +
+                                multipartFileUtils.uploadFile(requiredDocuments[k], fullToFilePath, el.getName());
 
                         documentService.saveRequestTourDocument(
                                 new RequestTourDocument(0, requestId, el.getTourDocumentId(), filePathDB, i + 1),

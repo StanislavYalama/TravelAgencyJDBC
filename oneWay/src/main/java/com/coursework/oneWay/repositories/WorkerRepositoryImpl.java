@@ -11,7 +11,7 @@ public class WorkerRepositoryImpl extends JDBCCustomRepositoryImpl<Worker, Integ
     @Override
     public void saveNewWorker(Worker worker, String password, Connection connection){
         String query = "CREATE USER " + worker.getLogin() + " WITH ENCRYPTED PASSWORD '" + password +
-                "' IN GROUP " + worker.getRole().name().toLowerCase();
+                "' IN GROUP " + worker.getRole();
 
         try(Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);
