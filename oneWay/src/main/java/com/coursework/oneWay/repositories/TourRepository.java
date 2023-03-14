@@ -2,6 +2,7 @@ package com.coursework.oneWay.repositories;
 
 import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
+import com.coursework.oneWay.models.TourView;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -9,6 +10,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface TourRepository {
+
+    List<TourView> findAllTourView(Connection connection);
 
     Tour findByRequestId(int requestId, Connection connection);
 
@@ -19,4 +22,6 @@ public interface TourRepository {
     void deleteLocation(int tourId, int locationId, Connection connection);
 
     void saveExcursion(int tourId, int excursionId, Connection connection);
+
+    TourView findByIdTourViews(int tourId, Connection connection);
 }

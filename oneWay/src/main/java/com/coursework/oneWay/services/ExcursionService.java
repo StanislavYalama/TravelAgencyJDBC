@@ -18,6 +18,10 @@ public class ExcursionService {
         return excursionRepository.findByTourId(id, connection);
     }
 
+    public List<Excursion> findByTourIdUnspent(int id, Connection connection){
+        return excursionRepository.findByTourIdUnspent(id, connection);
+    }
+
     public void save(Excursion excursion, Connection connection) {
         excursionRepository.save(excursion, connection);
     }

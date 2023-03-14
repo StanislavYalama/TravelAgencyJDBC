@@ -42,4 +42,36 @@ public class ExcursionRepositoryImpl extends JDBCCustomRepositoryImpl<Excursion,
 
         return excursionList;
     }
+
+    @Override
+    public List<Excursion> findByTourIdUnspent(int id, Connection connection) {
+        List<Excursion> excursionList = new ArrayList<>();
+        String query = """
+                SELECT * FROM excursion
+                WHERE location_id IN (SELECT location_id FROM tour_location
+                    WHERE tour_id = ?) AND id NOT IN(SELECT excursion_id FROM tour_excursion
+                    WHERE tour_id = ?)""";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(2, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                Excursion excursion = new Excursion();
+                excursion.setId(resultSet.getInt("id"));
+                excursion.setContentType(resultSet.getString("content_type"));
+                excursion.setCountPlaces(resultSet.getInt("count_places"));
+                excursion.setPlaceName(resultSet.getString("place_name"));
+                excursion.setLocationId(resultSet.getInt("location_id"));
+
+                excursionList.add(excursion);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return excursionList;
+    }
 }

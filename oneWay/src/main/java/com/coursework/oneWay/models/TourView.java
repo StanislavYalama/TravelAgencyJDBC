@@ -1,15 +1,16 @@
 package com.coursework.oneWay.models;
 
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Tour {
+@AllArgsConstructor
+public class TourView {
     private Integer id;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateStart;
@@ -20,4 +21,6 @@ public class Tour {
     private Integer workerId;
     private Integer tourOperatorId;
     private boolean visible;
+    private Double pricePromotion;
+    private Integer discountPercentage;
 }

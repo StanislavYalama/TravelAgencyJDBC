@@ -1,7 +1,9 @@
 package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Hotel;
+import com.coursework.oneWay.models.TourHotel;
 import com.coursework.oneWay.repositories.HotelRepositoryImpl;
+import com.coursework.oneWay.repositories.TourHotelRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ public class HotelService {
 
     @Autowired
     private HotelRepositoryImpl hotelRepository;
+    @Autowired
+    private TourHotelRepositoryImpl tourHotelRepository;
 
     public List<Hotel> findAll(Connection connection){
         return hotelRepository.findAll(Hotel.class, connection);
@@ -23,7 +27,7 @@ public class HotelService {
     }
 
     public List<Hotel> findByTourId(int tourId, Connection connection){
-        return hotelRepository.findByTourId(tourId, connection);
+        return hotelRepository.findByTourIdUnspent(tourId, connection);
     }
 
     public void delete(int id, Connection connection){
@@ -34,7 +38,15 @@ public class HotelService {
         hotelRepository.save(hotel, connection);
     }
 
-    public List<Hotel> findByTourId(Integer request_id, Connection connection) {
-        return hotelRepository.findByTourId(request_id, connection);
+    public List<Hotel> findByTourId(Integer tour_id, Connection connection) {
+        return hotelRepository.findByTourId(tour_id, connection);
+    }
+
+    public List<Hotel> findByTourIdUnspent(Integer request_id, Connection connection) {
+        return hotelRepository.findByTourIdUnspent(request_id, connection);
+    }
+
+    public void saveTourHotel(TourHotel tourHotel, Connection connection) {
+        tourHotelRepository.save(tourHotel, connection);
     }
 }

@@ -11,6 +11,7 @@
     </nav>
 
     <div>
+        <p>Створити працівника</p>
         <form action="/adminPanel/createWorker" method="post">
             <input type="text" name="login" placeholder="Логін">
             <input type="text" name="password" placeholder="Пароль">
@@ -19,9 +20,18 @@
             <input type="text" name="email" placeholder="Ел. почта">
             <input type="text" name="phone" placeholder="Моб. телефон">
             <select name="role">
-                <option th:each="role : ${roles}" th:value="${role}" th:text="${#strings.toLowerCase(role)}"></option>
+                <option th:each="role : ${roles}" th:value="${role.toDBFormat()}" th:text="${role.toDBFormat()}"></option>
             </select>
             <input type="submit" value="Створити">
+        </form>
+    </div>
+    
+    <div>
+        <p>Змінити пароль співробітника</p>
+        <form action="/adminPanel/changeWorkerPassword" method="post">
+            <input type="text" name="login" placeholder="Логін">
+            <input type="text" name="password" placeholder="Новий пароль">
+            <input type="submit" value="Змінити пароль">
         </form>
     </div>
 
@@ -34,6 +44,7 @@
                 <th>Ел. пошта</th>
                 <th>Моб. телефон</th>
                 <th>Роль</th>
+                <th>Login</th>
             </tr>
             <tr th:each = "el : ${workerList}">
                 <td th:text="${el.id}"></td>
@@ -41,6 +52,13 @@
                 <td th:text="${el.email}"></td>
                 <td th:text="${el.phone}"></td>
                 <td th:text="${el.role}"></td>
+                <td th:text="${el.login}"></td>
+                <td>
+                    <form action="/adminPanel/fireTheWorker" method="post">
+                        <input type="text" th:value="${el.login}" name="login" style="visibility: hidden">
+                        <input type="submit" value="Звільнити">
+                    </form>
+                </td>
             </tr>
         </table>
     </div>

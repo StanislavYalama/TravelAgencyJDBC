@@ -2,10 +2,12 @@ package com.coursework.oneWay.repositories;
 
 import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
+import com.coursework.oneWay.models.TourView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -13,11 +15,41 @@ import java.util.List;
 public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> implements TourRepository {
 
     @Override
+    public List<TourView> findAllTourView(Connection connection) {
+        List<TourView> tourViewList = new ArrayList<>();
+        String query = "SELECT * FROM tour_view";
+
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                TourView tourView = new TourView(
+                        resultSet.getInt("id"),
+                        resultSet.getDate("date_start").toLocalDate(),
+                        resultSet.getDate("date_end").toLocalDate(),
+                        resultSet.getDouble("price"),
+                        resultSet.getString("description"),
+                        resultSet.getInt("worker_id"),
+                        resultSet.getInt("tour_operator_id"),
+                        resultSet.getBoolean("visible"),
+                        resultSet.getDouble("price_promotion"),
+                        resultSet.getInt("discount_percentage")
+                );
+
+                tourViewList.add(tourView);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tourViewList;
+    }
+
+    @Override
     public Tour findByRequestId(int requestId, Connection connection) {
         Tour tour = new Tour();
         String query = "SELECT * FROM tour WHERE id = (SELECT tour_id FROM request WHERE id = ?)";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, requestId);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -26,9 +58,7 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             tour.setDateEnd(resultSet.getDate("date_end").toLocalDate());
             tour.setDescription(resultSet.getString("description"));
             tour.setWorkerId(resultSet.getInt("worker_id"));
-            tour.setLocationCount(resultSet.getInt("location_count"));
             tour.setPrice(resultSet.getDouble("price"));
-            tour.setPricePromotion(resultSet.getDouble("price_promotion"));
             tour.setTourOperatorId(resultSet.getInt("tour_operator_id"));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,12 +118,39 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
                 INSERT INTO tour_excursion(tour_id, excursion_id)
                 VALUES(?, ?)""";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, tourId);
             preparedStatement.setInt(2, excursionId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public TourView findByIdTourViews(int tourId, Connection connection) {
+        TourView tourView = new TourView();
+        String query = "SELECT * FROM tour_view WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tourId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            tourView.setId(resultSet.getInt("id"));
+            tourView.setDateStart(resultSet.getDate("date_start").toLocalDate());
+            tourView.setDateEnd(resultSet.getDate("date_end").toLocalDate());
+            tourView.setPrice(resultSet.getDouble("price"));
+            tourView.setDescription(resultSet.getString("description"));
+            tourView.setWorkerId(resultSet.getInt("worker_id"));
+            tourView.setTourOperatorId(resultSet.getInt("tour_operator_id"));
+            tourView.setVisible(resultSet.getBoolean("visible"));
+            tourView.setPricePromotion(resultSet.getDouble("price_promotion"));
+            tourView.setDiscountPercentage(resultSet.getInt("discount_percentage"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tourView;
     }
 }

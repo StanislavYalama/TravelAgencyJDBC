@@ -15,6 +15,5 @@ public class Location {
     private String country;
     private String city;
     private String description;
-    private BigDecimal price;
     private Integer workerId;
 }

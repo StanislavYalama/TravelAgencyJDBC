@@ -1,5 +1,6 @@
 package com.coursework.oneWay.controllers;
 
+import com.coursework.oneWay.WorkerRole;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.Client;
 import com.coursework.oneWay.services.ClientService;
@@ -37,6 +38,10 @@ public class LoginController {
         httpSessionBean.setConnection(loginService.getConnection(name, password));
         httpSessionBean.setId(loginService.getUserId(name, httpSessionBean.getConnection()));
         httpSessionBean.setRole(loginService.getRole(name, httpSessionBean.getConnection()));
+        if(httpSessionBean.getRole().equals(WorkerRole.ADMINISTRATOR.toDBFormat())){
+            loginService.setDBRole(WorkerRole.ADMINISTRATOR.toDBFormat(), httpSessionBean.getConnection());
+            return "redirect:/adminPanel";
+        }
         return httpSessionBean.getLastUrl();
     }
 

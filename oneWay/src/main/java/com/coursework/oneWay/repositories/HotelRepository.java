@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface HotelRepository{
 
-    public List<Hotel> findByTourId(int tourId, Connection connection);
+    List<Hotel> findByTourId(int tourId, Connection connection);
+
+    List<Hotel> findByTourIdUnspent(int tourId, Connection connection);
 }

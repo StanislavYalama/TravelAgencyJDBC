@@ -67,8 +67,28 @@ public class LoginService {
         }
     }
 
-    private void fireTheWorker(String login, Connection connection){
-        String query = "ALTER USER ".concat(login).concat("WITH ENCRYPTED PASSWORD '".concat("ppooopp3222").concat("'"));
+    public void changeUserPassword(String login, String password, Connection connection){
+        String query = "ALTER USER ".concat(login).concat(" WITH ENCRYPTED PASSWORD '".concat(password).concat("'"));
+
+        try(Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fireTheWorker(String login, Connection connection){
+        String query = "ALTER USER ".concat(login).concat(" WITH ENCRYPTED PASSWORD '".concat("uvolen").concat("'"));
+
+        try(Statement statement = connection.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setDBRole(String role, Connection connection) {
+        String query = "SET ROLE ".concat(role);
 
         try(Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);

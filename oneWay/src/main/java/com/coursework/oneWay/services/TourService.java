@@ -2,6 +2,7 @@ package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
+import com.coursework.oneWay.models.TourView;
 import com.coursework.oneWay.repositories.TourRepository;
 import com.coursework.oneWay.repositories.TourRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,12 @@ public class TourService {
     public Tour findById(int tourId, Connection connection){
         return tourRepository.findById(Tour.class, tourId, connection);
     }
+    public List<TourView> findAllTourViews(Connection connection){
+        return tourRepository.findAllTourView(connection);
+    }
+    public void makeVisible(int tourId, Connection connection){
+        tourRepository.update(Tour.class, tourId, "is_visible", true, connection);
+    }
     public Tour findByRequestId(int requestId, Connection connection){
         return tourRepository.findByRequestId(requestId, connection);
     }
@@ -44,5 +51,9 @@ public class TourService {
     }
     public void saveExcursion(int tourId, int excursionId, Connection connection){
         tourRepository.saveExcursion(tourId, excursionId, connection);
+    }
+
+    public TourView findByIdTourViews(int tourId, Connection connection) {
+        return tourRepository.findByIdTourViews(tourId, connection);
     }
 }

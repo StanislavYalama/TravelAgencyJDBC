@@ -5,10 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class RequestHotel {
-    private int id;
-    private int requestId;
-    private int hotelId;
+@AllArgsConstructor
+public class TourHotel {
+
+    private Integer id;
+    private Integer tourId;
+    private Integer hotelId;
 }

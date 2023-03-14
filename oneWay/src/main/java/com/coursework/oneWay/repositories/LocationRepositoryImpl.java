@@ -29,7 +29,6 @@ public class LocationRepositoryImpl extends JDBCCustomRepositoryImpl<Location, I
                 location.setCountry(resultSet.getString("country"));
                 location.setCity(resultSet.getString("city"));
                 location.setDescription(resultSet.getString("description"));
-                location.setPrice(resultSet.getBigDecimal("price"));
                 location.setWorkerId(resultSet.getInt("worker_id"));
                 locationList.add(location);
             }

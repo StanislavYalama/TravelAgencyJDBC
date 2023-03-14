@@ -19,9 +19,9 @@
             <th>description</th>
             <th>tourManagerId</th>
             <th>tourOperatorId</th>
-            <th>locationCount</th>
+            <th>discountPercentage</th>
         </tr>
-        <tr th:each = "el : ${tours}">
+        <tr th:each = "el : ${tours}" th:if="${el.isVisible == true or role == 'tour_manager'}">
             <td th:text="${el.id}"></td>
             <td th:text="${el.dateStart}"></td>
             <td th:text="${el.dateEnd}"></td>
@@ -30,7 +30,7 @@
             <td th:text="${el.description}"></td>
             <td th:text="${el.workerId}"></td>
             <td th:text="${el.tourOperatorId}"></td>
-            <td th:text="${el.locationCount}"></td>
+            <td th:text="${el.discountPercentage}"></td>
             <td><a th:href="'/catalog/' + ${el.id}">Details</a></td>
         </tr>
     </table>
@@ -69,6 +69,23 @@
                 <input type="text" name="contentType" placeholder="Тип контенту">
                 <input type="number" name="countPlaces" placeholder="К-ть місць">
                 <input type="text" name="placeName" placeholder="Назва місця">
+            </form>
+        </div>
+        <br>
+        <div>
+            <p>Створення готелю</p>
+            <form action="/catalog/saveHotel" method="post">
+                <select name="locationId">
+                    <option th:each="el : ${allLocations}" th:value="${el.id}"
+                            th:text="${el.country} + ' - ' + ${el.city}"></option>
+                </select>
+                <input type="text" name="name" placeholder="Назва">
+                <input type="text" name="address" placeholder="Адреса">
+                <input type="text" name="country" placeholder="Країна">
+                <input type="text" name="city" placeholder="Місто">
+                <input type="text" name="typeFood" placeholder="Тип харчування">
+                <input type="number" name="quality" placeholder="Якість">
+                <input type="number" name="placesCount" placeholder="К-ть місць">
             </form>
         </div>
         <br>
