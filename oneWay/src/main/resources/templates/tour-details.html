@@ -2,240 +2,362 @@
 <html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
-  <title>Catalog</title>
+  <link rel="stylesheet" href="/styles/tour-details.css">
+  <link rel="stylesheet" href="/styles/global/nav-bar.css">
+  <link rel="stylesheet" href="/styles/global/table-style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jaldi&family=Mina&display=swap" rel="stylesheet">
+  <title>Деталі туру</title>
 </head>
 <body>
+<header th:insert="/global-blocks/header.html"></header>
 <div class="wrapper">
-  <h1>Tour Details</h1>
-  <br/><br/>
-  <div class="tour-info">
-    <div class="tour-info__img">
-      <img src="" alt="">
-    </div>
-    <div class="tour-info__info">
-      <p>Інформація тура</p>
-      <div>
-        <p th:text="'Початок туру: ' + ${tour.dateStart}"></p>
-        <p th:text="'Кінець туру: ' + ${tour.dateEnd}"></p>
+    <main>
+      <div class="tour-info">
+        <div class="tour-info__img-container">
+          <img th:src="'/image' + ${tour.photoPath}" alt="Фото не знайдено" id="tour-info__img_img">
+        </div>
+        <div class="tour-info__text">
+          <div class="tour-info__text-container">
+            <div>
+              <p th:text="${tour.name}"></p>
+            </div>
+            <div>
+              <p th:text="'Тип туру: ' + ${tour.type}"></p>
+              <p th:text="'Кількість місць: ' + ${tour.numberOfSeats}" th:if="${role}=='tour_manager'"></p>
+              <p th:text="'Початок туру: ' + ${tour.dateStart}"></p>
+              <p th:text="'Кінець туру: ' + ${tour.dateEnd}"></p>
+            </div>
+            <div>
+              <p th:text="'Ціна: ' + ${tour.price} + ' грн'"></p>
+              <p th:text="'Ціна зі знижкою: ' + ${tour.pricePromotion} + ' грн'"></p>
+            </div>
+            <div class="catalog-forms">
+              <div th:if="${role}=='client'">
+                <div th:if="${clientSendRequest.id}==null">
+                  <form th:action="'/catalog/' + ${tourId} + '/addMembers'" method="post">
+                    Кількість учасників<br>
+                    <input name="members_count" type="number" value="1"><br>
+                    <input type="submit" value="Замовити" class="tour-info__submit-button">
+                  </form>
+                </div>
+                <div th:unless="${clientSendRequest.id}==null">
+                  <form th:action="'/cabinet/' + ${userId}" method="get">
+                    <input type="submit" value="Оплатити"
+                           th:if="${clientSendRequest.paymentStatus}==false" class="tour-info__submit-button">
+                    <input type="submit" value="Оплачено"
+                           th:unless="${clientSendRequest.paymentStatus}==false" class="tour-info__submit-button">
+                  </form>
+                </div>
+              </div>
+
+
+              <form action="/login" th:if="${role}=='guest'">
+                <input type="submit" value="Замовити" class="tour-info__submit-button">
+              </form>
+              <form th:action="'/catalog/delete/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
+                <input type="submit" value="Delete" class="tour-info__submit-button">
+              </form>
+            </div>
+            <div>
+              <p th:text="'Видимість туру: ' + ${tour.visible}" th:if="${role}=='tour_manager'"></p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <p th:text="'Ціна: ' + ${tour.price} + ' грн'"></p>
-        <p th:text="'Ціна зі знижкою: ' + ${tour.pricePromotion} + ' грн'"></p>
-        <!-- <p th:text="${tour.discountPercentage} + '%'"></p> -->
-      </div>
-      <div class="catalog-forms">
-        <form th:action="'/catalog/' + ${tourId} + '/addMembers'" th:if="${role}=='client'" method="post">
-          Кількість учасників<br>
-          <input name="members_count" type="number" value="1">
-          <input type="submit" value="Замовити">
-        </form>
-        <form action="/login" th:if="${role}=='guest'">
-          <input type="submit" value="Замовити">
-        </form>
-        <form th:action="'/catalog/delete/' + ${tour.id}" th:if="${role}=='tour_manager'" method="post">
-          <input type="submit" value="Delete">
-        </form>
-      </div>
-      <div>
+      <br>
+      <div class="description">
         <p>Опис</p>
         <p th:text="${tour.description}"></p>
       </div>
-    </div>
-  </div>
-  <br>
-
-  <br><br>
-  <div class="tour-documents" th:if="${tourDocumentList.size()} &gt; 0">
-    <ul>
-      <li th:each="el : ${tourDocumentList}" th:text="${el.name}"></li>
-    </ul>
-  </div>
-  <br>
-  <div class="locations">
-    <p>Locations</p>
-    <table border="1">
-      <tr>
-        <th>Id</th>
-        <th>country</th>
-        <th>description</th>
-        <th>city</th>
-        <th>creatorId</th>
-      </tr>
-      <tr th:each = "el : ${locations}">
-        <td th:text="${el.id}"></td>
-        <td th:text="${el.country}"></td>
-        <td th:text="${el.city}"></td>
-        <td th:text="${el.description}"></td>
-        <td th:text="${el.workerId}"></td>
-        <td>
-          <form th:action="'/catalog/' + ${tour.id} + '/deleteLocation/' + ${el.id}"
-                th:if="${role} == 'manager'" method="post">
-            <input type="submit" value="Відкріпити">
+  
+      <br><br>
+      <div class="tour-documents" th:if="${tourDocumentList.size()} &gt; 0">
+        <p>Необхідні документи</p>
+        <ul>
+          <li th:each="el : ${tourDocumentList}" th:text="${el.name}"></li>
+        </ul>
+        
+        <div th:if="${role}=='tour_manager'">
+          <form th:action="'/catalog/' + ${tour.id} + '/deleteDocument'" method="post">
+            <input type="submit" value="Очистити список необхідних документів">
           </form>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <br>
-  <div class="promotions" th:if="${promotions.size()} &gt; 0">
-    <p>Знижки</p><br>
-    <table border="1">
-      <tr>
-        <th>Id</th>
-        <th>Дата початку</th>
-        <th>Дата кінця</th>
-        <th>Номер номер творця</th>
-        <th>Відсоток знижки</th>
-      </tr>
-      <tr th:each = "el : ${promotions}">
-        <td th:text="${el.id}"></td>
-        <td th:text="${el.dateBeginning}"></td>
-        <td th:text="${el.dateEnd}"></td>
-        <td th:text="${el.workerId}"></td>
-        <td th:text="${el.discountPercentage}"></td>
-      </tr>
-    </table>
-  </div>
-  <br>
-  <div class="forms" th:if="${role}=='tour_manager'">
-    <div>
-      Приєднати знижки
-      <form th:action="'/catalog/addPromotion/' + ${tour.id}" method="post">
-        Номер знижки: <input type="number" name="promotionId"><br>
-        <input type="submit" value="Link">
-      </form>
-    </div>
-    <div>
-      Приєднати локації до тура
-      <form th:action="'/catalog/addLocation/' + ${tour.id}" method="post">
-  <!--      TODO-->
+        </div>
+      </div>
+
+      <div class="excursions_table" th:if="${!excursionViewList.isEmpty()}">
+        <br><br>
+        <p>Екскурсії</p>
+        <table class="styled-table">
+          <thead>
+          <tr>
+            <th>Місто</th>
+            <th>Тип екскурсії</th>
+            <th>Назва місця</th>
+            <th th:if="${role}=='tour_manager'">Опції</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="el : ${excursionViewList}">
+            <td th:text="${el.city}"></td>
+            <td th:text="${el.contentType}"></td>
+            <td th:text="${el.placeName}"></td>
+            <td th:if="${role}=='tour_manager'">
+              <form th:action="'/catalog/' + ${tour.id} + '/deleteExcursion/' + ${el.id}" method="post">
+                <input type="submit" value="Відкріпити">
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div th:if="${!hotelListByTourId.isEmpty()}">
+        <br><br>
+        <p>Готелі</p>
+        <table class="styled-table">
+          <thead>
+          <tr>
+            <th>Назва</th>
+            <th>Адреса</th>
+            <th>Тип харчування</th>
+            <th>Якість</th>
+            <th>Кількість місць</th>
+            <th>Номер локації</th>
+            <th th:if="${role}=='tour_manager'">Опції</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="el : ${hotelListByTourId}">
+            <td th:text="${el.name}"></td>
+            <td th:text="${el.address}"></td>
+            <td th:text="${el.typeFood}"></td>
+            <td th:text="${el.quality}"></td>
+            <td th:text="${el.placesCount}"></td>
+            <td th:text="${el.locationId}"></td>
+            <td th:if="${role}=='tour_manager'">
+              <form th:action="'/catalog/' + ${tour.id} + '/deleteHotel/' + ${el.id}" method="post">
+                <input type="submit" value="Відкріпити">
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <br>
+      </div>
+
+
+      <div class="tour_manager_functional" th:if="${role}=='tour_manager'">
+        <div class="locations">
+          <p>Locations</p>
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>country</th>
+                <th>city</th>
+                <th>description</th>
+                <th>creatorId</th>
+                <th th:if="${role}=='tour_manager'"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each = "el : ${locations}">
+                <td th:text="${el.id}"></td>
+                <td th:text="${el.country}"></td>
+                <td th:text="${el.city}"></td>
+                <td th:text="${el.description}"></td>
+                <td th:text="${el.workerId}"></td>
+                <td>
+                  <form th:action="'/catalog/' + ${tour.id} + '/deleteLocation/' + ${el.id}"
+                        th:if="${role}=='tour_manager'" method="post">
+                    <input type="submit" value="Відкріпити">
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div class="promotions" th:if="${promotions.size()} &gt; 0">
+          <p>Знижки</p><br>
+          <table class="styled-table">
+            <tr>
+              <th>Id</th>
+              <th>Дата початку</th>
+              <th>Дата кінця</th>
+              <th>Номер номер творця</th>
+              <th>Відсоток знижки</th>
+              <th th:if="${role}=='tour_manager'">Опції</th>
+            </tr>
+            <tr th:each = "el : ${promotions}">
+              <td th:text="${el.id}"></td>
+              <td th:text="${el.dateBeginning}"></td>
+              <td th:text="${el.dateEnd}"></td>
+              <td th:text="${el.workerId}"></td>
+              <td th:text="${el.discountPercentage}"></td>
+              <td th:if="${role}=='tour_manager'">
+                <form th:action="'/catalog/' + ${tour.id} + '/deletePromotion/' + ${el.id}" method="post">
+                  <input type="submit" value="Відкріпити">
+                </form>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <br>
+        <div class="forms">
+          <div>
+            Приєднати знижки
+            <form th:action="'/catalog/addPromotion/' + ${tour.id}" method="post">
+              Номер знижки: <input type="number" name="promotionId"><br>
+              <input type="submit" value="Link">
+            </form>
+          </div>
+          <div>
+            Приєднати локації до тура
+            <form th:action="'/catalog/addLocation/' + ${tour.id}" method="post">
+              <div>
+                <select name="location">
+                  <option value="0">--Обрати локацію--</option>
+                  <option th:value="${loc.id}" th:each="loc : ${allLocations}" th:text="${loc.country} + ' - ' + ${loc.city}"></option>
+                </select>
+                <br>
+              </div>
+              <input type="submit" value="Підтвердити">
+            </form>
+          </div>
+          <div>
+            Вказати потрібні документи
+            <form th:action="'/catalog/' + ${tour.id} + '/addDocument'" method="post">
+              <div th:each="el : ${documentList}">
+                <input type="checkbox"  name="documentIdList" th:id="${el.id}" th:value="${el.id}">
+                <label th:for="${el.id}" th:text="${el.name}"></label>
+              </div>
+              <input type="submit" value="Зберегти">
+            </form>
+          </div>
+        </div>
+        </br>
+        </br>
+        <div class="excursions">
+          <p>Зв'язати</p>
+          <div class="addExcursion">
+            <form th:action="'/catalog/' + ${tour.id} + '/addExcursion'" method="post">
+              <select name="addExcursion_location" id="addExcursion_location" onchange="excursionFunc()">
+                <option value="0" selected>Оберіть локацію</option>
+                <option th:each="el : ${locations}" th:value="${el.id}" th:text="${el.city}"
+                        name="addExcursion_location_option"></option>
+              </select>
+              <select name="addExcursion_excursion" id="addExcursion_excursion">
+                <option value="0" selected>--Екскурсії--</option>
+                <option th:each="el : ${excursionList}" th:value="${el.id}"
+                        th:text="${el.locationId} + '.' + ${el.id} + ' - ' + ${el.placeName}" name="optionExcursion" hidden></option>
+              </select>
+              <input type="submit" value="Додати">
+            </form>
+          </div>
+          <div class="addHotel">
+            <form th:action="'/catalog/' + ${tour.id} + '/addHotel'" method="post">
+              <select name="addHotel_location" id="addHotel_location" onchange="hotelFunc()">
+                <option value="0" selected>--Оберіть локацію--</option>
+                <option th:each="el : ${locations}" th:value="${el.id}" th:text="${el.city}"
+                        name="addHotel_location_option"></option>
+              </select>
+              <select name="addHotel_hotel" id="addHotel_hotel">
+                <option value="0" selected>--Готелі--</option>
+                <option th:each="el : ${hotelList}" th:value="${el.id}"
+                        th:text="${el.locationId} + '.' + ${el.id} + ' - ' + ${el.name}" name="optionHotel" hidden></option>
+              </select>
+              <input type="submit" value="Додати">
+            </form>
+          </div>
+          <script th:inline="javascript">
+          var excursionListStr = /*[[${excursionsGson}]]*/ 'default';
+          const excursionList = JSON.parse(excursionListStr);
+  
+          var hotelListStr = /*[[${hotelListGson}]]*/ 'default';
+          const hotelList = JSON.parse(hotelListStr);
+  
+          var selElem = document.getElementById('addExcursion_excursion');
+          var selElemHotel = document.getElementById('addHotel_hotel');
+  
+          function sortSelect(selElem) {
+            var tmpAry = new Array();
+            for (var i=0;i<selElem.options.length;i++) {
+                tmpAry[i] = new Array();
+                tmpAry[i][0] = selElem.options[i].text;
+                tmpAry[i][1] = selElem.options[i].value;
+            }
+            tmpAry.sort();
+            while (selElem.options.length > 0) {
+                selElem.options[0] = null;
+            }
+            for (var i=0;i<tmpAry.length;i++) {
+                var op = new Option(tmpAry[i][0], tmpAry[i][1]);
+                selElem.options[i] = op;
+            }
+            return;
+          }
+          sortSelect(selElem);
+          sortSelect(selElemHotel);
+  
+          function excursionFunc() {
+              var selectLocation = document.getElementById('addExcursion_location');
+              var locationId = selectLocation.options[selectLocation.selectedIndex].value;
+              var optionsList = selElem.options;
+  
+              Array.from(excursionList).forEach(function (element, index) {
+                if(optionsList[index + 1].hasAttribute('selected')){
+                  optionList[0].removeAttribute('selected');
+                }
+                if(element.locationId == locationId){
+                  optionsList[index + 1].removeAttribute('hidden');
+                } else{
+                  optionsList[index + 1].setAttribute('hidden', '');
+                }
+              });
+              selElem.value = 0;
+          };
+  
+          function hotelFunc() {
+              var selectLocation = document.getElementById('addHotel_location');
+              var locationId = selectLocation.options[selectLocation.selectedIndex].value;
+              var optionsList = selElemHotel.options;
+  
+              Array.from(hotelList).forEach(function (element, index) {
+                if(optionsList[index + 1].hasAttribute('selected')){
+                  optionList[0].removeAttribute('selected');
+                }
+                if(element.locationId == locationId){
+                  optionsList[index + 1].removeAttribute('hidden');
+                } else{
+                  optionsList[index + 1].setAttribute('hidden', '');
+                }
+              });
+              selElemHotel.value = 0;
+          };
+        </script>
+        </div>
         <div>
-          <select name="location">
-            <option value="0">--Обрати локацію--</option>
-            <option th:value="${loc.id}" th:each="loc : ${allLocations}" th:text="${loc.country} + ' - ' + ${loc.city}"></option>
-          </select>
-          <br>
+          <br><br>
+          <form th:action="'/catalog/' + ${tour.id} + '/addPhoto'" method="post"
+                enctype="multipart/form-data">
+            <p>Оберіть зображення для тура</p>
+            <input name="tourImg" type="file"
+                   accept="application/pdf, image/jpeg, image/png"><br>
+            <input type="submit" value="Зберегти">
+          </form>
+          <br><br>
+          <div>
+            <form th:action="'/catalog/' + ${tour.id} + '/changeVisible'" method="post">
+              <input type="submit" value="Змінити видимість туру для користувачів">
+            </form>
+          </div>
         </div>
-        <input type="submit" value="Підтвердити">
-      </form>
-    </div>
-    <div>
-      Вказати потрібні документи
-      <form th:action="'/catalog/' + ${tour.id} + '/addDocument'" method="post">
-        <div th:each="el : ${documentList}">
-          <input type="checkbox"  name="documentIdList" th:id="${el.id}" th:value="${el.id}">
-          <label th:for="${el.id}" th:text="${el.name}"></label>
-        </div>
-        <input type="submit" value="Зберегти">
-      </form>
-    </div>
+      </div>
+    </main>
   </div>
-  </br>
-  </br>
-  <div class="excursions" th:if="${role}=='tour_manager'">
-    <div class="addExcursion">
-      <form th:action="'/catalog/' + ${tour.id} + '/addExcursion'" method="post">
-        <select name="addExcursion_location" id="addExcursion_location" onchange="excursionFunc()">
-          <option value="0" selected>Оберіть локацію</option>
-          <option th:each="el : ${locations}" th:value="${el.id}" th:text="${el.city}"
-                  name="addExcursion_location_option"></option>
-        </select>
-        <select name="addExcursion_excursion" id="addExcursion_excursion">
-          <option value="0" selected>--Екскурсії--</option>
-          <option th:each="el : ${excursionList}" th:value="${el.id}"
-                  th:text="${el.locationId} + '.' + ${el.id} + ' - ' + ${el.placeName}" name="optionExcursion" hidden></option>
-        </select>
-        <input type="submit" value="Додати">
-      </form>
-    </div>
-    <div class="addHotel">
-      <form th:action="'/catalog/' + ${tour.id} + '/addHotel'" method="post">
-        <select name="addHotel_location" id="addHotel_location" onchange="hotelFunc()">
-          <option value="0" selected>--Оберіть локацію--</option>
-          <option th:each="el : ${locations}" th:value="${el.id}" th:text="${el.city}"
-                  name="addHotel_location_option"></option>
-        </select>
-        <select name="addHotel_hotel" id="addHotel_hotel">
-          <option value="0" selected>--Готелі--</option>
-          <option th:each="el : ${hotelList}" th:value="${el.id}"
-                  th:text="${el.locationId} + '.' + ${el.id} + ' - ' + ${el.name}" name="optionHotel" hidden></option>
-        </select>
-        <input type="submit" value="Додати">
-      </form>
-    </div>
-    <script th:inline="javascript">
-        var excursionListStr = /*[[${excursionsGson}]]*/ 'default';
-        const excursionList = JSON.parse(excursionListStr);
-
-        var hotelListStr = /*[[${hotelListGson}]]*/ 'default';
-        const hotelList = JSON.parse(hotelListStr);
-
-        var selElem = document.getElementById('addExcursion_excursion');
-        var selElemHotel = document.getElementById('addHotel_hotel');
-
-        function sortSelect(selElem) {
-          var tmpAry = new Array();
-          for (var i=0;i<selElem.options.length;i++) {
-              tmpAry[i] = new Array();
-              tmpAry[i][0] = selElem.options[i].text;
-              tmpAry[i][1] = selElem.options[i].value;
-          }
-          tmpAry.sort();
-          while (selElem.options.length > 0) {
-              selElem.options[0] = null;
-          }
-          for (var i=0;i<tmpAry.length;i++) {
-              var op = new Option(tmpAry[i][0], tmpAry[i][1]);
-              selElem.options[i] = op;
-          }
-          return;
-        }
-        sortSelect(selElem);
-        sortSelect(selElemHotel);
-
-        function excursionFunc() {
-            var selectLocation = document.getElementById('addExcursion_location');
-            var locationId = selectLocation.options[selectLocation.selectedIndex].value;
-            var optionsList = selElem.options;
-
-            Array.from(excursionList).forEach(function (element, index) {
-              if(optionsList[index + 1].hasAttribute('selected')){
-                optionList[0].removeAttribute('selected');
-              }
-              if(element.locationId == locationId){
-                optionsList[index + 1].removeAttribute('hidden');
-              } else{
-                optionsList[index + 1].setAttribute('hidden', '');
-              }
-            });
-            selElem.value = 0;
-        };
-
-        function hotelFunc() {
-            var selectLocation = document.getElementById('addHotel_location');
-            var locationId = selectLocation.options[selectLocation.selectedIndex].value;
-            var optionsList = selElemHotel.options;
-
-            Array.from(hotelList).forEach(function (element, index) {
-              if(optionsList[index + 1].hasAttribute('selected')){
-                optionList[0].removeAttribute('selected');
-              }
-              if(element.locationId == locationId){
-                optionsList[index + 1].removeAttribute('hidden');
-              } else{
-                optionsList[index + 1].setAttribute('hidden', '');
-              }
-            });
-            selElemHotel.value = 0;
-        };
-      </script>
-    <br><br>
-    <div>
-      <form action="'/catalog/' + ${tour.id} + '/makeVisible'" method="post">
-        <input type="submit" value="Зробити видимим для користувачів">
-      </form>
-    </div>
-  </div>
-</div>
 </body>
 </html>

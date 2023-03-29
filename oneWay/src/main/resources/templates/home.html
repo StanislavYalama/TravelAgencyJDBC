@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="/styles/nav-bar.css">
+    <link rel="stylesheet" href="/styles/nav-bar.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jaldi&family=Mina&display=swap" rel="stylesheet">
@@ -12,38 +15,7 @@
 </head>
 <body>
     <div class="content">
-        <header>
-            <div class="header-navigate">
-                <div class="nav-image">
-                    <a href="/">
-                        <img src="image/home/logo.png" alt="" width="100px" height="60px">
-                    </a>
-                </div>
-                <nav class="navigate">
-                    <ul>
-                        <li>
-                            <a href="/catalog">Каталог турів</a>
-                        </li>
-                        <li>
-                            <a href="/promotions">Акції</a>
-                        </li>
-                        <li th:if="${role}=='manager'">
-                            <a href="/requests">Заявки</a>
-                        </li>
-                        <li th:if="${role}=='client'" class="navigate_right">
-                            <a th:href="'/cabinet/' + ${userId}">Особистий кабінет</a>
-                        </li>
-                        <li th:if="${role}=='guest'" class="navigate_right">
-                            <a href="/login">Вхід</a>
-                        </li>
-                        <li th:unless="${role}=='guest'" class="navigate_right">
-                            <a href="/logout">Вихід</a>
-                        </li>
-                    </ul>        
-                </nav>
-            </div>
-    
-        </header>
+        <header th:insert="/global-blocks/header.html"></header>
         <main>
             <div class="slider">
                 <img src="image/home/slide.png" alt="" width="1366">
@@ -122,7 +94,6 @@
                         <div class="benefits-flexnox-image">
                             <img src="image/home/stages/stage4.png" alt="" width="220" height="170">
                         </div>
-                        
                     </div>
                     <div class="benefits-flexbox">
                         <p>Насолоджуйтесь<br> відпочинком</p>
@@ -133,13 +104,6 @@
                 </div>
             </div>
         </main>
-        <footer>
-            <div>
-                <a href="#">FAQ</a>
-                <a href="#">Політика конфіденційності</a>
-                <a href="#">Корпоративна Політика</a>
-            </div>
-        </footer>
     </div>
 </body>
 </html>

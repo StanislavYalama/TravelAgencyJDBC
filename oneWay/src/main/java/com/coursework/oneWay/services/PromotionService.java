@@ -39,4 +39,8 @@ public class PromotionService {
     public List<Promotion> findByTourId(int tourId, Connection connection){
         return promotionRepository.findByTourId(tourId, connection);
     }
+
+    public void deleteFromTourPromotion(int tourId, int promotionId, Connection connection) {
+        promotionRepository.deleteFromTourPromotion(tourId, promotionId, connection);
+    }
 }

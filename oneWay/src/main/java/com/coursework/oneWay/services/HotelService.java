@@ -26,7 +26,7 @@ public class HotelService {
         return hotelRepository.findById(Hotel.class, id, connection);
     }
 
-    public List<Hotel> findByTourId(int tourId, Connection connection){
+    public List<Hotel> findByTourIdUnspent(int tourId, Connection connection){
         return hotelRepository.findByTourIdUnspent(tourId, connection);
     }
 
@@ -38,15 +38,19 @@ public class HotelService {
         hotelRepository.save(hotel, connection);
     }
 
-    public List<Hotel> findByTourId(Integer tour_id, Connection connection) {
-        return hotelRepository.findByTourId(tour_id, connection);
+    public List<Hotel> findByTourId(Integer tourId, Connection connection) {
+        return hotelRepository.findByTourId(tourId, connection);
     }
 
-    public List<Hotel> findByTourIdUnspent(Integer request_id, Connection connection) {
-        return hotelRepository.findByTourIdUnspent(request_id, connection);
-    }
+//    public List<Hotel> findByTourIdUnspent(Integer request_id, Connection connection) {
+//        return hotelRepository.findByTourIdUnspent(request_id, connection);
+//    }
 
     public void saveTourHotel(TourHotel tourHotel, Connection connection) {
         tourHotelRepository.save(tourHotel, connection);
+    }
+
+    public void deleteFromTourHotel(TourHotel tourHotel, Connection connection) {
+        tourHotelRepository.delete(tourHotel, connection);
     }
 }

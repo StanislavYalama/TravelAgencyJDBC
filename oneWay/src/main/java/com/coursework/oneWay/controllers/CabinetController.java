@@ -34,6 +34,7 @@ public class CabinetController {
                 .getBalance();
         balance = Math.floor(balance * 100) / 100;
 
+        model.addAttribute("userId", httpSessionBean.getId());
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("client", client);
         model.addAttribute("balance", balance);
@@ -67,7 +68,7 @@ public class CabinetController {
 
         if(!newStatus.equals("")){
             Request request = requestService.findById(requestId, httpSessionBean.getConnection());
-            requestService.setStatus(requestId, newStatus, request.getWorkerId(),
+            requestService.setStatus(requestId, newStatus, httpSessionBean.getId(),
                     httpSessionBean.getConnection());
         }
 

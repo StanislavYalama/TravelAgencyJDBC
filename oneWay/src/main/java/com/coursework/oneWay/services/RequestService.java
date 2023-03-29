@@ -36,32 +36,22 @@ public class RequestService {
     private RequestRepositoryImpl requestRepository;
 
     public List<Request> findAll(Connection connection) {
-
-//        checkDenyStatus(requestList, connection);
         return requestRepository.findAll(Request.class, connection);
     }
 
     public Request findById(int requestId, Connection connection) {
-
-//        checkDenyStatus(requestList, connection);
         return requestRepository.findById(Request.class, requestId, connection);
     }
 
     public List<Request> findUnadmitted(Connection connection) {
-
-//        checkDenyStatus(requestList, connection);
         return requestRepository.findUnadmitted(connection);
     }
 
     public List<Request> findAdmitted(Connection connection) {
-
-//        checkDenyStatus(requestList, connection);
         return requestRepository.findAdmitted(connection);
     }
 
     public List<Request> findByClientId(int id, Connection connection) {
-
-//        checkDenyStatus(requestList, connection);
         return requestRepository.findByClientId(id, connection);
     }
 
@@ -88,55 +78,12 @@ public class RequestService {
         requestRepository.pay(requestId, clientId, connection);
     }
 
-    //TODO
-    private void checkDenyStatus(List<Request> requestList, Connection connection) {
-        if (Duration.between(LocalDate.now(), dateOfLastUpdate).toMillis() > updateInterval) {
-            isUpdated = false;
-        }
-        if (!isUpdated) {
-            requestList.forEach(el -> {
-                if(el.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBFormat()) || !el.isPaymentStatus()){
-                    long duration = Duration.between(
-                            tourService.findByRequestId(el.getId(), connection).getDateStart(),
-                            LocalDate.now()).toMillis();
-
-                    if (duration < denyInterval) {
-                        requestRepository.update(Request.class, el.getId(), "status",
-                                RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBFormat(), connection);
-                    }
-                }
-            });
-
-            isUpdated = true;
-        }
-    }
-
-    private void checkDenyStatus(Request request, Connection connection) {
-        if (Duration.between(LocalDate.now(), dateOfLastUpdate).toMillis() > updateInterval) {
-            isUpdated = false;
-        }
-        if (!isUpdated) {
-            if(request.getStatus().equals(RequestStatus.ВІДПРАВЛЕНО.toDBFormat()) || !request.isPaymentStatus()){
-                long duration = Duration.between(
-                        tourService.findByRequestId(request.getId(), connection).getDateStart(),
-                        LocalDate.now()).toMillis();
-
-                if (duration < denyInterval) {
-                    requestRepository.update(Request.class, request.getId(), "status",
-                            RequestStatus.СКАСОВАНО_АГЕНСТВОМ.toDBFormat(), connection);
-                }
-            }
-
-            isUpdated = true;
-        }
-    }
-
     public int getMembersCountById(int requestId, Connection connection) {
         return requestRepository.getMembersCountById(requestId, connection);
     }
-}
 
-//    public void saveNew(int clientId, int tourId){
-//        requestRepository.saveNew(clientId, tourId);
-//    }
+    public Request findByClientIdAndTourId(int clientId, int tourId, Connection connection) {
+        return requestRepository.findByClientIdAndTourId(clientId, tourId, connection);
+    }
+}
 

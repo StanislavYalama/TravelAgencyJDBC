@@ -18,7 +18,7 @@ public class HotelRepositoryImpl extends JDBCCustomRepositoryImpl<Hotel, Integer
         List<Hotel> hotelList = new ArrayList<>();
         String query = """
                 SELECT * FROM hotel
-                WHERE location_id IN (SELECT location_id FROM tour_location
+                WHERE id IN (SELECT hotel_id FROM tour_hotel
                 	WHERE tour_id = ?)""";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -29,8 +29,6 @@ public class HotelRepositoryImpl extends JDBCCustomRepositoryImpl<Hotel, Integer
                 hotel.setId(resultSet.getInt("id"));
                 hotel.setName(resultSet.getString("name"));
                 hotel.setAddress(resultSet.getString("address"));
-                hotel.setCountry(resultSet.getString("country"));
-                hotel.setCity(resultSet.getString("city"));
                 hotel.setTypeFood(resultSet.getString("type_food"));
                 hotel.setQuality(resultSet.getInt("quality"));
                 hotel.setLocationId(resultSet.getInt("location_id"));
@@ -62,8 +60,6 @@ public class HotelRepositoryImpl extends JDBCCustomRepositoryImpl<Hotel, Integer
                 hotel.setId(resultSet.getInt("id"));
                 hotel.setName(resultSet.getString("name"));
                 hotel.setAddress(resultSet.getString("address"));
-                hotel.setCountry(resultSet.getString("country"));
-                hotel.setCity(resultSet.getString("city"));
                 hotel.setTypeFood(resultSet.getString("type_food"));
                 hotel.setQuality(resultSet.getInt("quality"));
                 hotel.setLocationId(resultSet.getInt("location_id"));

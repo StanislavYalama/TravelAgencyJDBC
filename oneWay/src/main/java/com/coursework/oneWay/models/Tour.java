@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Tour {
     private Integer id;
+    private String name;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -20,4 +21,6 @@ public class Tour {
     private Integer workerId;
     private Integer tourOperatorId;
     private boolean visible;
+    private String type;
+    private Integer numberOfSeats;
 }

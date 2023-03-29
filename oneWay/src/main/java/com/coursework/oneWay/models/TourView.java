@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TourView {
     private Integer id;
+    private String name;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -23,4 +24,7 @@ public class TourView {
     private boolean visible;
     private Double pricePromotion;
     private Integer discountPercentage;
+    private String type;
+    private Integer numberOfSeats;
+    private String photoPath;
 }

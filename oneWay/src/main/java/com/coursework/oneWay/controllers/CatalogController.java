@@ -1,6 +1,7 @@
 package com.coursework.oneWay.controllers;
 
 import com.coursework.oneWay.DocumentType;
+import com.coursework.oneWay.TourType;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,22 +48,61 @@ public class CatalogController {
 
     @Value("${upload.path}")
     String toClientDocumentPackage;
+    @Value("${tourImg.path}")
+    String tourImgAbsolutePath;
 
     @GetMapping
     public String catalog(Model model) throws SQLException {
 
+        List<TourView> tourViewList = tourService.findAllTourViews(httpSessionBean.getConnection());
+        if(httpSessionBean.getRole().equals("tour_manager")){
+            tourViewList = tourViewList
+                    .stream()
+                    .sorted(Comparator.comparing(TourView::isVisible)
+                            .thenComparing(TourView::getDateStart))
+                    .toList();
+        } else{
+            tourViewList = tourViewList
+                    .stream()
+                    .filter(el -> el.isVisible() && el.getDateStart().isBefore(LocalDate.now()))
+                    .toList();
+        }
+
+        model.addAttribute("userId", httpSessionBean.getId());
         model.addAttribute("role", httpSessionBean.getRole());
-        model.addAttribute("tours",
-                tourService.findAllTourViews(httpSessionBean.getConnection()));
-        model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+        model.addAttribute("tours", tourViewList);
+        if(httpSessionBean.getRole().equals("tour_manager")){
+            model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+        }
         model.addAttribute("documentTypes", EnumSet.allOf(DocumentType.class));
+        model.addAttribute("tourType", EnumSet.allOf(TourType.class));
 
         httpSessionBean.setLastUrl("redirect:/catalog");
         return "catalog";
     }
     @GetMapping("/{tourId}")
     public String catalogTourDetails(Model model, @PathVariable int tourId){
+
         List<Location> locationList = locationService.findByTourId(tourId, httpSessionBean.getConnection());
+        List<ExcursionView> excursionViewList = excursionService.findByTourIdExcursionView(tourId, httpSessionBean.getConnection());
+        List<Excursion> excursionList = excursionService.findByTourIdUnspent(tourId, httpSessionBean.getConnection())
+                .stream()
+                .sorted(Comparator.comparing(Excursion::getLocationId))
+                .collect(Collectors.toList());
+        List<Hotel> hotelList = hotelService.findByTourIdUnspent(tourId, httpSessionBean.getConnection())
+                .stream()
+                .sorted(Comparator.comparing(Hotel::getLocationId))
+                .toList();
+        List<Hotel> hotelListByTourId = hotelService.findByTourId(tourId, httpSessionBean.getConnection())
+                .stream()
+                .sorted(Comparator.comparing(Hotel::getLocationId))
+                .toList();;
+
+        if(httpSessionBean.getRole().equals("client")){
+            model.addAttribute("clientSendRequest",
+                    requestService.findByClientIdAndTourId(httpSessionBean.getId(), tourId, httpSessionBean.getConnection()));
+        }
+        model.addAttribute("userId", httpSessionBean.getId());
         model.addAttribute("tour",
                 tourService.findByIdTourViews(tourId, httpSessionBean.getConnection()));
         model.addAttribute("locations", locationList);
@@ -71,19 +112,14 @@ public class CatalogController {
                 promotionService.findByTourId(tourId, httpSessionBean.getConnection()));
         model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
 
-        List<Excursion> excursionList = excursionService.findByTourIdUnspent(tourId, httpSessionBean.getConnection())
-                .stream()
-                .sorted(Comparator.comparing(Excursion::getLocationId))
-                .collect(Collectors.toList());
+        model.addAttribute("excursionViewList", excursionViewList);
         model.addAttribute("excursionList", excursionList);
         model.addAttribute("excursionsGson", new Gson().toJson(excursionList));
 
-        List<Hotel> hotelList = hotelService.findByTourIdUnspent(tourId, httpSessionBean.getConnection())
-                .stream()
-                .sorted(Comparator.comparing(Hotel::getLocationId))
-                .toList();
+        model.addAttribute("hotelListByTourId", hotelListByTourId);
         model.addAttribute("hotelList", hotelList);
         model.addAttribute("hotelListGson", new Gson().toJson(hotelList));
+
         model.addAttribute("documentList", documentService.findAll(httpSessionBean.getConnection()));
         model.addAttribute("tourDocumentList",
                 documentService.findTourDocumentByTourId(tourId, httpSessionBean.getConnection()));
@@ -167,6 +203,13 @@ public class CatalogController {
         return "redirect:/catalog/{tourId}";
     }
 
+    @PostMapping("{tourId}/deletePromotion/{promotionId}")
+    public String catalogDeletePromotion(@PathVariable int tourId,
+                                         @PathVariable int promotionId){
+        promotionService.deleteFromTourPromotion(tourId, promotionId, httpSessionBean.getConnection());
+        return "redirect:/catalog/{tourId}";
+    }
+
     @PostMapping("/addLocation/{tourId}")
     public String catalogAddLocation(@PathVariable int tourId,
                                       @RequestParam(name = "location") List<Integer> locationIdList){
@@ -199,11 +242,27 @@ public class CatalogController {
         return "redirect:/catalog/{tourId}";
     }
 
+    @PostMapping("/catalog/{tourId}/deleteExcursion/{excursionId}")
+    public String deleteExcursion(@PathVariable int tourId,
+                                  @PathVariable int excursionId){
+
+        tourService.deleteExcursion(tourId, excursionId, httpSessionBean.getConnection());
+        return "redirect:/catalog/{tourId}";
+    }
+
     @PostMapping("/{tourId}/addHotel")
     public String saveHotel(@PathVariable int tourId,
                             @RequestParam(name = "addHotel_hotel") int hotelId){
         hotelService.saveTourHotel(new TourHotel(0, tourId, hotelId), httpSessionBean.getConnection());
         return httpSessionBean.getLastUrl();
+    }
+
+    @PostMapping("/{tourId}/deleteHotel/{hotelId}")
+    public String deleteHotel(@PathVariable int tourId,
+                              @PathVariable int hotelId){
+
+        hotelService.deleteFromTourHotel(new TourHotel(0, tourId, hotelId), httpSessionBean.getConnection());
+        return "redirect:/catalog/{tourId}";
     }
 
     @PostMapping("/{tourId}/addDocument")
@@ -218,6 +277,13 @@ public class CatalogController {
             documentService.saveTourDocumentList(tourDocumentList, httpSessionBean.getConnection());
         }
 
+        return "redirect:/catalog/{tourId}";
+    }
+
+    @PostMapping("/{tourId}/deleteDocument")
+    public String deleteDocument(@PathVariable int tourId){
+
+        documentService.deleteTourDocumentByTourId(tourId, httpSessionBean.getConnection());
         return "redirect:/catalog/{tourId}";
     }
 
@@ -246,9 +312,26 @@ public class CatalogController {
         return httpSessionBean.getLastUrl();
     }
 
-    @PostMapping("/{tourId}/makeVisible")
+    @PostMapping("/{tourId}/addPhoto")
+    public String addPhoto(@PathVariable int tourId,
+                           @RequestParam MultipartFile tourImg){
+        try {
+            String toFilePath = "/" + tourId + "/";
+
+            String subStr = tourImgAbsolutePath.substring(0, tourImgAbsolutePath.length() - 1);
+            String filePathDB = subStr.substring(subStr.lastIndexOf('/')) + toFilePath +
+                    multipartFileUtils.uploadFile(tourImg, tourImgAbsolutePath + toFilePath, "");
+
+            tourService.saveTourImg(new TourImg(0, tourId, filePathDB), httpSessionBean.getConnection());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return httpSessionBean.getLastUrl();
+    }
+
+    @PostMapping("/{tourId}/changeVisible")
     public String makeVisible(@PathVariable int tourId){
-        tourService.makeVisible(tourId, httpSessionBean.getConnection());
+        tourService.changeVisible(tourId, httpSessionBean.getConnection());
         return httpSessionBean.getLastUrl();
     }
 }

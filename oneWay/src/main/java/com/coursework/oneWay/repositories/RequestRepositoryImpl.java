@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -39,7 +40,7 @@ public class RequestRepositoryImpl extends JDBCCustomRepositoryImpl<Request, Int
     public void pay(int requestId, int clientId, Connection connection) {
 
         String tourPriceQuery = """
-                SELECT price_promotion FROM tour
+                SELECT price_promotion FROM tour_view
                 WHERE id = (SELECT tour_id FROM request
                     WHERE id = ? AND client_id = ?)""";
         String walletBalanceQuery = "SELECT balance FROM personal_wallet WHERE client_id = ?";
@@ -116,6 +117,36 @@ public class RequestRepositoryImpl extends JDBCCustomRepositoryImpl<Request, Int
             e.printStackTrace();
         }
         return membersCount;
+    }
+
+    @Override
+    public Request findByClientIdAndTourId(int clientId, int tourId, Connection connection) {
+        Request request = new Request();
+        String query = """
+                SELECT * FROM request
+                WHERE client_id = ? AND tour_id = ?
+                """;
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, clientId);
+            preparedStatement.setInt(2, tourId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                request.setId(resultSet.getInt("id"));
+                request.setClientId(resultSet.getInt("client_id"));
+                request.setTourId(resultSet.getInt("tour_id"));
+                request.setStatus(resultSet.getString("status"));
+                request.setDate(resultSet.getObject("date", LocalDateTime.class));
+                request.setPaymentStatus(resultSet.getBoolean("payment_status"));
+                request.setWorkerId(resultSet.getInt("worker_id"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return request;
     }
 
     public int getCurrentRequestIdSequenceValue(Connection connection) {

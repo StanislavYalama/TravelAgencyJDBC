@@ -10,4 +10,5 @@ public interface HotelRepository{
     List<Hotel> findByTourId(int tourId, Connection connection);
 
     List<Hotel> findByTourIdUnspent(int tourId, Connection connection);
+
 }

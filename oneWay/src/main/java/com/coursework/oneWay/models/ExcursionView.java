@@ -5,15 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Hotel {
-
+@AllArgsConstructor
+public class ExcursionView {
     private Integer id;
-    private String name;
-    private String address;
-    private String typeFood;
-    private Integer quality;
-    private Integer placesCount;
+    private String city;
+    private String placeName;
+    private String contentType;
     private Integer locationId;
 }

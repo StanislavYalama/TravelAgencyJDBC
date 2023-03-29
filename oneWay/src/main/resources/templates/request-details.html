@@ -2,62 +2,74 @@
 <html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Request ##</title>
+    <link rel="stylesheet" href="/styles/global/base.css">
+    <link rel="stylesheet" href="/styles/global/nav-bar.css">
+    <link rel="stylesheet" href="/styles/global/table-style.css">
+    <title>Деталі заявки</title>
 </head>
 <body>
+<header th:insert="/global-blocks/header.html"></header>
 <div class="wrapper" th:if="${role} eq 'manager'">
     <div class="request-container">
-        <table border="1">
-            <tr>
-                <th>id</th>
-                <th>Номер клієнта</th>
-                <th>Статус</th>
-                <th>Дата</th>
-                <th>Номер тура</th>
-<!--                <th>Номер менеджера</th>-->
-                <th>Статус оплати</th>
-            </tr>
-            <tr>
-                <form th:action="'/requests/admit/' + ${request.id}" method="post">
-                    <td th:text="${request.id}" id="id1"></td>
-                    <td><a th:text="${request.clientId}" th:href="'/cabinet/' + ${request.clientId}"></a></td>
-                    <td>
-                        <select class="form-control" id="dropDownList" name="status">
-                            <option th:value="${request.status}" th:text="${request.status}"></option>
-                            <option th:each="el_status : ${status_values}" th:value="${el_status}"
-                                    th:text="${#strings.toLowerCase(el_status)}"
-                                    th:if="${request.status}!=${#strings.toLowerCase(el_status)}"></option>
-                        </select>
-                    </td>
-                    <td th:text="${request.date}"></td>
-                    <td th:text="${request.tourId}"></td>
-<!--                    <td th:text="${request.workerId}"></td>-->
-                    <td th:text="${request.paymentStatus}"></td>
-                    <td>
-                        <input type="submit" value="Надіслати">
-                    </td>
-                </form>
-            </tr>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Номер клієнта</th>
+                    <th>Статус</th>
+                    <th>Дата</th>
+                    <th>Номер тура</th>
+                    <!--                <th>Номер менеджера</th>-->
+                    <th>Статус оплати</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <form th:action="'/requests/admit/' + ${request.id}" method="post">
+                        <td th:text="${request.id}" id="id1"></td>
+                        <td><a th:text="${request.clientId}" th:href="'/cabinet/' + ${request.clientId}"></a></td>
+                        <td>
+                            <select class="form-control" id="dropDownList" name="status">
+                                <option th:value="${request.status}" th:text="${request.status}"></option>
+                                <option th:each="el_status : ${status_values}" th:value="${el_status}"
+                                        th:text="${#strings.toLowerCase(el_status)}"
+                                        th:if="${request.status}!=${#strings.toLowerCase(el_status)}"></option>
+                            </select>
+                        </td>
+                        <td th:text="${request.date}"></td>
+                        <td th:text="${request.tourId}"></td>
+                        <!--                    <td th:text="${request.workerId}"></td>-->
+                        <td th:text="${request.paymentStatus}"></td>
+                        <td>
+                            <input type="submit" value="Надіслати">
+                        </td>
+                    </form>
+                </tr>
+            </tbody>
         </table>
     </div>
 
     <div class="client-data">
         <p>Особисті дані клієнта</p>
-        <table border="1">
-            <tr>
-                <th>id</th>
-                <th>ФІО</th>
-                <th>Телефон</th>
-                <th>Ел. скринька</th>
-                <th>Баланс</th>
-            </tr>
-            <tr>
-                <td th:text="${client.id}"></td>
-                <td th:text="${client.name}"></td>
-                <td th:text="${client.phone}"></td>
-                <td th:text="${client.email}"></td>
-                <td th:text="${balance}"></td>
-            </tr>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>ФІО</th>
+                    <th>Телефон</th>
+                    <th>Ел. скринька</th>
+                    <th>Баланс</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td th:text="${client.id}"></td>
+                    <td th:text="${client.name}"></td>
+                    <td th:text="${client.phone}"></td>
+                    <td th:text="${client.email}"></td>
+                    <td th:text="${balance}"></td>
+                </tr>
+            </tbody>
         </table>
     </div>
 

@@ -39,4 +39,17 @@ public class PromotionRepositoryImpl extends JDBCCustomRepositoryImpl<Promotion,
 
         return promotionList;
     }
+
+    @Override
+    public void deleteFromTourPromotion(int tourId, int promotionId, Connection connection) {
+        String query = "DELETE FROM tour_promotion WHERE tour_id = ? AND promotion_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tourId);
+            preparedStatement.setInt(2, promotionId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

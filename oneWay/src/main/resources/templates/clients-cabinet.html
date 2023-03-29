@@ -2,28 +2,35 @@
 <html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles/global/base.css">
+    <link rel="stylesheet" href="/styles/global/nav-bar.css">
+    <link rel="stylesheet" href="/styles/global/table-style.css">
     <title>Особистий кабінет</title>
 </head>
 <body>
-<!--th:if="${role} ? 'client' : 'manager' and ${client.id} == ${userId}" class="access-confirm"-->
-    <div>
+    <header th:insert="/global-blocks/header.html"></header>
+    <div class="wrapper">
         <div id="content1">
             <p>Особисті дані</p>
-            <table border="1">
-                <tr>
-                    <th>id</th>
-                    <th>ФІО</th>
-                    <th>Телефон</th>
-                    <th>Ел. скринька</th>
-                    <th>Баланс</th>
-                </tr>
-                <tr>
-                    <td th:text="${client.id}" id="id1"></td>
-                    <td th:text="${client.name}"></td>
-                    <td th:text="${client.phone}"></td>
-                    <td th:text="${client.email}"></td>
-                    <td th:text="${balance}"></td>
-                </tr>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>ФІО</th>
+                        <th>Телефон</th>
+                        <th>Ел. скринька</th>
+                        <th>Баланс</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${client.id}" id="id1"></td>
+                        <td th:text="${client.name}"></td>
+                        <td th:text="${client.phone}"></td>
+                        <td th:text="${client.email}"></td>
+                        <td th:text="${balance}"></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <div th:if="${role}=='manager'">
@@ -35,76 +42,59 @@
         <div id="request">
             <div class="requests-container" th:if="${request.size()} &gt; 0">
                 <p>Надіслані запити</p>
-                <table border="1">
-                    <tr>
-                        <th>id</th>
-                        <th>Номер клієнта</th>
-                        <th>Статус</th>
-                        <th>Дата</th>
-                        <th>Номер тура</th>
-                        <th>Номер менеджера</th>
-                        <th>Статус оплати</th>
-                    </tr>
-                    <tr th:each="el : ${request}">
-                        <td th:text="${el.id}" id="id2"></td>
-                        <td th:text="${el.clientId}"></td>
-                        <td th:if="${role}=='manager'">
-                            <form th:action="'/requests/admit/' + ${el.id}" method="post">
-                                <select class="form-control" id="dropDownList" name="status">
-                                    <option th:each="el_status : ${status_values}" th:value="${el_status}"
-                                            th:text="${el_status}" th:if="${el_status}!='відпралено'"></option>
-                                </select>
-                                <input type="submit" value="Змінити">
-                            </form>
-                        </td>
-                        <td th:text="${el.status}" th:unless="${role}=='manager'"></td>
-                        <td th:text="${el.date}"></td>
-                        <td th:text="${el.tourId}"></td>
-                        <td th:text="${el.workerId}"></td>
-                        <td th:text="${el.paymentStatus}"></td>
-                        <td th:if="${role}=='client'">
-                            <form th:action="'/cabinet/' + ${client.id} + '/payRequest/' + ${el.id}" method="post">
-                                <input type="submit" value="Оплатити">
-                            </form>
-                        </td>
-                        <td th:if="${role} ? 'client' : 'manager'">
-                            <form th:action="'/cabinet/' + ${client.id} + '/denyRequest/' + ${el.id}" method="post">
-                                <input type="submit" value="Скасувати заявку">
-                            </form>
-                        </td>
-                    </tr>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Номер клієнта</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                            <th>Номер тура</th>
+                            <th>Номер менеджера</th>
+                            <th>Статус оплати</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="el : ${request}">
+                            <td th:text="${el.id}" id="id2"></td>
+                            <td th:text="${el.clientId}"></td>
+                            <td th:if="${role}=='manager'">
+                                <form th:action="'/requests/admit/' + ${el.id}" method="post">
+                                    <select class="form-control" id="dropDownList" name="status">
+                                        <option th:each="el_status : ${status_values}" th:value="${el_status}"
+                                                th:text="${el_status}" th:if="${el_status}!='відпралено'"></option>
+                                    </select>
+                                    <input type="submit" value="Змінити">
+                                </form>
+                            </td>
+                            <td th:text="${el.status}" th:unless="${role}=='manager'"></td>
+                            <td th:text="${el.date}"></td>
+                            <td th:text="${el.tourId}"></td>
+                            <td th:text="${el.workerId}"></td>
+                            <td th:text="${el.paymentStatus}">
+                                <p th:if="${el.paymentStatus}=='false'">Не оплачено</p>
+                                <p th:unless="${el.paymentStatus}=='false'">Оплачено</p>
+                            </td>
+                            <td th:if="${role}=='client'">
+                                <form th:action="'/cabinet/' + ${client.id} + '/payRequest/' + ${el.id}" method="post">
+                                    <input type="submit" value="Оплатити">
+                                </form>
+                            </td>
+                            <td th:if="${role} ? 'client' : 'manager'">
+                                <form th:action="'/cabinet/' + ${client.id} + '/denyRequest/' + ${el.id}" method="post">
+                                    <input type="submit" value="Скасувати заявку">
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div th:unless="${request.size()} &gt; 0">
                 <p>Не подано жодної заявки</p>
             </div>
         </div>
-        <div id="voucher" th:if="${voucher.size()} &gt; 0">
-            <p>Ваучери</p>
-            <table border="1">
-                <tr>
-                    <th>id</th>
-                    <th>tourOperatorId</th>
-                    <th>date</th>
-                    <th>country</th>
-                    <th>photo</th>
-                </tr>
-                <tr th:each="el : ${voucher}">
-                    <td th:text="${el.id}" id="id3"></td>
-                    <td th:text="${el.tourOperatorId}"></td>
-                    <td th:text="${el.date}"></td>
-                    <td th:text="${el.country}"></td>
-                    <td>
-                        <img th:src="'image/voucher' + ${el.photo}">
-                    </td>
-                    <td th:text="${el.requestId}"></td>
-                </tr>
-            </table>
-        </div>
     </div>
-<!--    <div th:unless="${role} ? 'client' : 'manager' and ${client.id} == ${userId}" class="access-denied">-->
-<!--        <h1>Ви не маєте доступу до цієї сторінки</h1>-->
-<!--        <p>Якщо це ваша сторінка, то <a href="/login">Увійдіть</a></p>-->
-<!--    </div>-->
 </body>
 </html>

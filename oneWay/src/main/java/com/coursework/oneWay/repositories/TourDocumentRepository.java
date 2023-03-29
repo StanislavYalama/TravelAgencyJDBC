@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TourDocumentRepository {
     List<TourDocumentView> findByTourId(int tourId, Connection connection);
+
+    void deleteByTourId(int tourId, Connection connection);
 }

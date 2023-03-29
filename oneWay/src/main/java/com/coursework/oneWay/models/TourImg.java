@@ -5,11 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Excursion {
+@AllArgsConstructor
+public class TourImg {
     private Integer id;
-    private Integer locationId;
-    private String contentType;
-    private String placeName;
+    private Integer tourId;
+    private String photoPath;
 }

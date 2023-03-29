@@ -1,6 +1,7 @@
 package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Excursion;
+import com.coursework.oneWay.models.ExcursionView;
 import com.coursework.oneWay.repositories.ExcursionRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class ExcursionService {
 
     public List<Excursion> findByTourIdUnspent(int id, Connection connection){
         return excursionRepository.findByTourIdUnspent(id, connection);
+    }
+
+    public List<ExcursionView> findByTourIdExcursionView(int tourId, Connection connection){
+        return excursionRepository.findByTourIdExcursionView(tourId, connection);
     }
 
     public void save(Excursion excursion, Connection connection) {

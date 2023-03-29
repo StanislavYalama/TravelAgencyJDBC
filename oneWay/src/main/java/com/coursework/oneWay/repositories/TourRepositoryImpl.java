@@ -24,6 +24,7 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             while (resultSet.next()) {
                 TourView tourView = new TourView(
                         resultSet.getInt("id"),
+                        resultSet.getString("name"),
                         resultSet.getDate("date_start").toLocalDate(),
                         resultSet.getDate("date_end").toLocalDate(),
                         resultSet.getDouble("price"),
@@ -32,7 +33,10 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
                         resultSet.getInt("tour_operator_id"),
                         resultSet.getBoolean("visible"),
                         resultSet.getDouble("price_promotion"),
-                        resultSet.getInt("discount_percentage")
+                        resultSet.getInt("discount_percentage"),
+                        resultSet.getString("type"),
+                        resultSet.getInt("number_of_seats"),
+                        resultSet.getString("photo_path")
                 );
 
                 tourViewList.add(tourView);
@@ -60,6 +64,8 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             tour.setWorkerId(resultSet.getInt("worker_id"));
             tour.setPrice(resultSet.getDouble("price"));
             tour.setTourOperatorId(resultSet.getInt("tour_operator_id"));
+            tour.setType(resultSet.getString("type"));
+            tour.setNumberOfSeats(resultSet.getInt("number_of_seats"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -146,11 +152,30 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             tourView.setVisible(resultSet.getBoolean("visible"));
             tourView.setPricePromotion(resultSet.getDouble("price_promotion"));
             tourView.setDiscountPercentage(resultSet.getInt("discount_percentage"));
+            tourView.setType(resultSet.getString("type"));
+            tourView.setNumberOfSeats(resultSet.getInt("number_of_seats"));
+            tourView.setPhotoPath(resultSet.getString("photo_path"));
+            tourView.setName(resultSet.getString("name"));
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return tourView;
+    }
+
+    @Override
+    public void deleteExcursion(int tourId, int excursionId, Connection connection) {
+        String query = "DELETE FROM tour_excursion WHERE tour_id = ? AND excursion_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tourId);
+            preparedStatement.setInt(2, excursionId);
+            preparedStatement.executeUpdate();
+            log.info("Delete row from tour_location table with tourId = {} and locationId = {}",
+                    tourId, excursionId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

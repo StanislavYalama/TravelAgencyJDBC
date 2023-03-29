@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    min-width: 1vw;
+    min-height: 100%;
+    background: rgb(224, 228, 206);
+    overflow-x: hidden;
+    margin: 0 auto;
+}
+/* wrapper */
+.wrapper{
+    width: 100%;
+    border: 0 solid transparent;
+    border-width: 0 40px;
+    margin: 0 auto;
+    margin-top: 80px;
+    margin-bottom: 80px
+    box-sizing: border-box;
+}
+p{
+    font-family: 'Mina', sans-serif;
+}

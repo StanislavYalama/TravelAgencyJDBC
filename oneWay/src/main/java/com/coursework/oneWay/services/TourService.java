@@ -2,8 +2,9 @@ package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Location;
 import com.coursework.oneWay.models.Tour;
+import com.coursework.oneWay.models.TourImg;
 import com.coursework.oneWay.models.TourView;
-import com.coursework.oneWay.repositories.TourRepository;
+import com.coursework.oneWay.repositories.TourImgRepositoryImpl;
 import com.coursework.oneWay.repositories.TourRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +14,15 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class TourService {
 
-    private final TourRepositoryImpl tourRepository;
+    @Autowired
+    private TourRepositoryImpl tourRepository;
+    @Autowired
+    private TourImgRepositoryImpl tourImgRepository;
 
     public List<Tour> findAll(Connection connection) throws SQLException {
         return tourRepository.findAll(Tour.class, connection);
@@ -31,8 +33,17 @@ public class TourService {
     public List<TourView> findAllTourViews(Connection connection){
         return tourRepository.findAllTourView(connection);
     }
-    public void makeVisible(int tourId, Connection connection){
-        tourRepository.update(Tour.class, tourId, "is_visible", true, connection);
+    public void changeVisible(int tourId, Connection connection){
+        boolean newVisibleValue;
+        Tour tour = tourRepository.findById(Tour.class, tourId, connection);
+
+        if(tour.isVisible()){
+            newVisibleValue = false;
+        } else{
+            newVisibleValue = true;
+        }
+
+        tourRepository.update(Tour.class, tourId, "visible", newVisibleValue, connection);
     }
     public Tour findByRequestId(int requestId, Connection connection){
         return tourRepository.findByRequestId(requestId, connection);
@@ -52,8 +63,15 @@ public class TourService {
     public void saveExcursion(int tourId, int excursionId, Connection connection){
         tourRepository.saveExcursion(tourId, excursionId, connection);
     }
-
     public TourView findByIdTourViews(int tourId, Connection connection) {
         return tourRepository.findByIdTourViews(tourId, connection);
+    }
+
+    public void saveTourImg(TourImg tourImg, Connection connection){
+        tourImgRepository.save(tourImg, connection);
+    }
+
+    public void deleteExcursion(int tourId, int excursionId, Connection connection) {
+        tourRepository.deleteExcursion(tourId, excursionId, connection);
     }
 }

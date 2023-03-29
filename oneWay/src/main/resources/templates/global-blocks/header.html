@@ -1,3 +1,72 @@
-<div th:fragment="header">
-
+<div class="header-navigate">
+    <div class="nav-image">
+        <a href="/">
+            <img src="/image/home/logo.png" alt="" width="100px" height="60px">
+        </a>
+    </div>
+    <nav class="navigate">
+        <ul>
+            <li>
+                <a href="/catalog">Каталог турів</a>
+            </li>
+<!--            <li th:if="${role}=='tour_manager'">-->
+<!--                <a href="/promotions">Акції</a>-->
+<!--            </li>-->
+            <li th:if="${role}=='manager'">
+                <a href="/requests">Заявки</a>
+            </li>
+            <li th:if="${role}=='client'" class="navigate_right">
+                <a th:href="'/cabinet/' + ${userId}">Особистий кабінет</a>
+            </li>
+            <li th:if="${role}=='guest'" class="navigate_right">
+                <a href="/login">Вхід</a>
+            </li>
+            <li th:unless="${role}=='guest'" class="navigate_right">
+                <a href="/logout">Вихід</a>
+            </li>
+        </ul>
+    </nav>
 </div>
+<style>
+/*navigation*/
+header{
+    width: 100%;
+    height: 60px;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    overflow: hidden;
+    background-color: rgba(246, 246, 246, 1);
+    margin-bottom: 60px;
+}
+.header-navigate{
+    min-height: 60px;
+    display: flex;
+}
+.nav-image{
+    height: 60px;
+    width: 100px;
+}
+.navigate{
+    padding-top: 19px;
+    padding-bottom: 19px;
+    width: 100%;
+}
+.navigate ul li{
+    display: inline-block;
+}
+.navigate ul li a{
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.navigate_right-div{
+    margin-left: auto;
+}
+.navigate ul li a:hover{
+    color: orange;
+}
+</style>

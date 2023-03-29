@@ -2,10 +2,14 @@
 <html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles/global/base.css">
+    <link rel="stylesheet" href="/styles/nav-bar.css">
+
     <title>Дані учасників</title>
 </head>
 <body>
-    <div>
+    <header th:insert="/global-blocks/header.html"></header>
+    <div class="wrapper">
         <p>Завантажте фото документів, потрібних для оформлення тура</p>
         <form th:action="'/catalog/' + ${tourId} + '/addMembers/' + ${members_count} + '/processing'" method="post"
               enctype="multipart/form-data">

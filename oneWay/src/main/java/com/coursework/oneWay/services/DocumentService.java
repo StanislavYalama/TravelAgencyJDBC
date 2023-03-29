@@ -42,4 +42,8 @@ public class DocumentService {
     public void saveRequestTourDocument(RequestTourDocument requestTourDocument, Connection connection) {
         requestTourDocumentRepository.save(requestTourDocument, connection);
     }
+
+    public void deleteTourDocumentByTourId(int tourId, Connection connection) {
+        tourDocumentRepository.deleteByTourId(tourId, connection);
+    }
 }

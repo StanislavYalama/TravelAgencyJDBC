@@ -43,4 +43,16 @@ public class TourDocumentRepositoryImpl extends JDBCCustomRepositoryImpl<TourDoc
 
         return tourDocumentViewList;
     }
+
+    @Override
+    public void deleteByTourId(int tourId, Connection connection) {
+        String query = "DELETE FROM tour_document WHERE tour_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tourId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

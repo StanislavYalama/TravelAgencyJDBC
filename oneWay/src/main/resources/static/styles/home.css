@@ -12,49 +12,8 @@ body {
     background: rgb(224, 228, 206);
     overflow-x: hidden;
 }
-/*navigation*/
-header{
-    width: 100%;
-    height: 60px;
-    position: fixed;
-    top: 0;
-    z-index: 100;
-    overflow: hidden;
-    background-color: rgba(246, 246, 246, 1);
-}
-.header-navigate{
-    min-height: 60px;
-    display: flex;
-}
-.nav-image{
-    height: 60px;
-    width: 100px;
-}
-.navigate{
-    padding-top: 19px;
-    padding-bottom: 19px;
-    width: 100%;
-}
-.navigate ul li{
-    display: inline-block;
-}
-.navigate ul li a{
-    font-size: 18px;
-    font-weight: bold;
-    text-decoration: none;
-    color: black;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-.navigate_right-div{
-    margin-left: auto;
-}
-.navigate ul li a:hover{
-    color: orange;
-}
 /* slider */
 .slider{
-    margin-top: 60px;
     width: 100%;
 }
 .slider img{
@@ -64,11 +23,10 @@ header{
 }
 /* recomended-tours */
 .rec-tour-conteiner{
+    margin: 0 auto;
     margin-top: 30px;
     width: 100%;
-    height: 548px;
-    margin-left: 55px;
-    margin-right: 55px;
+    height: fit-content;
 }
 .rec-tour-text{
     font-size: 24px;
@@ -77,9 +35,10 @@ header{
 .tours-conteiner{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 15px;
-    align-items: stretch;
+/*     align-items: stretch; */
     flex-basis: 22%;
     width: 100%;
     height: 550px;
@@ -88,8 +47,7 @@ header{
     position: relative;
     width: 300px;
     border: 1px black solid;
-    max-height: 480px;
-    
+    min-height: 480px;
 
     background: #FFFFFF;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);

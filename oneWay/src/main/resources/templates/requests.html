@@ -2,101 +2,114 @@
 <html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles/global/base.css">
+    <link rel="stylesheet" href="/styles/global/nav-bar.css">
+    <link rel="stylesheet" href="/styles/global/table-style.css">
     <title>Заявки</title>
 </head>
 <body>
-<input type=radio id="toggle1" name="toggle" checked>Не переглянуті
-<input type=radio id="toggle2" name="toggle">Переглянуті
+    <header th:insert="/global-blocks/header.html"></header>
+    <div class="wrapper">
+        <input type=radio id="toggle1" name="toggle" checked>Не переглянуті
+        <input type=radio id="toggle2" name="toggle">Переглянуті
 
-<div id="content1">
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>Номер клієнта</th>
-            <th>Статус</th>
-            <th>Дата</th>
-            <th>Номер тура</th>
-            <th>Номер менеджера</th>
-            <th>Статус оплати</th>
-        </tr>
-        <tr th:each = "el : ${requestUnadmit}">
-            <form th:action="'/requests/admit/' + ${el.id}" method="post">
-                <td id="id1"><a th:href="'/requests/' + ${el.id}" th:text="${el.id}"></a></td>
-                <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
-                <td>
-                    <select class="form-control" id="dropDownList1" name="status">
-                        <option th:value="${el.status}" th:text="${el.status}"></option>
-                        <option th:each="el_status : ${status_values}" th:value="${el_status}" th:text="${#strings.toLowerCase(el_status)}"
-                                th:if="${el.status}!=${#strings.toLowerCase(el_status)}"></option>
-                    </select>
-                </td>
-                <td th:text="${el.date}"></td>
-                <td th:text="${el.tourId}"></td>
-                <td th:text="${el.workerId}"></td>
-                <td th:text="${el.paymentStatus}"></td>
-                <td>
-                    <input type="submit" value="Надіслати">
-                </td>
-            </form>
-        </tr>
-    </table>
-</div>
-<br><br>
-<div id="content2">
-    <table border="1" style="visible=true">
-        <tr>
-            <th>id</th>
-            <th>Номер клієнта</th>
-            <th>Статус</th>
-            <th>Дата</th>
-            <th>Номер тура</th>
-            <th>Номер менеджера</th>
-            <th>Статус оплати</th>
-        </tr>
-        <tr th:each = "el : ${requestAdmit}">
-            <form th:action="'/requests/admit/' + ${el.id}" method="post">
-                <td id="id2"><a th:href="'/requests/' + ${el.id}" th:text="${el.id}"></a></td>
-                <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
-                <td>
-                    <select class="form-control" id="dropDownList2" name="status">
-                        <option th:value="${el.status}" th:text="${el.status}"></option>
-                        <option th:each="el_status : ${status_values}" th:value="${el_status}"
-                                th:text="${#strings.toLowerCase(el_status)}"
-                                th:if="${el.status}!=${#strings.toLowerCase(el_status)}"></option>
-                    </select>
-                </td>
-                <td th:text="${el.date}"></td>
-                <td th:text="${el.tourId}"></td>
-                <td th:text="${el.workerId}"></td>
-                <td th:text="${el.paymentStatus}"></td>
-                <td>
-                    <input type="submit" value="Надіслати">
-                </td>
-            </form>
-        </tr>
-    </table>
-</div>
-<style>
-    #content1
-    {
-        display:none;
-    }
+        <div id="content1">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Номер клієнта</th>
+                    <th>Статус</th>
+                    <th>Дата</th>
+                    <th>Номер тура</th>
+                    <th>Номер менеджера</th>
+                    <th>Статус оплати</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each = "el : ${requestUnadmit}">
+                    <form th:action="'/requests/admit/' + ${el.id}" method="post">
+                        <td id="id1"><a th:href="'/requests/' + ${el.id}" th:text="${el.id}"></a></td>
+                        <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
+                        <td>
+                            <select class="form-control" id="dropDownList1" name="status">
+                                <option th:value="${el.status}" th:text="${el.status}"></option>
+                                <option th:each="el_status : ${status_values}" th:value="${el_status}" th:text="${#strings.toLowerCase(el_status)}"
+                                        th:if="${el.status}!=${#strings.toLowerCase(el_status)}"></option>
+                            </select>
+                        </td>
+                        <td th:text="${el.date}"></td>
+                        <td th:text="${el.tourId}"></td>
+                        <td th:text="${el.workerId}"></td>
+                        <td th:text="${el.paymentStatus}"></td>
+                        <td>
+                            <input type="submit" value="Надіслати">
+                        </td>
+                    </form>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <br><br>
+        <div id="content2">
+            <table class="styled-table" style="visible=true">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Номер клієнта</th>
+                    <th>Статус</th>
+                    <th>Дата</th>
+                    <th>Номер тура</th>
+                    <th>Номер менеджера</th>
+                    <th>Статус оплати</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each = "el : ${requestAdmit}">
+                    <form th:action="'/requests/admit/' + ${el.id}" method="post">
+                        <td id="id2"><a th:href="'/requests/' + ${el.id}" th:text="${el.id}"></a></td>
+                        <td><a th:text="${el.clientId}" th:href="'/cabinet/' + ${el.clientId}"></a></td>
+                        <td>
+                            <select class="form-control" id="dropDownList2" name="status">
+                                <option th:value="${el.status}" th:text="${el.status}"></option>
+                                <option th:each="el_status : ${status_values}" th:value="${el_status}"
+                                        th:text="${#strings.toLowerCase(el_status)}"
+                                        th:if="${el.status}!=${#strings.toLowerCase(el_status)}"></option>
+                            </select>
+                        </td>
+                        <td th:text="${el.date}"></td>
+                        <td th:text="${el.tourId}"></td>
+                        <td th:text="${el.workerId}"></td>
+                        <td th:text="${el.paymentStatus}"></td>
+                        <td>
+                            <input type="submit" value="Надіслати">
+                        </td>
+                    </form>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <style>
+        #content1
+        {
+            display:none;
+        }
 
-    #content2
-    {
-        display:none;
-    }
+        #content2
+        {
+            display:none;
+        }
 
-    #toggle1:checked ~ #content1
-    {
-      display: block;
-    }
+        #toggle1:checked ~ #content1
+        {
+          display: block;
+        }
 
-    #toggle2:checked ~ #content2
-    {
-      display: block;
-    }
-</style>
-
+        #toggle2:checked ~ #content2
+        {
+          display: block;
+        }
+        </style>
+    </div>
 </body>
 </html>

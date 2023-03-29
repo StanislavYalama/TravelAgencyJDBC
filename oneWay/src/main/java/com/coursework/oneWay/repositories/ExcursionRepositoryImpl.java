@@ -1,6 +1,7 @@
 package com.coursework.oneWay.repositories;
 
 import com.coursework.oneWay.models.Excursion;
+import com.coursework.oneWay.models.ExcursionView;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -29,7 +30,6 @@ public class ExcursionRepositoryImpl extends JDBCCustomRepositoryImpl<Excursion,
                 Excursion excursion = new Excursion();
                 excursion.setId(resultSet.getInt("id"));
                 excursion.setContentType(resultSet.getString("content_type"));
-                excursion.setCountPlaces(resultSet.getInt("count_places"));
                 excursion.setPlaceName(resultSet.getString("place_name"));
                 excursion.setLocationId(resultSet.getInt("location_id"));
 
@@ -61,9 +61,38 @@ public class ExcursionRepositoryImpl extends JDBCCustomRepositoryImpl<Excursion,
                 Excursion excursion = new Excursion();
                 excursion.setId(resultSet.getInt("id"));
                 excursion.setContentType(resultSet.getString("content_type"));
-                excursion.setCountPlaces(resultSet.getInt("count_places"));
                 excursion.setPlaceName(resultSet.getString("place_name"));
                 excursion.setLocationId(resultSet.getInt("location_id"));
+
+                excursionList.add(excursion);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return excursionList;
+    }
+
+    @Override
+    public List<ExcursionView> findByTourIdExcursionView(int tourId, Connection connection) {
+        List<ExcursionView> excursionList = new ArrayList<>();
+        String query = """
+                SELECT * FROM excursion_view
+                WHERE id IN (SELECT excursion_id FROM tour_excursion
+                    WHERE tour_id = ?)""";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, tourId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                ExcursionView excursion = new ExcursionView();
+                excursion.setId(resultSet.getInt("id"));
+                excursion.setContentType(resultSet.getString("content_type"));
+                excursion.setPlaceName(resultSet.getString("place_name"));
+                excursion.setLocationId(resultSet.getInt("location_id"));
+                excursion.setCity(resultSet.getString("city"));
 
                 excursionList.add(excursion);
             }
