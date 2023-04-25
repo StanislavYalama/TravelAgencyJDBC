@@ -148,39 +148,39 @@
         <br>
       </div>
 
+      <div class="locations">
+        <p>Locations</p>
+        <table class="styled-table">
+          <thead>
+          <tr>
+            <th>Id</th>
+            <th>country</th>
+            <th>city</th>
+            <th>description</th>
+            <th>creatorId</th>
+            <th th:if="${role}=='tour_manager'"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each = "el : ${locations}">
+            <td th:text="${el.id}"></td>
+            <td th:text="${el.country}"></td>
+            <td th:text="${el.city}"></td>
+            <td th:text="${el.description}"></td>
+            <td th:text="${el.workerId}"></td>
+            <td>
+              <form th:action="'/catalog/' + ${tour.id} + '/deleteLocation/' + ${el.id}"
+                    th:if="${role}=='tour_manager'" method="post">
+                <input type="submit" value="Відкріпити">
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <br>
 
       <div class="tour_manager_functional" th:if="${role}=='tour_manager'">
-        <div class="locations">
-          <p>Locations</p>
-          <table class="styled-table">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>country</th>
-                <th>city</th>
-                <th>description</th>
-                <th>creatorId</th>
-                <th th:if="${role}=='tour_manager'"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each = "el : ${locations}">
-                <td th:text="${el.id}"></td>
-                <td th:text="${el.country}"></td>
-                <td th:text="${el.city}"></td>
-                <td th:text="${el.description}"></td>
-                <td th:text="${el.workerId}"></td>
-                <td>
-                  <form th:action="'/catalog/' + ${tour.id} + '/deleteLocation/' + ${el.id}"
-                        th:if="${role}=='tour_manager'" method="post">
-                    <input type="submit" value="Відкріпити">
-                  </form>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <br>
         <div class="promotions" th:if="${promotions.size()} &gt; 0">
           <p>Знижки</p><br>
           <table class="styled-table">

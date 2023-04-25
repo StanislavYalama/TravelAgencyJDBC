@@ -1,13 +1,8 @@
 package com.coursework.oneWay.services;
 
 import com.coursework.oneWay.models.Client;
-import com.coursework.oneWay.models.ClientDocumentView;
 import com.coursework.oneWay.models.PersonalWallet;
-import com.coursework.oneWay.models.Request;
-import com.coursework.oneWay.repositories.ClientRepository;
 import com.coursework.oneWay.repositories.ClientRepositoryImpl;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

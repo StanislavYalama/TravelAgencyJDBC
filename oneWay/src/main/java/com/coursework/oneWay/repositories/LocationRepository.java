@@ -8,4 +8,6 @@ import java.util.List;
 public interface LocationRepository {
 
     List<Location> findByTourId(int id, Connection connection);
+
+    List<String> getCountryList(Connection connection);
 }

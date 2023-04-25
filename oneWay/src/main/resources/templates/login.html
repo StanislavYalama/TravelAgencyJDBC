@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,25 +11,7 @@
     <title>Login</title>
 </head>
 <body>
-    <header>
-        <div class="header-navigate">
-            <div class="nav-image">
-                <a href="home.html">
-                    <img src="image/home/logo.png" alt="" width="100px" height="60px">
-                </a>
-            </div>
-            <nav class="navigate">
-                <ul>
-                    <li>
-                        <a href="/catalog">Каталог турів</a>
-                    </li>
-                    <li>
-                        <a href="/promotions">Акції</a>
-                    </li>
-                </ul>        
-            </nav>
-        </div>
-    </header>
+<header th:insert="/global-blocks/header.html"></header>
     <main>
         <div class="log-form-conteiner">
             <form action="/login/authorization" method="post">

@@ -17,7 +17,7 @@ public class LocationService {
         return locationRepository.findByTourId(tourId, connection);
     }
 
-    public List<Location> finAll(Connection connection) {
+    public List<Location> findAll(Connection connection) {
         return locationRepository.findAll(Location.class, connection);
     }
 
@@ -27,5 +27,9 @@ public class LocationService {
 
     public void save(Location location, Connection connection) {
         locationRepository.save(location, connection);
+    }
+
+    public List<String> getCountryList(Connection connection) {
+        return locationRepository.getCountryList(connection);
     }
 }

@@ -3,10 +3,7 @@ package com.coursework.oneWay.repositories;
 import com.coursework.oneWay.models.Location;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,5 +34,22 @@ public class LocationRepositoryImpl extends JDBCCustomRepositoryImpl<Location, I
         }
 
         return locationList;
+    }
+
+    @Override
+    public List<String> getCountryList(Connection connection) {
+        String query = "SELECT * FROM country_view";
+        List<String> countryList = new ArrayList<>();
+
+        try(Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(query);
+            while(resultSet.next()){
+                countryList.add(resultSet.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return countryList;
     }
 }

@@ -6,12 +6,15 @@
     </div>
     <nav class="navigate">
         <ul>
-            <li>
+            <li th:if="${role}!='administrator'">
                 <a href="/catalog">Каталог турів</a>
             </li>
-<!--            <li th:if="${role}=='tour_manager'">-->
-<!--                <a href="/promotions">Акції</a>-->
-<!--            </li>-->
+            <li th:unless="${role}!='administrator'">
+                <a href="/adminPanel">Адмін панель</a>
+            </li>
+            <li th:if="${role}=='tour_manager'">
+                <a href="/promotions">Знижки</a>
+            </li>
             <li th:if="${role}=='manager'">
                 <a href="/requests">Заявки</a>
             </li>

@@ -61,6 +61,7 @@ public class CatalogController {
                     .sorted(Comparator.comparing(TourView::isVisible)
                             .thenComparing(TourView::getDateStart))
                     .toList();
+            model.addAttribute("countryList", locationService.getCountryList(httpSessionBean.getConnection()));
         } else{
             tourViewList = tourViewList
                     .stream()
@@ -72,7 +73,7 @@ public class CatalogController {
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("tours", tourViewList);
         if(httpSessionBean.getRole().equals("tour_manager")){
-            model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+            model.addAttribute("allLocations", locationService.findAll(httpSessionBean.getConnection()));
         }
         model.addAttribute("documentTypes", EnumSet.allOf(DocumentType.class));
         model.addAttribute("tourType", EnumSet.allOf(TourType.class));
@@ -110,7 +111,7 @@ public class CatalogController {
         model.addAttribute("role", httpSessionBean.getRole());
         model.addAttribute("promotions",
                 promotionService.findByTourId(tourId, httpSessionBean.getConnection()));
-        model.addAttribute("allLocations", locationService.finAll(httpSessionBean.getConnection()));
+        model.addAttribute("allLocations", locationService.findAll(httpSessionBean.getConnection()));
 
         model.addAttribute("excursionViewList", excursionViewList);
         model.addAttribute("excursionList", excursionList);
@@ -136,6 +137,12 @@ public class CatalogController {
     @PostMapping("/delete/{tourId}")
     public String catalogDelete(@PathVariable int tourId){
         tourService.deleteById(tourId, httpSessionBean.getConnection());
+        return "redirect:/catalog";
+    }
+
+    @PostMapping("/closeTour")
+    public String closeTour(@RequestParam String country){
+        tourService.closeTourByCountryName(country, httpSessionBean.getConnection());
         return "redirect:/catalog";
     }
 

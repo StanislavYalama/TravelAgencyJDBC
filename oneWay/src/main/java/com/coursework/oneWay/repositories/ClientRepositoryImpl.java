@@ -1,14 +1,11 @@
 package com.coursework.oneWay.repositories;
 
 import com.coursework.oneWay.models.Client;
-import com.coursework.oneWay.models.ClientDocument;
 import com.coursework.oneWay.models.PersonalWallet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Component

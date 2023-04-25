@@ -178,4 +178,17 @@ public class TourRepositoryImpl extends JDBCCustomRepositoryImpl<Tour, Integer> 
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void closeTourByCountryName(String country, Connection connection) {
+        String query = "CALL cancel_tour_by_country(?)";
+
+        try(CallableStatement callableStatement = connection.prepareCall(query)) {
+            callableStatement.setString(1, country);
+            callableStatement.execute();
+            log.info("Was executed procedure cancel_tour_by_country({}).", country);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -30,8 +30,9 @@ public class WorkerRepositoryImpl extends JDBCCustomRepositoryImpl<Worker, Integ
         try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            id = resultSet.getInt(1);
+            while(resultSet.next()){
+                id = resultSet.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

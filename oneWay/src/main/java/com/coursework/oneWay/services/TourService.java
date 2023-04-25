@@ -74,4 +74,8 @@ public class TourService {
     public void deleteExcursion(int tourId, int excursionId, Connection connection) {
         tourRepository.deleteExcursion(tourId, excursionId, connection);
     }
+
+    public void closeTourByCountryName(String country, Connection connection) {
+        tourRepository.closeTourByCountryName(country, connection);
+    }
 }

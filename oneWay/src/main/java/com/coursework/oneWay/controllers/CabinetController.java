@@ -22,10 +22,6 @@ public class CabinetController {
     private ClientService clientService;
     @Autowired
     private RequestService requestService;
-    @Autowired
-    private TourService tourService;
-    @Autowired
-    private VoucherService voucherService;
 
     @GetMapping("/{id}")
     public String cabinet(Model model, @PathVariable int id){
@@ -41,8 +37,6 @@ public class CabinetController {
         model.addAttribute("request", requestService.findByClientId(id,
                 httpSessionBean.getConnection()).stream().sorted(Comparator.comparing(Request::getDate)).collect(Collectors.toList()));
         model.addAttribute("status_values", EnumSet.allOf(RequestStatus.class));
-        model.addAttribute("voucher", voucherService.findByClientId(id,
-                httpSessionBean.getConnection()));
         return "clients-cabinet";
     }
 

@@ -83,6 +83,16 @@
                         <input type="submit" value="Зберегти">
                     </form>
                 </div>
+                <div>
+                    <p>Скасування туру за назвою країни</p>
+                    <form action="/catalog/closeTour" method="post">
+                        <select name="country">
+                            <option th:each="el : ${countryList}" th:value="${el}"
+                                    th:text="${el}"></option>
+                        </select>
+                        <input type="submit" value="Зберегти">
+                    </form>
+                </div>
             </div>
 
             <div class="rec-tour-conteiner">

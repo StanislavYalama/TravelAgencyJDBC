@@ -26,4 +26,6 @@ public interface TourRepository {
     TourView findByIdTourViews(int tourId, Connection connection);
 
     void deleteExcursion(int tourId, int excursionId, Connection connection);
+
+    void closeTourByCountryName(String country, Connection connection);
 }
