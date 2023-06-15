@@ -1,6 +1,6 @@
 package com.coursework.oneWay.controllers;
 
-import com.coursework.oneWay.WorkerRole;
+import com.coursework.oneWay.enums.WorkerRole;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.Worker;
 import com.coursework.oneWay.services.LoginService;

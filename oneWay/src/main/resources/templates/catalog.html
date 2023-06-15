@@ -18,11 +18,12 @@
                 <div>
                     <p>Створення тура</p>
                     <form action="/catalog/save" method="post">
+                        Назва <input type="text" name="name"><br><br>
                         Дата початку <input type="date" name="dateStart"><br><br>
                         Дата кінця <input type="date" name="dateEnd"><br><br>
-                        Ціна <input type="number" name="price" value="4555"><br><br>
-                        Опис <input type="text" name="description" value="descr"><br><br>
-                        Номер туроператора <input type="number" name="tourOperatorId" value="1"><br><br>
+                        Ціна <input type="number" name="price"><br><br>
+                        Опис <input type="text" name="description"><br><br>
+                        Номер туроператора <input type="number" name="tourOperatorId"><br><br>
                         Тип <select name="type">
                         <option th:each="el : ${tourType}" th:value="${el.toDBFormat()}"
                                 th:text="${el.toDBFormat()}"></option>

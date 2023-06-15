@@ -43,6 +43,9 @@ public class RequestRepositoryImpl extends JDBCCustomRepositoryImpl<Request, Int
                 SELECT price_promotion FROM tour_view
                 WHERE id = (SELECT tour_id FROM request
                     WHERE id = ? AND client_id = ?)""";
+        String memberCountQuery = """
+                SELECT DISTINCT MAX(member_number) OVER (PARTITION BY request_id) FROM request_tour_document
+                WHERE request_id = ?""";
         String walletBalanceQuery = "SELECT balance FROM personal_wallet WHERE client_id = ?";
         String changeBalanceQuery = "UPDATE personal_wallet SET balance = balance - ? WHERE client_id = ?";
         String changePaymentStatus = "UPDATE request SET payment_status = true WHERE id = ?";
@@ -56,8 +59,22 @@ public class RequestRepositoryImpl extends JDBCCustomRepositoryImpl<Request, Int
             while(resultSet1.next()){
                 price = resultSet1.getDouble(1);
             }
-            preparedStatement1.close();
             resultSet1.close();
+            preparedStatement1.close();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(memberCountQuery);
+            preparedStatement.setInt(1, requestId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            int memberCount = 0;
+            while(resultSet.next()){
+                memberCount = resultSet.getInt(1);
+            }
+            resultSet.close();
+            preparedStatement.close();
+
+            if(memberCount != 0){
+                price *= memberCount;
+            }
 
             int previousLevel = connection.getTransactionIsolation();
             connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);

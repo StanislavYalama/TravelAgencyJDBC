@@ -1,6 +1,6 @@
 package com.coursework.oneWay.services;
 
-import com.coursework.oneWay.RequestStatus;
+import com.coursework.oneWay.enums.RequestStatus;
 import com.coursework.oneWay.models.Request;
 import com.coursework.oneWay.repositories.RequestRepositoryImpl;
 import lombok.Getter;
@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

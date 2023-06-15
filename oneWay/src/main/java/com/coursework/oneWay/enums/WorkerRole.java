@@ -1,4 +1,4 @@
-package com.coursework.oneWay;
+package com.coursework.oneWay.enums;
 
 public enum WorkerRole {
     MANAGER, TOUR_MANAGER, ADMINISTRATOR;

@@ -1,7 +1,7 @@
 package com.coursework.oneWay.controllers;
 
-import com.coursework.oneWay.DocumentType;
-import com.coursework.oneWay.RequestStatus;
+import com.coursework.oneWay.enums.DocumentType;
+import com.coursework.oneWay.enums.RequestStatus;
 import com.coursework.oneWay.bean.HttpSessionBean;
 import com.coursework.oneWay.models.*;
 import com.coursework.oneWay.services.*;

@@ -1,4 +1,4 @@
-package com.coursework.oneWay;
+package com.coursework.oneWay.enums;
 
 public enum DocumentType {
     ДЛЯ_ЗАЯВКИ, ДЛЯ_УЧАСТІ_В_ТУРІ;
